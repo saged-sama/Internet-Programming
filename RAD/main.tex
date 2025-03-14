@@ -1,0 +1,119 @@
+
+\documentclass[a4paper,11pt,oneside]{book}
+
+\usepackage[margin=1.2in]{geometry} 
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nccmath}
+\renewcommand*\familydefault{\sfdefault}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+\newtheorem{mydef}{Definition}
+\newtheorem{mytherm}{Theorem}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0.1}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblue}{rgb}{0.10,0.00,1.00}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{1.0,1.0,1.0}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codeblue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                        
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=none
+}
+\lstset{style=mystyle}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{caption}
+\usepackage{lipsum}
+
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{makecell}
+\usepackage{booktabs}
+
+\usepackage{enumitem}
+\newlist{abbrv}{itemize}{1}
+\setlist[abbrv,1]{label=,labelwidth=1in,align=parleft,itemsep=0.1\baselineskip,leftmargin=!}
+
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[comma,authoryear]{natbib}
+\renewcommand{\bibname}{References} 
+\usepackage[toc]{appendix}
+
+\makeindex
+
+\title{RAD}
+\author{Nazira Jesmin Lina }
+\date{February 2023}
+
+\begin{document}
+
+
+
+\begin{titlepage}
+    \begin{center}
+        \includegraphics[scale=0.9]{DU-log.png} \\[12pt]
+        
+        \huge \textbf{University of Dhaka}
+        \begin{center}
+           { \LARGE \textbf{Department of Computer Science and Engineering \\[8pt]}}
+           
+             {\textbf{ \LARGE CSE-3112 : Software Engineering Lab \\}}
+             \begin{LARGE}
+                    \textbf{ \LARGE \\[1pt]}
+               Software Requirements Analysis Document (RAD) \\[8pt]
+                     \textbf{\Huge E-Lib} \\[8pt]
+                     A Library Management Software\\[8pt]    
+        		\textbf{Submitted By:\\[8pt]}
+        			1. Syed Mumtahin Mahmud, Roll: 50\\[8pt]
+                        2. Nazira Jesmin Lina, Roll: 55\\[8pt]
+
+        		\textbf{Submitted On : \\[8pt]}
+        			February 21, 2023\\[10pt]
+        		\textbf{Submitted To :\\[8pt]}
+        			1. Dr. Saifuddin Md. Tareeq \\[8pt]
+                    2. Redwan Ahmed Rizvee \\[8pt]
+	       \end{LARGE}
+             
+        \end{center}
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\listoffigures
+
+\input{chapters/introduction}
+\input{chapters/overall_description}
+\input{chapters/proposed_system}
+\input{chapters/supporting_information}
+
+\end{document}
