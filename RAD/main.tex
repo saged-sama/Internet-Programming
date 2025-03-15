@@ -7,7 +7,7 @@
 \usepackage{amsmath}
 \usepackage{nccmath}
 \renewcommand*\familydefault{\sfdefault}
-
+\usepackage{array}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \newtheorem{mydef}{Definition}
@@ -70,6 +70,7 @@
 \usepackage[toc]{appendix}
 
 \makeindex
+\renewcommand{\arraystretch}{2}
 
 \title{RAD}
 \author{Nazira Jesmin Lina }
@@ -79,41 +80,41 @@
 
 
 
-\begin{titlepage}
-    \begin{center}
-        \includegraphics[scale=0.9]{DU-log.png} \\[12pt]
+% \begin{titlepage}
+%     \begin{center}
+%         \includegraphics[scale=0.9]{DU-log.png} \\[12pt]
         
-        \huge \textbf{University of Dhaka}
-        \begin{center}
-           { \LARGE \textbf{Department of Computer Science and Engineering \\[8pt]}}
+%         \huge \textbf{University of Dhaka}
+%         \begin{center}
+%            { \LARGE \textbf{Department of Computer Science and Engineering \\[8pt]}}
            
-             {\textbf{ \LARGE CSE-3112 : Software Engineering Lab \\}}
-             \begin{LARGE}
-                    \textbf{ \LARGE \\[1pt]}
-               Software Requirements Analysis Document (RAD) \\[8pt]
-                     \textbf{\Huge E-Lib} \\[8pt]
-                     A Library Management Software\\[8pt]    
-        		\textbf{Submitted By:\\[8pt]}
-        			1. Syed Mumtahin Mahmud, Roll: 50\\[8pt]
-                        2. Nazira Jesmin Lina, Roll: 55\\[8pt]
+%              {\textbf{ \LARGE CSE-3112 : Software Engineering Lab \\}}
+%              \begin{LARGE}
+%                     \textbf{ \LARGE \\[1pt]}
+%                Software Requirements Analysis Document (RAD) \\[8pt]
+%                      \textbf{\Huge E-Lib} \\[8pt]
+%                      A Library Management Software\\[8pt]    
+%         		\textbf{Submitted By:\\[8pt]}
+%         			1. Syed Mumtahin Mahmud, Roll: 50\\[8pt]
+%                         2. Nazira Jesmin Lina, Roll: 55\\[8pt]
 
-        		\textbf{Submitted On : \\[8pt]}
-        			February 21, 2023\\[10pt]
-        		\textbf{Submitted To :\\[8pt]}
-        			1. Dr. Saifuddin Md. Tareeq \\[8pt]
-                    2. Redwan Ahmed Rizvee \\[8pt]
-	       \end{LARGE}
+%         		\textbf{Submitted On : \\[8pt]}
+%         			February 21, 2023\\[10pt]
+%         		\textbf{Submitted To :\\[8pt]}
+%         			1. Dr. Saifuddin Md. Tareeq \\[8pt]
+%                     2. Redwan Ahmed Rizvee \\[8pt]
+% 	       \end{LARGE}
              
-        \end{center}
-    \end{center}
-\end{titlepage}
+%         \end{center}
+%     \end{center}
+% \end{titlepage}
 
-\tableofcontents
-\listoffigures
+% \tableofcontents
+% \listoffigures
 
-\input{chapters/introduction}
-\input{chapters/overall_description}
+% \input{chapters/introduction}
+% \input{chapters/overall_description}
 \input{chapters/proposed_system}
-\input{chapters/supporting_information}
+% \input{chapters/supporting_information}
 
 \end{document}

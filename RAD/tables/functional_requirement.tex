@@ -1,19 +1,20 @@
+\renewcommand{\arraystretch}{2}
+\noindent
 \begin{center}
-
-% Different accounts
-\begin{tabular}{ | m{5em} | m{6.5cm}|  } 
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
   \hline
   ID & 3.2.1\\ 
   \hline
-  Name & User Management \\ 
+  Name & User and Administration \\ 
   \hline
   Description & 
-  \begin{enumerate}
-      \item The system shall allow the admin to create and manage staff accounts.
-      \item The system shall allow staff to update their account information.
-      \item The system shall allow the admin to reset passwords for staff accounts.
+  \begin{itemize}
+      \item The system should allow the admin to create and manage teacher, staff, and student accounts through institutional mails.
+      \item Teacher and staff can update their account information.
+      \item Allow students' login to student corner.
+      \item Allow password resets for all accounts.
 
-  \end{enumerate} \\
+  \end{itemize} \\
   \hline
   
   Priority & High\\
@@ -23,100 +24,313 @@
 \end{tabular}
 \end{center}
 
-% Input income, expenses
+\vspace{0.5cm}
+
 \begin{center}
-\begin{tabular}{ | m{5em} | m{6.5cm}|  } 
+  \begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+    \hline
+    ID & 3.2.2\\  
+    \hline
+    Name & Navbar \\  
+    \hline
+    Description & 
+    \begin{itemize}
+        \item Visualize University logo along with the department name
+        \item Include quick links to pages, such as, Homepage, About, Admission, Teachers and Staff, Students Corner, Research, Academics, Events, Facilities and Alumni.
+        \item Include quick links to login, logout pages
+        \item Necessary quick links for admin
+    \end{itemize} \\ 
+    \hline
+    Priority & High\\
+    \hline 
+    Reference & \\
+    \hline
+  \end{tabular}
+  \end{center}
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
   \hline
-  ID & 3.2.2\\ 
+  ID & 3.2.3\\  
   \hline
-  Name &  Book Management\\ 
+  Name & Homepage \\  
   \hline
   Description & 
-  \begin{enumerate}
-      \item  The system shall allow the staff to add new books to the library database with information such as title, author, publication date, ISBN, and category.
-      \item The system shall allow the staff to update book information such as book cover, title, author, and category.
-      \item The system shall allow the staff to search for a book by title, author, ISBN, or category.
-      \item The system shall allow the staff to delete a book from the library database.
-
-
-  \end{enumerate} \\
+  \begin{itemize}
+      \item Should display a welcome message.
+      \item Show the department’s mission and vision.
+      \item Provide announcements and news updates.
+      \item Display upcoming events.
+  \end{itemize} \\ 
   \hline
-  
   Priority & High\\
-  \hline
+  \hline 
   Reference & \\
   \hline
 \end{tabular}
 \end{center}
 
-% Planned payments and income
+\vspace{0.5cm}
+
+
 \begin{center}
-\begin{tabular}{ | m{5em} | m{6.5cm}|  } 
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
   \hline
-  ID & 3.2.3\\ 
+  ID & 3.2.4\\  
   \hline
-  Name & Borrowing Management \\ 
+  Name & About Us \\  
   \hline
   Description & 
-  \begin{enumerate}
-  
-      \item The system shall allow the staff to borrow a book to a member.
-      \item The system shall allow the staff to check if a book is available for borrowing.
-      \item The system shall allow the staff to record the borrowing details such as the book ID, member ID, and borrowing date.
-      \item The system shall send notifications to the member if the book is not returned by the due date.
-
-  \end{enumerate} \\
+  \begin{itemize}
+      \item Provide an overview of the department.
+      \item Include a message from the Head of the Department.
+      \item Showcase department history and achievements.
+      \item Show contact information and location on a map.
+  \end{itemize} \\ 
   \hline
-  
-  Priority & High \\
-  \hline
-  Reference & \\
-  \hline
-\end{tabular}
-\end{center}
-
-% Due and lent tabs
-\begin{center}
-\begin{tabular}{ | m{5em} | m{6.5cm}|  } 
-  \hline
-  ID & 3.2.4\\ 
-  \hline
-  Name & Returning Management \\ 
-  \hline
-  Description & 
-  \begin{enumerate}
-      \item The system shall allow the staff to return a borrowed book.
-      \item The system shall record the return details such as the book ID, member ID, and return date.
-      \item The system shall calculate any late fees or fines for overdue books.
-  \end{enumerate} \\
-  \hline
-  
-  Priority & High\\
-  \hline
-  Reference & \\
-  \hline
-\end{tabular}
-\end{center}
-
-% password access
-\begin{center}
-\begin{tabular}{ | m{5em} | m{6.5cm}|  } 
-  \hline
-  ID & 3.2.5\\ 
-  \hline
-  Name & Reports and Analytics\\ 
-  \hline
-  Description & 
-  \begin{enumerate}
-      \item The system shall allow the staff to generate reports on borrowing and returning activities.
-      \item The system shall allow the staff to view analytics on book borrowing trends.
-  \end{enumerate} \\
-  \hline
-  
   Priority & Medium\\
-  \hline
+  \hline 
   Reference & \\
   \hline
 \end{tabular}
-\end{center}  
+\end{center}
 
+\vspace{0.5cm}
+
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.5\\  
+  \hline
+  Name & Academics \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Provide information about undergraduate, postgraduate, and PhD programs.
+      \item Display course structures, syllabi, and credit details.
+      \item Include class schedules and timetables.
+      \item Provide an academic calendar with important dates.
+  \end{itemize} \\ 
+  \hline
+  Priority & High\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.6\\  
+  \hline
+  Name & Faculty and Staff \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Maintain a faculty directory with names, designations, and research backgrounds.
+      \item Provide links to faculty members' LinkedIn and Google Scholar profiles.
+      \item Display faculty and staff details, office room numbers, and office hours.
+  \end{itemize} \\ 
+  \hline
+  Priority & High\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.7\\  
+  \hline
+  Name & Research and Innovation \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Provide information on research areas and groups.
+      \item Show research publications and ongoing projects.
+      \item Display collaboration opportunities and funding options.
+  \end{itemize} \\ 
+  \hline
+  Priority & Medium\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.8\\  
+  \hline
+  Name & Admissions \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Provide admission criteria and process details.
+      \item Allow applicants to download and submit application forms.
+      \item Display scholarship and financial aid information.
+      \item Provide an FAQ section related to admissions.
+  \end{itemize} \\  
+  \hline
+  Priority & High\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.9\\  
+  \hline
+  Name & Student Corner \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Display information on student clubs and their activities, and other organizations.
+      \item Highlight student achievements.
+      \item Provide access to academic resources such as lecture notes and past question papers.
+      \item Logged in access to student's academic records, grades, and attendance.
+  \end{itemize} \\ 
+  \hline
+  Priority & Medium\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{center}
+  \begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+    \hline
+    ID & 3.2.10\\  
+    \hline
+    Name & Notices and Circulars \\  
+    \hline
+    Description & 
+    \begin{itemize}
+        \item Allow admins to publish official announcements.
+        \item Provide department policies, rules, and regulations.
+        \item Display exam schedules, results, and other academic notices.
+        \item Enable push notifications for logged in users.
+    \end{itemize} \\ 
+    \hline
+    Priority & High\\
+    \hline 
+    Reference & \\
+    \hline
+    
+  \end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.11\\  
+  \hline
+  Name & Events and Conferences \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Display information on upcoming workshops and seminars.
+      \item Provide details on hackathons and coding competitions.
+      \item Show details on departmental events such as covocations, parties, and picnics etc
+      \item Provide event participation details and allow registration
+  \end{itemize} \\ 
+  \hline
+  Priority & Medium\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.12\\  
+  \hline
+  Name & Alumni \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Showcase alumni success stories.
+      \item Provide information on alumni networks and events.
+  \end{itemize} \\ 
+  \hline
+  Priority & Low\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.13\\  
+  \hline
+  Name & Facilities \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Provide information on departmental facilities such as labs, libraries, and auditoriums.
+  \end{itemize} \\ 
+  \hline
+  Priority & Medium\\
+  \hline 
+  Reference & \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{ | >{\bfseries}m{5em} | m{10cm} |  } 
+  \hline
+  ID & 3.2.14\\  
+  \hline
+  Name & AI Assistant \\  
+  \hline
+  Description & 
+  \begin{itemize}
+      \item Implement an AI assistant to promptly answer frequently asked questions.
+      \item Provide information on admission, courses, faculty, and events.
+      \item Allow users to ask questions, and get answers in both Bengali and English.
+  \end{itemize} \\ 
+  \hline
+  Priority & Medium\\
+  \hline 
+  Reference & \\
+  \hline
+  
+\end{tabular}
+\end{center}
