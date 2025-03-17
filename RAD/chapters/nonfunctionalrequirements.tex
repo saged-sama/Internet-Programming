@@ -1,0 +1,71 @@
+\section{Nonfunctional Requirements}
+\begin{enumerate}
+    \item Performance Requirements
+    \begin{itemize}
+        \item The system should respond to user requests within \textbf{2 seconds} under normal load.
+        \item It should support at least \textbf{1000 concurrent users} without performance degradation.
+        \item Database queries should be optimized to execute within \textbf{500 milliseconds} on average.
+        \item The system should be able to handle a \textbf{10,000-record dataset} efficiently.
+    \end{itemize}
+
+    \item Security Requirements
+    \begin{itemize}
+        \item User authentication should be enforced using \textbf{OAuth 2.0 or JWT-based authentication}.
+        \item Institutional email verification should be required for teacher and admin accounts.
+        \item Passwords should be \textbf{hashed and stored securely} using bcrypt or Argon2.
+        \item The system should prevent \textbf{SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF)}.
+        \item Role-based access control (RBAC) should be implemented to restrict access to different sections of the system.
+    \end{itemize}
+
+    \item Usability Requirements
+    \begin{itemize}
+        \item The user interface should be \textbf{intuitive and accessible} to users of different technical backgrounds.
+        \item The system should follow \textbf{WCAG 2.1 Level AA} accessibility standards.
+        \item Mobile responsiveness should be ensured across devices with different screen sizes.
+        \item The system should support \textbf{Bengali and English languages}.
+    \end{itemize}
+
+    \item Availability Requirements
+    \begin{itemize}
+        \item The system should have \textbf{99.5\% uptime} except for planned maintenance.
+        \item In case of a failure, the system should be \textbf{recoverable within 30 minutes}.
+        \item Automated database backups should be scheduled \textbf{daily} and retained for at least \textbf{30 days}.
+    \end{itemize}
+
+    \item Maintainability and Scalability
+    \begin{itemize}
+        \item The system should follow a \textbf{modular architecture} for easy maintenance and updates.
+        \item The backend should be designed using \textbf{RESTful API principles}, and \textbf{Software Design Best Practices and Patterns}.
+        \item The system should be \textbf{horizontally scalable} to accommodate an increase in users.
+        \item The system should be \textbf{vertically scalable} to accommodate an increase in data (such as, resources) volume.
+        \item Logging and monitoring should be implemented using \textbf{ELK stack or Prometheus}.
+    \end{itemize}
+
+    \item Data Integrity and Consistency
+    \begin{itemize}
+        \item The database should maintain \textbf{ACID compliance} for transactions.
+        \item The system should ensure that \textbf{no duplicate user accounts} are created.
+        \item All updates to the database should follow \textbf{proper validation and constraints}.
+    \end{itemize}
+
+    \item Compatibility Requirements
+    \begin{itemize}
+        \item The frontend should be \textbf{compatible with modern browsers} (Chrome, Firefox, Edge, Safari).
+        \item The backend should be deployable on \textbf{Linux-based cloud servers}.
+        \item The database should support either \textbf{SQL-based relational models (PostgreSQL/MySQL/SQLite)} or \textbf{no SQL models (MongoDB/Redis)}.
+    \end{itemize}
+
+    \item Logging and Monitoring
+    \begin{itemize}
+        \item All system events should be \textbf{logged with timestamps and user activity}.
+        \item Error logs should be stored and categorized based on severity.
+        \item A monitoring dashboard should be available for \textbf{system health checks}.
+    \end{itemize}
+
+    \item Disaster Recovery and Backup
+    \begin{itemize}
+        \item The system should have a \textbf{disaster recovery plan} to restore services quickly.
+        \item Backups should be \textbf{stored in a separate location} to avoid single-point failure.
+        \item Regular \textbf{testing of backup restoration} should be performed.
+    \end{itemize}
+\end{enumerate}
