@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "title": "Fall Semester Registration",
+    "date": "June 15, 2025",
+    "category": "Academic",
+    "description": "Registration for the Fall 2025 semester is now open. Please check your student portal for details.",
+    "isImportant": true
+  },
+  {
+    "id": 2,
+    "title": "New Research Grant",
+    "date": "June 10, 2025",
+    "category": "Research",
+    "description": "The university has received a $2M grant for AI research. Applications for research assistants are now open."
+  },
+  {
+    "id": 3,
+    "title": "Campus Renovation Notice",
+    "date": "June 5, 2025",
+    "category": "Administrative",
+    "description": "The main library will be closed for renovations from June 20 to July 5. Alternative study spaces will be available."
+  },
+  {
+    "id": 4,
+    "title": "Student Council Elections",
+    "date": "June 8, 2025",
+    "category": "General",
+    "description": "Nominations for student council positions are now open. Submit your application by June 15."
+  },
+  {
+    "id": 5,
+    "title": "Midterm Examination Schedule",
+    "date": "June 12, 2025",
+    "category": "Academic",
+    "description": "The midterm examination schedule has been published. Please check the academic calendar for details.",
+    "isImportant": true
+  },
+  {
+    "id": 6,
+    "title": "Faculty Research Symposium",
+    "date": "June 7, 2025",
+    "category": "Research",
+    "description": "The annual faculty research symposium will be held on June 25. All faculty members are encouraged to participate."
+  },
+  {
+    "id": 7,
+    "title": "New Cafeteria Hours",
+    "date": "June 3, 2025",
+    "category": "Administrative",
+    "description": "The university cafeteria will now be open from 7:00 AM to 9:00 PM on weekdays."
+  },
+  {
+    "id": 8,
+    "title": "Summer Internship Opportunities",
+    "date": "June 1, 2025",
+    "category": "General",
+    "description": "Various summer internship opportunities are available. Visit the career center for more information."
+  }
+]

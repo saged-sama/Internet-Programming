@@ -8,34 +8,22 @@ interface Resource {
   link: string;
 }
 
-const resources: Resource[] = [
-  {
-    title: "Course Materials",
-    icon: "📚",
-    description: "Access syllabi, lecture notes, and resources",
-    link: "/courses"
-  },
-  {
-    title: "Research Papers",
-    icon: "📝",
-    description: "Browse departmental research publications",
-    link: "/research"
-  },
-  {
-    title: "Faculty Profiles",
-    icon: "👨‍🏫",
-    description: "Learn about our faculty members",
-    link: "/directory"
-  },
-  {
-    title: "Lab Schedules",
-    icon: "💻",
-    description: "View lab availability and schedules",
-    link: "/labs"
-  }
-];
+
+import { useEffect, useState } from 'react';
 
 export default function AcademicResourcesSection() {
+  const [resources, setResources] = useState<Resource[]>([]);
+
+  useEffect(() => {
+    import('../../../assets/academicResources.json')
+      .then((data) => {
+        setResources(data.default || data);
+      })
+      .catch((err) => {
+        console.error('Failed to load academic resources:', err);
+      });
+  }, []);
+
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

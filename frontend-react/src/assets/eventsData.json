@@ -1,0 +1,75 @@
+{
+  "events": [
+    {
+      "id": 1,
+      "title": "Annual Tech Symposium",
+      "date": "June 20, 2025",
+      "time": "10:00 AM - 4:00 PM",
+      "location": "Main Auditorium",
+      "category": "Conference",
+      "description": "Join us for a day of cutting-edge technology discussions, demos, and networking opportunities with industry leaders.",
+      "image": "https://placehold.co/600x400?text=Tech+Symposium",
+      "registrationRequired": true,
+      "registrationDeadline": "June 15, 2025"
+    },
+    {
+      "id": 2,
+      "title": "Career Fair 2025",
+      "date": "June 25, 2025",
+      "time": "9:00 AM - 3:00 PM",
+      "location": "Student Center",
+      "category": "Academic",
+      "description": "Connect with over 50 companies offering internships and full-time positions for students and recent graduates.",
+      "image": "https://placehold.co/600x400?text=Career+Fair",
+      "registrationRequired": true,
+      "registrationDeadline": "June 20, 2025"
+    },
+    {
+      "id": 3,
+      "title": "Research Presentation Day",
+      "date": "July 5, 2025",
+      "time": "1:00 PM - 5:00 PM",
+      "location": "Science Building",
+      "category": "Academic",
+      "description": "Undergraduate and graduate students present their research projects to faculty and peers.",
+      "image": "https://placehold.co/600x400?text=Research+Day",
+      "registrationRequired": false
+    },
+    {
+      "id": 4,
+      "title": "Cultural Night",
+      "date": "July 10, 2025",
+      "time": "6:00 PM - 10:00 PM",
+      "location": "University Amphitheater",
+      "category": "Cultural",
+      "description": "An evening celebrating cultural diversity with performances, food, and activities from around the world.",
+      "image": "https://placehold.co/600x400?text=Cultural+Night",
+      "registrationRequired": false
+    },
+    {
+      "id": 5,
+      "title": "AI Workshop Series",
+      "date": "July 15-17, 2025",
+      "time": "9:00 AM - 12:00 PM",
+      "location": "Computer Science Building, Room 301",
+      "category": "Workshop",
+      "description": "A three-day workshop on artificial intelligence fundamentals, machine learning, and practical applications.",
+      "image": "https://placehold.co/600x400?text=AI+Workshop",
+      "registrationRequired": true,
+      "registrationDeadline": "July 10, 2025"
+    },
+    {
+      "id": 6,
+      "title": "Inter-University Sports Tournament",
+      "date": "July 20-25, 2025",
+      "time": "Various times",
+      "location": "University Sports Complex",
+      "category": "Sports",
+      "description": "Annual sports competition featuring teams from universities across the country competing in various sports.",
+      "image": "https://placehold.co/600x400?text=Sports+Tournament",
+      "registrationRequired": true,
+      "registrationDeadline": "July 1, 2025"
+    }
+  ],
+  "categories": ["All", "Academic", "Cultural", "Sports", "Workshop", "Conference"]
+}

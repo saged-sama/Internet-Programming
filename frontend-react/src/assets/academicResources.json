@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Course Materials",
+    "icon": "📚",
+    "description": "Access syllabi, lecture notes, and resources",
+    "link": "/courses"
+  },
+  {
+    "title": "Research Papers",
+    "icon": "📝",
+    "description": "Browse departmental research publications",
+    "link": "/research"
+  },
+  {
+    "title": "Faculty Profiles",
+    "icon": "👨‍🏫",
+    "description": "Learn about our faculty members",
+    "link": "/directory"
+  },
+  {
+    "title": "Lab Schedules",
+    "icon": "💻",
+    "description": "View lab availability and schedules",
+    "link": "/labs"
+  }
+]
