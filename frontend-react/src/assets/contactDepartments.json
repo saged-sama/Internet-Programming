@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Admissions Office",
+    "email": "admissions@university.edu",
+    "phone": "+880 1234 567890"
+  },
+  {
+    "name": "Student Affairs",
+    "email": "studentaffairs@university.edu",
+    "phone": "+880 1234 567891"
+  },
+  {
+    "name": "Academic Affairs",
+    "email": "academic@university.edu",
+    "phone": "+880 1234 567892"
+  },
+  {
+    "name": "Financial Aid",
+    "email": "financialaid@university.edu",
+    "phone": "+880 1234 567893"
+  }
+]

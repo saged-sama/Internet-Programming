@@ -1,0 +1,150 @@
+[
+  {
+    "id": 1,
+    "name": "Dr. Ahmed Khan",
+    "role": "Faculty",
+    "department": "Computer Science",
+    "title": "Professor",
+    "email": "ahmed.khan@university.edu",
+    "phone": "+880 1234 567890",
+    "expertise": ["Artificial Intelligence", "Machine Learning", "Data Science"],
+    "image": "https://placehold.co/200x200?text=Dr.+Ahmed",
+    "officeHours": "Monday, Wednesday: 2:00 PM - 4:00 PM",
+    "officeLocation": "CS Building, Room 301",
+    "bio": "Dr. Ahmed Khan is a Professor of Computer Science with over 15 years of experience in AI research. He leads the university's Machine Learning Lab and has published extensively in top-tier conferences and journals.",
+        "education": [
+          "Ph.D. in Computer Science, MIT, 2008",
+          "M.S. in Computer Science, Stanford University, 2004",
+          "B.S. in Computer Engineering, Bangladesh University of Engineering and Technology, 2002"
+        ],
+        "publications": [
+          "Khan, A., et al. (2023). 'Advances in Deep Learning for Natural Language Processing.' IEEE Transactions on AI.",
+          "Khan, A., Rahman, S. (2022). 'Neural Networks for Climate Prediction.' Nature Machine Intelligence.",
+          "Khan, A., et al. (2021). 'Reinforcement Learning in Healthcare.' Journal of AI in Medicine.",
+          "Khan, A., et al. (2020). 'Explainable AI for Critical Systems.' ACM Conference on AI Safety."
+        ]
+  },
+  {
+    "id": 2,
+    "name": "Dr. Sarah Rahman",
+    "role": "Faculty",
+    "department": "Engineering",
+    "title": "Associate Professor",
+    "email": "sarah.rahman@university.edu",
+    "phone": "+880 1234 567891",
+    "expertise": ["Robotics", "Control Systems", "Automation"],
+    "image": "https://placehold.co/200x200?text=Dr.+Sarah",
+    "officeHours": "Tuesday, Thursday: 10:00 AM - 12:00 PM",
+    "officeLocation": "Engineering Building, Room 205"
+  },
+  {
+    "id": 3,
+    "name": "Dr. Karim Hossain",
+    "role": "Faculty",
+    "department": "Business",
+    "title": "Assistant Professor",
+    "email": "karim.hossain@university.edu",
+    "phone": "+880 1234 567892",
+    "expertise": ["Finance", "Economics", "Business Analytics"],
+    "image": "https://placehold.co/200x200?text=Dr.+Karim",
+    "officeHours": "Wednesday, Friday: 1:00 PM - 3:00 PM",
+    "officeLocation": "Business Building, Room 410"
+  },
+  {
+    "id": 4,
+    "name": "Fatima Begum",
+    "role": "Staff",
+    "department": "Computer Science",
+    "title": "Administrative Assistant",
+    "email": "fatima.begum@university.edu",
+    "phone": "+880 1234 567893",
+    "image": "https://placehold.co/200x200?text=Fatima",
+    "officeLocation": "CS Building, Room 100"
+  },
+  {
+    "id": 5,
+    "name": "Mohammad Ali",
+    "role": "Staff",
+    "department": "Engineering",
+    "title": "Lab Technician",
+    "email": "mohammad.ali@university.edu",
+    "phone": "+880 1234 567894",
+    "image": "https://placehold.co/200x200?text=Mohammad",
+    "officeLocation": "Engineering Building, Room 150"
+  },
+  {
+    "id": 6,
+    "name": "Nusrat Jahan",
+    "role": "Student",
+    "department": "Computer Science",
+    "email": "nusrat.jahan@student.university.edu",
+    "image": "https://placehold.co/200x200?text=Nusrat",
+    "expertise": ["Web Development", "Mobile Apps"]
+  },
+  {
+    "id": 7,
+    "name": "Rafiq Islam",
+    "role": "Student",
+    "department": "Engineering",
+    "email": "rafiq.islam@student.university.edu",
+    "image": "https://placehold.co/200x200?text=Rafiq",
+    "expertise": ["Mechanical Design", "CAD"]
+  },
+  {
+    "id": 8,
+    "name": "Dr. Aisha Chowdhury",
+    "role": "Faculty",
+    "department": "Science",
+    "title": "Professor",
+    "email": "aisha.chowdhury@university.edu",
+    "phone": "+880 1234 567895",
+    "expertise": ["Physics", "Quantum Mechanics", "Theoretical Physics"],
+    "image": "https://placehold.co/200x200?text=Dr.+Aisha",
+    "officeHours": "Monday, Wednesday: 11:00 AM - 1:00 PM",
+    "officeLocation": "Science Building, Room 220"
+  },
+  {
+    "id": 9,
+    "name": "Samiul Haque",
+    "role": "Student",
+    "department": "Business",
+    "email": "samiul.haque@student.university.edu",
+    "image": "https://placehold.co/200x200?text=Samiul",
+    "expertise": ["Marketing", "Entrepreneurship"]
+  },
+  {
+    "id": 10,
+    "name": "Dr. Mahmud Hasan",
+    "role": "Faculty",
+    "department": "Medicine",
+    "title": "Associate Professor",
+    "email": "mahmud.hasan@university.edu",
+    "phone": "+880 1234 567896",
+    "expertise": ["Cardiology", "Internal Medicine"],
+    "image": "https://placehold.co/200x200?text=Dr.+Mahmud",
+    "officeHours": "Thursday: 9:00 AM - 11:00 AM",
+    "officeLocation": "Medicine Building, Room 310"
+  },
+  {
+    "id": 11,
+    "name": "Tania Rahim",
+    "role": "Staff",
+    "department": "Science",
+    "title": "Lab Manager",
+    "email": "tania.rahim@university.edu",
+    "phone": "+880 1234 567899",
+    "image": "https://placehold.co/200x200?text=Tania",
+    "officeLocation": "Science Building, Room 101"
+  },
+  {
+    "id": 12,
+    "name": "Nasreen Akter",
+    "role": "Staff",
+    "department": "Arts",
+    "title": "Program Coordinator",
+    "email": "nasreen.akter@university.edu",
+    "phone": "+880 1234 567897",
+    "image": "https://placehold.co/200x200?text=Nasreen",
+    "officeLocation": "Arts Building, Room 120"
+  }
+]

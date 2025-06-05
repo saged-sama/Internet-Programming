@@ -2,6 +2,12 @@ import { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
 import themeClasses, { themeValues } from '../../lib/theme-utils';
+// @ts-ignore
+import departments from '../../assets/contactDepartments.json';
+// @ts-ignore
+import contactInfo from '../../assets/contactInfo.json';
+// @ts-ignore
+import contactSubjects from '../../assets/contactSubjects.json';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -38,29 +44,8 @@ export default function ContactPage() {
     }, 1500);
   };
 
-  const departments = [
-    {
-      name: "Admissions Office",
-      email: "admissions@university.edu",
-      phone: "+880 1234 567890"
-    },
-    {
-      name: "Student Affairs",
-      email: "studentaffairs@university.edu",
-      phone: "+880 1234 567891"
-    },
-    {
-      name: "Academic Affairs",
-      email: "academic@university.edu",
-      phone: "+880 1234 567892"
-    },
-    {
-      name: "Financial Aid",
-      email: "financialaid@university.edu",
-      phone: "+880 1234 567893"
-    }
-  ];
-
+  // Import departments from assets
+  // @ts-ignore
   return (
     <Layout>
       <div className="bg-gray-50 py-8">
@@ -78,21 +63,22 @@ export default function ContactPage() {
               <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
                 <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>University Address</h2>
                 <address className="not-italic">
-                  <p className="mb-2">123 University Avenue</p>
-                  <p className="mb-2">Dhaka, Bangladesh</p>
-                  <p className="mb-2">Postal Code: 1000</p>
-                  <p className="mb-4">Main Campus</p>
+                  {/* Import address from assets */}
+                  {/* @ts-ignore */}
+                  {contactInfo.address.map((line: string, idx: number) => (
+                    <p className={idx === 3 ? "mb-4" : "mb-2"} key={idx}>{line}</p>
+                  ))}
                   <div className="flex items-center mb-2">
                     <svg className={`w-5 h-5 mr-2 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
-                    <span>info@university.edu</span>
+                    <span>{contactInfo.email}</span>
                   </div>
                   <div className="flex items-center">
                     <svg className={`w-5 h-5 mr-2 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    <span>+880 1234 567890</span>
+                    <span>{contactInfo.phone}</span>
                   </div>
                 </address>
               </div>
@@ -189,12 +175,11 @@ export default function ContactPage() {
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
                       >
                         <option value="">Select a subject</option>
-                        <option value="General Inquiry">General Inquiry</option>
-                        <option value="Admissions">Admissions</option>
-                        <option value="Academic">Academic</option>
-                        <option value="Financial Aid">Financial Aid</option>
-                        <option value="Technical Support">Technical Support</option>
-                        <option value="Other">Other</option>
+                        {/* Import subjects from assets */}
+                        {/* @ts-ignore */}
+                        {contactSubjects.map(subject => (
+                          <option value={subject} key={subject}>{subject}</option>
+                        ))}
                       </select>
                     </div>
                     <div>
