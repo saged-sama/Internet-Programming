@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
+import themeClasses, { themeValues } from '../../lib/theme-utils';
 
 interface Event {
   id: number;
@@ -134,7 +135,7 @@ export default function EventsPage() {
                 <input
                   type="text"
                   placeholder="Search events..."
-                  className="w-full md:w-64 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full md:w-64 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[${themeValues.colors.primary}]"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -155,17 +156,11 @@ export default function EventsPage() {
           {filteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredEvents.map(event => (
-                <div key={event.id} className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+                <div key={event.id} className={`bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col border border-gray-200 hover:shadow-lg transition-shadow hover:border-[${themeValues.colors.accentYellow}]`}>
                   <img src={event.image} alt={event.title} className="w-full h-48 object-cover" />
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-2">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        event.category === 'Academic' ? 'bg-blue-100 text-blue-800' :
-                        event.category === 'Cultural' ? 'bg-purple-100 text-purple-800' :
-                        event.category === 'Sports' ? 'bg-green-100 text-green-800' :
-                        event.category === 'Workshop' ? 'bg-amber-100 text-amber-800' :
-                        'bg-pink-100 text-pink-800'
-                      }`}>
+                      <span className={`inline-flex items-center rounded-full ${themeClasses.bgAccentYellow} ${themeClasses.textPrimary} text-xs font-semibold px-2 py-1`}>
                         {event.category}
                       </span>
                       {event.registrationRequired && (
@@ -174,7 +169,7 @@ export default function EventsPage() {
                         </span>
                       )}
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
+                    <h3 className={`text-xl font-semibold mb-2 ${themeClasses.textPrimary}`}>{event.title}</h3>
                     <div className="flex items-center text-gray-600 mb-1">
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -201,11 +196,11 @@ export default function EventsPage() {
                       </p>
                     )}
                     <div className="flex space-x-2">
-                      <Button variant="outline" asChild>
+                      <Button variant="outline" className={themeClasses.outlineButton} asChild>
                         <Link to={`/events/${event.id}`}>View Details</Link>
                       </Button>
                       {event.registrationRequired && (
-                        <Button asChild>
+                        <Button className={themeClasses.primaryButton} asChild>
                           <Link to={`/events/${event.id}/register`}>Register</Link>
                         </Button>
                       )}
@@ -216,13 +211,13 @@ export default function EventsPage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className={`mx-auto h-12 w-12 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h3 className="mt-2 text-lg font-medium text-gray-900">No events found</h3>
+              <h3 className={`mt-2 text-lg font-medium ${themeClasses.textPrimary}`}>No events found</h3>
               <p className="mt-1 text-gray-500">Try changing your search or filter criteria.</p>
               <div className="mt-6">
-                <Button onClick={() => {setSelectedCategory(null); setSearchQuery('');}}>
+                <Button onClick={() => {setSelectedCategory(null); setSearchQuery('');}} className={themeClasses.primaryButton}>
                   Reset Filters
                 </Button>
               </div>

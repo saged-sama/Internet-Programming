@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
 import { Link } from 'react-router-dom';
+import themeClasses, { themeValues } from '../../lib/theme-utils';
 
 type NoticeCategory = 'All' | 'Academic' | 'Administrative' | 'General' | 'Research';
 
@@ -94,7 +95,7 @@ export default function NoticesPage() {
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">University Notices</h1>
+            <h1 className={`text-3xl font-bold ${themeClasses.textPrimary} mb-4`}>University Notices</h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Stay updated with the latest announcements, academic updates, and administrative notices.
             </p>
@@ -119,7 +120,7 @@ export default function NoticesPage() {
                 <input
                   type="text"
                   placeholder="Search notices..."
-                  className="w-full md:w-64 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full md:w-64 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[${themeValues.colors.primary}]`}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -143,29 +144,29 @@ export default function NoticesPage() {
                 <div 
                   key={notice.id} 
                   className={`bg-white p-6 rounded-lg shadow-sm border-l-4 ${
-                    notice.isImportant ? 'border-red-500' : 'border-blue-500'
+                    notice.isImportant ? `border-[${themeValues.colors.accentYellow}]` : `border-[${themeValues.colors.primary}]`
                   } hover:shadow-md transition-shadow`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          notice.category === 'Academic' ? 'bg-blue-100 text-blue-800' :
-                          notice.category === 'Administrative' ? 'bg-purple-100 text-purple-800' :
-                          notice.category === 'General' ? 'bg-green-100 text-green-800' :
-                          'bg-amber-100 text-amber-800'
+                          notice.category === 'Academic' ? `${themeClasses.bgPrimaryLight} bg-opacity-20 ${themeClasses.textPrimary}` :
+                          notice.category === 'Administrative' ? `${themeClasses.bgPrimary} bg-opacity-20 ${themeClasses.textPrimary}` :
+                          notice.category === 'General' ? `${themeClasses.bgAccentYellowLight} bg-opacity-20 ${themeClasses.textPrimary}` :
+                          `${themeClasses.bgAccentYellow} bg-opacity-20 ${themeClasses.textPrimary}`
                         }`}>
                           {notice.category}
                         </span>
                         {notice.isImportant && (
-                          <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                          <span className={`inline-flex items-center rounded-full ${themeClasses.bgAccentYellow} px-2.5 py-0.5 text-xs font-medium ${themeClasses.textPrimary}`}>
                             Important
                           </span>
                         )}
                       </div>
-                      <h3 className="text-xl font-semibold mb-2">{notice.title}</h3>
+                      <h3 className={`text-xl font-semibold mb-2 ${themeClasses.textPrimary}`}>{notice.title}</h3>
                       <p className="text-gray-600 mb-4">{notice.description}</p>
-                      <Button variant="link" className="p-0" asChild>
+                      <Button variant="link" className={`p-0 ${themeClasses.textAccentYellow} hover:opacity-80`} asChild>
                         <Link to={`/notices/${notice.id}`}>Read more</Link>
                       </Button>
                     </div>
@@ -175,13 +176,13 @@ export default function NoticesPage() {
               ))
             ) : (
               <div className="text-center py-12">
-                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg className={`mx-auto h-12 w-12 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="mt-2 text-lg font-medium text-gray-900">No notices found</h3>
+                <h3 className={`mt-2 text-lg font-medium ${themeClasses.textPrimary}`}>No notices found</h3>
                 <p className="mt-1 text-gray-500">Try changing your search or filter criteria.</p>
                 <div className="mt-6">
-                  <Button onClick={() => {setSelectedCategory('All'); setSearchQuery('');}}>
+                  <Button onClick={() => {setSelectedCategory('All'); setSearchQuery('');}} className={themeClasses.primaryButton}>
                     Reset Filters
                   </Button>
                 </div>
@@ -192,7 +193,7 @@ export default function NoticesPage() {
           {/* Archive Section */}
           <div className="mt-12 text-center">
             <h2 className="text-xl font-semibold mb-4">Looking for older notices?</h2>
-            <Button variant="outline" asChild>
+            <Button variant="outline" className={themeClasses.outlineButton} asChild>
               <Link to="/notices/archive">View Archive</Link>
             </Button>
           </div>

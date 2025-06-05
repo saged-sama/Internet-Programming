@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
+import themeClasses, { themeValues } from '../../lib/theme-utils';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -65,7 +66,7 @@ export default function ContactPage() {
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h1>
+            <h1 className={`text-3xl font-bold ${themeClasses.textPrimary} mb-4`}>Contact Us</h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Have questions or need assistance? Reach out to us using the form below or contact the appropriate department directly.
             </p>
@@ -75,20 +76,20 @@ export default function ContactPage() {
             {/* Contact Information */}
             <div>
               <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-                <h2 className="text-xl font-semibold mb-4">University Address</h2>
+                <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>University Address</h2>
                 <address className="not-italic">
                   <p className="mb-2">123 University Avenue</p>
                   <p className="mb-2">Dhaka, Bangladesh</p>
                   <p className="mb-2">Postal Code: 1000</p>
                   <p className="mb-4">Main Campus</p>
                   <div className="flex items-center mb-2">
-                    <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className={`w-5 h-5 mr-2 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     <span>info@university.edu</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className={`w-5 h-5 mr-2 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                     <span>+880 1234 567890</span>
@@ -97,19 +98,19 @@ export default function ContactPage() {
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-xl font-semibold mb-4">Department Contacts</h2>
+                <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>Department Contacts</h2>
                 <div className="space-y-4">
                   {departments.map((dept, index) => (
                     <div key={index} className="border-b pb-4 last:border-b-0 last:pb-0">
-                      <h3 className="font-medium text-lg mb-2">{dept.name}</h3>
+                      <h3 className={`font-medium ${themeClasses.textPrimary}`}>{dept.name}</h3>
                       <div className="flex items-center mb-1">
-                        <svg className="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className={`w-4 h-4 mr-2 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         <span>{dept.email}</span>
                       </div>
                       <div className="flex items-center">
-                        <svg className="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className={`w-4 h-4 mr-2 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                         </svg>
                         <span>{dept.phone}</span>
@@ -122,12 +123,12 @@ export default function ContactPage() {
 
             {/* Contact Form */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-xl font-semibold mb-4">Send Us a Message</h2>
+              <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>Get In Touch</h2>
               {formStatus === 'success' ? (
-                <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-4">
+                <div className={`bg-green-50 border-l-4 border-[${themeValues.colors.accentYellow}] p-4 mb-6`}>
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <svg className={`h-5 w-5 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -158,7 +159,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
                       />
                     </div>
                     <div>
@@ -172,7 +173,7 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
                       />
                     </div>
                     <div>
@@ -185,7 +186,7 @@ export default function ContactPage() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
                       >
                         <option value="">Select a subject</option>
                         <option value="General Inquiry">General Inquiry</option>
@@ -207,13 +208,13 @@ export default function ContactPage() {
                         value={formData.message}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
                       ></textarea>
                     </div>
                     <Button 
                       type="submit" 
                       disabled={formStatus === 'submitting'}
-                      className="w-full"
+                      className={`w-full ${themeClasses.primaryButton}`}
                     >
                       {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
                     </Button>
@@ -225,12 +226,12 @@ export default function ContactPage() {
 
           {/* Map */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Find Us</h2>
+            <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>Find Us</h2>
             <div className="h-96 bg-gray-200 rounded-lg overflow-hidden">
               {/* In a real application, you would use a proper map component like Google Maps or Leaflet */}
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <div className="text-center">
-                  <p className="text-gray-500 mb-2">Map Placeholder</p>
+                  <p className={`${themeClasses.textPrimary}`}>Map Placeholder</p>
                   <p className="text-sm text-gray-400">In a production environment, this would be an embedded Google Map or OpenStreetMap</p>
                 </div>
               </div>

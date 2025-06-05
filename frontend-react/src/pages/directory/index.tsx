@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
+import themeClasses, { themeValues } from '../../lib/theme-utils';
 
 type PersonRole = 'Faculty' | 'Staff' | 'Student';
 type Department = 'Computer Science' | 'Engineering' | 'Business' | 'Arts' | 'Science' | 'Medicine';
@@ -247,21 +248,21 @@ export default function DirectoryPage() {
                 <Link 
                   key={person.id} 
                   to={`/directory/${person.id}`} 
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-[#ECB31D]"
+                  className={`bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-[${themeValues.colors.accentYellow}]`}
                 >
                   <div className="flex items-center p-4">
                     <img 
                       src={person.image} 
                       alt={person.name} 
-                      className="w-16 h-16 rounded-full object-cover mr-4 border-2 border-[#ECB31D]" 
+                      className={`w-16 h-16 rounded-full object-cover mr-4 border-2 ${themeClasses.borderAccentYellow}`} 
                     />
                     <div>
-                      <h3 className="text-lg font-semibold text-[#13274D]">{person.name}</h3>
+                      <h3 className={`text-lg font-semibold ${themeClasses.textPrimary}`}>{person.name}</h3>
                       <div className="flex items-center space-x-2 mb-1">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          person.role === 'Faculty' ? 'bg-[#13274D] text-white' :
-                          person.role === 'Staff' ? 'bg-[#31466F] text-white' :
-                          'bg-[#ECB31D] text-[#13274D]'
+                          person.role === 'Faculty' ? `${themeClasses.bgPrimary} text-white` :
+                          person.role === 'Staff' ? `${themeClasses.bgPrimaryLight} text-white` :
+                          `${themeClasses.bgAccentYellow} ${themeClasses.textPrimary}`
                         }`}>
                           {person.role}
                         </span>
@@ -275,13 +276,13 @@ export default function DirectoryPage() {
                           {person.expertise.slice(0, 2).map((exp, i) => (
                             <span 
                               key={i} 
-                              className="inline-flex items-center rounded-full bg-[#F5C940] bg-opacity-20 px-2 py-0.5 text-xs text-[#13274D]"
+                              className={`inline-flex items-center rounded-full bg-[${themeValues.colors.accentYellowLight}] bg-opacity-20 px-2 py-0.5 text-xs ${themeClasses.textPrimary}`}
                             >
                               {exp}
                             </span>
                           ))}
                           {person.expertise.length > 2 && (
-                            <span className="inline-flex items-center rounded-full bg-[#F5C940] bg-opacity-20 px-2 py-0.5 text-xs text-[#13274D]">
+                            <span className={`inline-flex items-center rounded-full bg-[${themeValues.colors.accentYellowLight}] bg-opacity-20 px-2 py-0.5 text-xs ${themeClasses.textPrimary}`}>
                               +{person.expertise.length - 2}
                             </span>
                           )}
@@ -294,15 +295,15 @@ export default function DirectoryPage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-[#ECB31D]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className={`mx-auto h-12 w-12 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h3 className="mt-2 text-lg font-medium text-[#13274D]">No people found</h3>
+              <h3 className={`mt-2 text-lg font-medium ${themeClasses.textPrimary}`}>No people found</h3>
               <p className="mt-1 text-gray-500">Try changing your search or filter criteria.</p>
               <div className="mt-6">
                 <Button 
                   onClick={() => {setSelectedRole('All'); setSelectedDepartment('All'); setSearchQuery('');}} 
-                  className="bg-[#13274D] hover:bg-[#31466F] text-white"
+                  className={`${themeClasses.bgPrimary} hover:${themeClasses.bgPrimaryLight} text-white`}
                 >
                   Reset Filters
                 </Button>

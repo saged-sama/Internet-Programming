@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
+import themeClasses, { themeValues } from '../../lib/theme-utils';
 
 interface Meeting {
   id: number;
@@ -263,7 +264,7 @@ export default function MeetingsPage() {
               <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 {sortedDates.map(date => (
                   <div key={date} className="border-b border-gray-200 last:border-b-0">
-                    <div className="bg-[#13274D] text-white px-6 py-3">
+                    <div className={`${themeClasses.bgPrimary} text-white px-6 py-3`}>
                       <h3 className="font-medium">
                         {new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                       </h3>
@@ -272,16 +273,16 @@ export default function MeetingsPage() {
                       {meetingsByDate[date].map(meeting => (
                         <div key={meeting.id} className="p-4 hover:bg-gray-50">
                           <div className="flex items-start">
-                            <div className="min-w-[80px] text-center p-2 bg-[#F5C940] bg-opacity-20 rounded-md mr-4">
-                              <span className="block text-sm font-medium text-[#13274D]">{meeting.time.split('-')[0]}</span>
+                            <div className={`min-w-[80px] text-center p-2 bg-[${themeValues.colors.accentYellowLight}] bg-opacity-20 rounded-md mr-4`}>
+                              <span className={`block text-sm font-medium ${themeClasses.textPrimary}`}>{meeting.time.split('-')[0]}</span>
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center">
-                                <h4 className="text-lg font-medium text-[#13274D]">{meeting.title}</h4>
+                                <h4 className={`text-lg font-medium ${themeClasses.textPrimary}`}>{meeting.title}</h4>
                                 <span className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                                  meeting.type === 'Faculty' ? 'bg-[#13274D] text-white' :
-                                  meeting.type === 'Department' ? 'bg-[#31466F] text-white' :
-                                  meeting.type === 'Student' ? 'bg-[#ECB31D] text-[#13274D]' :
+                                  meeting.type === 'Faculty' ? `${themeClasses.bgPrimary} text-white` :
+                                  meeting.type === 'Department' ? `${themeClasses.bgPrimaryLight} text-white` :
+                                  meeting.type === 'Student' ? `${themeClasses.bgAccentYellow} ${themeClasses.textPrimary}` :
                                   'bg-gray-100 text-gray-800'
                                 }`}>
                                   {meeting.type}
@@ -292,7 +293,7 @@ export default function MeetingsPage() {
                             </div>
                             <div className="ml-4">
                               {meeting.isRegistrationRequired && (
-                                <Button size="sm" className="bg-[#13274D] hover:bg-[#31466F] text-white">
+                                <Button size="sm" className={`${themeClasses.bgPrimary} hover:${themeClasses.bgPrimaryLight} text-white`}>
                                   Register
                                 </Button>
                               )}
@@ -307,15 +308,15 @@ export default function MeetingsPage() {
             )
           ) : (
             <div className="text-center py-12">
-              <svg className="mx-auto h-12 w-12 text-[#ECB31D]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className={`mx-auto h-12 w-12 ${themeClasses.textAccentYellow}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <h3 className="mt-2 text-lg font-medium text-[#13274D]">No meetings found</h3>
+              <h3 className={`mt-2 text-lg font-medium ${themeClasses.textPrimary}`}>No meetings found</h3>
               <p className="mt-1 text-gray-500">Try changing your search or filter criteria.</p>
               <div className="mt-6">
                 <Button 
                   onClick={() => {setSelectedType('All'); setSelectedDate(''); setSearchQuery('');}} 
-                  className="bg-[#13274D] hover:bg-[#31466F] text-white"
+                  className={`${themeClasses.bgPrimary} hover:${themeClasses.bgPrimaryLight} text-white`}
                 >
                   Reset Filters
                 </Button>
