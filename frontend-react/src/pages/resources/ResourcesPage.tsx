@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FeeStructure } from "../../components/financials/FeeStructure";
 import { LabEquipmentBooking } from "../../components/lab/LabEquipmentBooking";
 import { ProjectsShowcase } from "../../components/projects/ProjectsShowcase";
@@ -18,6 +18,7 @@ import type {
 } from "../../types/financials";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
+import financialsData from "../../assets/financials.json";
 
 export function ResourcesPage() {
   const [fees, setFees] = useState<FeeStructureType[]>([]);
@@ -26,9 +27,26 @@ export function ResourcesPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [awards, setAwards] = useState<Award[]>([]);
 
+  useEffect(() => {
+    // Load mock data with proper type casting
+    setFees(financialsData.fees as FeeStructureType[]);
+    setEquipment(financialsData.labEquipment as LabEquipment[]);
+    setBookings(financialsData.bookings as BookingSlot[]);
+    setProjects(financialsData.projects as Project[]);
+    setAwards(financialsData.awards as Award[]);
+  }, []);
+
   const handlePayment = async (feeId: string) => {
     // Implement payment logic here
     console.log("Processing payment for fee:", feeId);
+    // Update fee status in the state
+    setFees(
+      fees.map((fee) =>
+        fee.id === feeId
+          ? { ...fee, status: "paid", paymentDate: new Date().toISOString() }
+          : fee
+      )
+    );
   };
 
   const handleBooking = async (
@@ -38,25 +56,42 @@ export function ResourcesPage() {
     purpose: string
   ) => {
     // Implement booking logic here
-    console.log("Creating booking:", {
+    const newBooking: BookingSlot = {
+      id: `book${bookings.length + 1}`,
       equipmentId,
+      userId: "currentUser", // This should come from auth context
       startTime,
       endTime,
       purpose,
-    });
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
+    setBookings([...bookings, newBooking]);
   };
 
   const handleBookingApproval = async (
     bookingId: string,
     approved: boolean
   ) => {
-    // Implement booking approval logic here
-    console.log("Updating booking status:", { bookingId, approved });
+    // Update booking status in the state
+    setBookings(
+      bookings.map((booking) =>
+        booking.id === bookingId
+          ? { ...booking, status: approved ? "approved" : "rejected" }
+          : booking
+      )
+    );
   };
 
   const handleAwardApproval = async (awardId: string, approved: boolean) => {
-    // Implement award approval logic here
-    console.log("Updating award status:", { awardId, approved });
+    // Update award status in the state
+    setAwards(
+      awards.map((award) =>
+        award.id === awardId
+          ? { ...award, status: approved ? "approved" : "rejected" }
+          : award
+      )
+    );
   };
 
   return (

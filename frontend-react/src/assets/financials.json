@@ -1,0 +1,120 @@
+{
+  "fees": [
+    {
+      "id": "fee1",
+      "title": "Tuition Fee - Spring 2024",
+      "amount": 50000,
+      "deadline": "2024-03-15",
+      "status": "pending",
+      "paymentDate": null
+    },
+    {
+      "id": "fee2",
+      "title": "Lab Fee",
+      "amount": 5000,
+      "deadline": "2024-02-28",
+      "status": "paid",
+      "paymentDate": "2024-02-15"
+    },
+    {
+      "id": "fee3",
+      "title": "Seminar Fee",
+      "amount": 2000,
+      "deadline": "2024-01-31",
+      "status": "overdue",
+      "paymentDate": null
+    }
+  ],
+  "labEquipment": [
+    {
+      "id": "eq1",
+      "name": "High-Performance Computing Cluster",
+      "description": "Advanced computing system for research",
+      "status": "available",
+      "location": "Lab 101",
+      "category": "computing"
+    },
+    {
+      "id": "eq2",
+      "name": "3D Printer",
+      "description": "Industrial-grade 3D printer",
+      "status": "booked",
+      "location": "Lab 102",
+      "category": "manufacturing"
+    },
+    {
+      "id": "eq3",
+      "name": "Microscope",
+      "description": "Digital microscope with image processing",
+      "status": "maintenance",
+      "location": "Lab 103",
+      "category": "imaging"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "book1",
+      "equipmentId": "eq1",
+      "userId": "user1",
+      "startTime": "2024-03-01T09:00:00",
+      "endTime": "2024-03-01T12:00:00",
+      "purpose": "Research project",
+      "status": "pending",
+      "createdAt": "2024-02-25T10:00:00"
+    },
+    {
+      "id": "book2",
+      "equipmentId": "eq2",
+      "userId": "user2",
+      "startTime": "2024-03-02T14:00:00",
+      "endTime": "2024-03-02T17:00:00",
+      "purpose": "Prototype development",
+      "status": "approved",
+      "createdAt": "2024-02-26T11:00:00"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj1",
+      "title": "AI in Healthcare",
+      "description": "Machine learning applications in medical diagnosis",
+      "supervisor": "Dr. Sarah Johnson",
+      "year": 2024,
+      "topic": "Artificial Intelligence",
+      "status": "ongoing",
+      "abstract": "This project explores the application of machine learning algorithms in medical diagnosis...",
+      "team": ["John Smith", "Emma Wilson", "Michael Brown"]
+    },
+    {
+      "id": "proj2",
+      "title": "Blockchain Security",
+      "description": "Enhancing blockchain security protocols",
+      "supervisor": "Dr. Michael Chen",
+      "year": 2023,
+      "topic": "Cybersecurity",
+      "status": "completed",
+      "abstract": "This research focuses on improving the security aspects of blockchain technology...",
+      "team": ["Alice Johnson", "Bob Wilson", "Carol Davis"]
+    }
+  ],
+  "awards": [
+    {
+      "id": "award1",
+      "title": "Best Research Paper",
+      "description": "Award for outstanding research contribution",
+      "recipient": "John Smith",
+      "year": 2024,
+      "type": "academic",
+      "status": "pending"
+    },
+    {
+      "id": "award2",
+      "title": "Innovation Grant",
+      "description": "Grant for innovative project development",
+      "recipient": "Emma Wilson",
+      "year": 2023,
+      "type": "research",
+      "status": "approved"
+    }
+  ]
+} 
