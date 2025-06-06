@@ -14,7 +14,7 @@ export interface NoticeCardProps {
 export default function NoticeCard({ id, title, date, category, description, isImportant }: NoticeCardProps) {
   return (
     <div
-      className={`bg-white p-6 rounded-lg shadow-sm border-l-4 ${
+      className={`bg-card p-4 rounded-lg shadow-sm border-l-4 ${
         isImportant ? themeClasses.borderAccentYellow : themeClasses.borderPrimary
       } hover:shadow-md transition-shadow`}
     >

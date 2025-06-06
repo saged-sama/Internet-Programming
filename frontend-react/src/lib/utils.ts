@@ -1,12 +1,10 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type { Meeting } from '../components/meetings/MeetingCard';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-
-// Meeting utilities
-import type { Meeting } from '../components/meetings/MeetingCard';
 
 export function filterMeetings(
   meetings: Meeting[],

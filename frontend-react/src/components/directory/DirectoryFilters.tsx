@@ -1,5 +1,5 @@
 import React from 'react';
-
+import themeClasses from '../../lib/theme-utils';
 import type { PersonRole, Department } from '../../lib/types';
 
 interface DirectoryFiltersProps {
@@ -23,18 +23,18 @@ const DirectoryFilters: React.FC<DirectoryFiltersProps> = ({
   roles,
   departments,
 }) => (
-  <div className="bg-white p-6 rounded-lg shadow-sm mb-8 border-t-4 border-[#13274D]">
+  <div className={`bg-card p-4 rounded-lg shadow-sm mb-4 border-t-4 ${themeClasses.borderPrimary}`}>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="relative">
         <input
           type="text"
           placeholder="Search by name, email, or expertise..."
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#13274D]"
+          className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <svg
-          className="absolute right-3 top-2.5 h-5 w-5 text-gray-400"
+          className="absolute right-3 top-2.5 h-5 w-5 text-muted-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -49,12 +49,12 @@ const DirectoryFilters: React.FC<DirectoryFiltersProps> = ({
         </svg>
       </div>
       <div>
-        <label htmlFor="role" className="block text-sm font-medium text-[#13274D] mb-1">
+        <label htmlFor="role" className="block font-medium text-primary mb-1">
           Filter by Role
         </label>
         <select
           id="role"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#13274D]"
+          className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           value={selectedRole}
           onChange={(e) => setSelectedRole(e.target.value as PersonRole | 'All')}
         >
@@ -66,12 +66,12 @@ const DirectoryFilters: React.FC<DirectoryFiltersProps> = ({
         </select>
       </div>
       <div>
-        <label htmlFor="department" className="block text-sm font-medium text-[#13274D] mb-1">
+        <label htmlFor="department" className="block font-medium text-primary mb-1">
           Filter by Department
         </label>
         <select
           id="department"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#13274D]"
+          className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           value={selectedDepartment}
           onChange={(e) => setSelectedDepartment(e.target.value as Department | 'All')}
         >

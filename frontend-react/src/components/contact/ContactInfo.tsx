@@ -4,8 +4,8 @@ import themeClasses from '../../lib/theme-utils';
 import contactInfo from '../../assets/contactInfo.json';
 
 const ContactInfo: React.FC = () => (
-  <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
-    <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>University Address</h2>
+  <div className="bg-card p-4 rounded-lg shadow-sm mb-4">
+    <h2 className={`font-semibold mb-4 ${themeClasses.textPrimary}`}>University Address</h2>
     <address className="not-italic">
       {contactInfo.address.map((line: string, idx: number) => (
         <p className={idx === 3 ? "mb-4" : "mb-2"} key={idx}>{line}</p>

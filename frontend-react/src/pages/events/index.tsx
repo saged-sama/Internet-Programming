@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
+import themeClasses from '../../lib/theme-utils';
 
 import eventsData from '../../assets/eventsData.json';
 import EventFilters from '../../components/events/EventFilters';
@@ -39,9 +40,9 @@ export default function EventsPage() {
 
   return (
     <Layout>
-      <div className="bg-background py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
+      <div className="bg-background py-6">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-8">
             <h1 className="mb-4">Upcoming Events</h1>
             <p className="text-muted-foreground max-w-3xl mx-auto">
               Discover and register for upcoming events, workshops, and activities at the university.
@@ -65,9 +66,9 @@ export default function EventsPage() {
           )}
 
           {/* Calendar View Section */}
-          <div className="mt-16 text-center">
+          <div className="mt-8 text-center">
             <h2 className="mb-4">Prefer a calendar view?</h2>
-            <Button variant="outline" asChild>
+            <Button variant="outline" className={themeClasses.outlineButton} asChild>
               <Link to="/events/calendar">View Calendar</Link>
             </Button>
           </div>

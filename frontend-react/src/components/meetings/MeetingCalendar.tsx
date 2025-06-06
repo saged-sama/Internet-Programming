@@ -8,15 +8,15 @@ interface MeetingCalendarProps {
 }
 
 const MeetingCalendar: React.FC<MeetingCalendarProps> = ({ meetingsByDate, sortedDates }) => (
-  <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+  <div className="bg-card rounded-lg shadow-sm overflow-hidden">
     {sortedDates.map(date => (
-      <div key={date} className="border-b border-gray-200 last:border-b-0">
-        <div className="bg-primary text-white px-6 py-3">
+      <div key={date} className="border-b border-border last:border-b-0">
+        <div className="bg-primary text-white px-4 py-2">
           <h3 className="font-medium">
             {new Date(date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </h3>
         </div>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-border">
           {meetingsByDate[date].map(meeting => (
             <MeetingCard key={meeting.id} meeting={meeting} />
           ))}

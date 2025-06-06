@@ -25,9 +25,9 @@ export default function AcademicResourcesSection() {
   }, []);
 
   return (
-    <section className="py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className={`text-3xl font-bold mb-8 text-center ${themeClasses.textPrimary}`}>
+    <section className="py-12">
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="mb-8 text-center">
           Academic Resources
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -44,15 +44,15 @@ function ResourceCard({ resource }: { resource: Resource }) {
   return (
     <Link 
       to={resource.link} 
-      className={`bg-white p-6 rounded-lg shadow-sm border hover:shadow-md ${themeClasses.hoverBorderAccentYellow} transition-all text-center`}
+      className={`bg-card p-6 rounded-lg shadow-sm border hover:shadow-md ${themeClasses.hoverBorderAccentYellow} transition-all text-center`}
     >
-      <div className={`text-4xl mb-4 ${themeClasses.textAccentYellow}`}>
+      <div className={`mb-4 text-2xl ${themeClasses.textAccentYellow}`}>
         {resource.icon}
       </div>
-      <h3 className={`text-xl font-semibold mb-2 ${themeClasses.textPrimary}`}>
+      <h3 className={`mb-2 ${themeClasses.textPrimary}`}>
         {resource.title}
       </h3>
-      <p className="text-gray-600 text-sm">
+      <p className="text-muted-foreground">
         {resource.description}
       </p>
     </Link>

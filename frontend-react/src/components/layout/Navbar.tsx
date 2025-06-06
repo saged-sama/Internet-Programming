@@ -21,30 +21,30 @@ export default function Navbar() {
               alt="University Logo" 
               className="h-8 w-8 mr-2" 
             />
-            <Link to="/" className="text-xl font-bold text-gray-900">
+            <Link to="/" className="font-bold text-foreground">
               CSEDU
             </Link>
           </div>
           
           <div className="flex items-center space-x-4">
-            <Link to="/about" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <Link to="/about" className="font-medium text-muted-foreground hover:text-foreground">
               About
             </Link>
-            <Link to="/events" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <Link to="/events" className="font-medium text-muted-foreground hover:text-foreground">
               Events
             </Link>
             
             <div className="flex items-center space-x-1">
-              <span className="text-sm font-medium text-gray-600">FOR YOU</span>
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <span className="font-medium text-muted-foreground">FOR YOU</span>
+              <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
             
-            <Button variant="outline" size="sm" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white">
+            <Button variant="outline" size="sm" className={`${themeClasses.outlineButton}`}>
               <Link to="/auth/login">Login</Link>
             </Button>
-            <Button size="sm" className="bg-yellow-500 hover:bg-yellow-600 text-white">
+            <Button size="sm" className={`${themeClasses.primaryButton}`}>
               <Link to="/auth/signup">Register</Link>
             </Button>
           </div>
@@ -55,35 +55,35 @@ export default function Navbar() {
       <nav className={`${themeClasses.bgPrimary} shadow-md`}>
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex space-x-8">
-            <Link to="/" className="text-white hover:text-yellow-300 font-medium">
+            <Link to="/" className="text-white hover:text-accent font-medium">
               Home
             </Link>
-            <Link to="/notices" className="text-white hover:text-yellow-300 font-medium">
+            <Link to="/notices" className="text-white hover:text-accent font-medium">
               Notices
             </Link>
-            <Link to="/events" className="text-white hover:text-yellow-300 font-medium">
+            <Link to="/events" className="text-white hover:text-accent font-medium">
               Events
             </Link>
-            <Link to="/directory" className="text-white hover:text-yellow-300 font-medium">
+            <Link to="/directory" className="text-white hover:text-accent font-medium">
               Directory
             </Link>
-            <Link to="/meetings" className="text-white hover:text-yellow-300 font-medium">
+            <Link to="/meetings" className="text-white hover:text-accent font-medium">
               Meetings
             </Link>
-            <Link to="/contact" className="text-white hover:text-yellow-300 font-medium">
+            <Link to="/contact" className="text-white hover:text-accent font-medium">
               Contact
             </Link>
           </div>
           
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <input 
               type="search" 
-              className="block w-64 p-2 pl-10 text-sm text-white border border-gray-600 rounded-full bg-gray-800 focus:ring-blue-500 focus:border-blue-500" 
+              className="block w-64 p-2 pl-10 text-white border-primary-light rounded-full bg-primary-dark focus:ring-accent focus:border-accent" 
               placeholder="Search..."
             />
           </div>
@@ -92,7 +92,7 @@ export default function Navbar() {
       
       {/* Mobile menu toggle button for smaller screens */}
       <div className="md:hidden fixed top-4 right-4 z-50">
-        <Button variant="ghost" size="sm" className="text-white bg-gray-800 rounded-full" onClick={toggleMobileMenu}>
+        <Button variant="ghost" size="sm" className="text-white bg-primary-dark rounded-full" onClick={toggleMobileMenu}>
           <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
@@ -118,22 +118,22 @@ export default function Navbar() {
                 </svg>
               </Button>
             </div>
-            <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+            <Link to="/" className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light">
               Home
             </Link>
-            <Link to="/notices" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+            <Link to="/notices" className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light">
               Notices
             </Link>
-            <Link to="/events" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+            <Link to="/events" className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light">
               Events
             </Link>
-            <Link to="/directory" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+            <Link to="/directory" className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light">
               Directory
             </Link>
-            <Link to="/meetings" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+            <Link to="/meetings" className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light">
               Meetings
             </Link>
-            <Link to="/contact" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+            <Link to="/contact" className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light">
               Contact
             </Link>
           </div>

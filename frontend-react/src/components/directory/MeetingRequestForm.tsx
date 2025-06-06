@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../../components/ui/button';
+import themeClasses from '../../lib/theme-utils';
 
 interface MeetingRequestFormProps {
   personName: string;
@@ -7,14 +8,14 @@ interface MeetingRequestFormProps {
 
 const MeetingRequestForm: React.FC<MeetingRequestFormProps> = ({ personName }) => (
   <div>
-    <h2 className="text-xl font-bold text-[#13274D] mb-4">Schedule a Meeting</h2>
-    <p className="text-gray-600 mb-6">
+    <h2 className={`font-bold ${themeClasses.textPrimary} mb-4`}>Schedule a Meeting</h2>
+    <p className="text-muted-foreground mb-4">
       Fill out the form below to request a meeting with {personName}.
     </p>
     <form className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-[#13274D] mb-1">
+          <label htmlFor="name" className={`block font-medium ${themeClasses.textPrimary} mb-1`}>
             Your Name
           </label>
           <input
@@ -25,7 +26,7 @@ const MeetingRequestForm: React.FC<MeetingRequestFormProps> = ({ personName }) =
           />
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-[#13274D] mb-1">
+          <label htmlFor="email" className={`block font-medium ${themeClasses.textPrimary} mb-1`}>
             Your Email
           </label>
           <input
@@ -37,7 +38,7 @@ const MeetingRequestForm: React.FC<MeetingRequestFormProps> = ({ personName }) =
         </div>
       </div>
       <div>
-        <label htmlFor="date" className="block text-sm font-medium text-[#13274D] mb-1">
+        <label htmlFor="date" className={`block font-medium ${themeClasses.textPrimary} mb-1`}>
           Preferred Date
         </label>
         <input
@@ -47,7 +48,7 @@ const MeetingRequestForm: React.FC<MeetingRequestFormProps> = ({ personName }) =
         />
       </div>
       <div>
-        <label htmlFor="time" className="block text-sm font-medium text-[#13274D] mb-1">
+        <label htmlFor="time" className={`block font-medium ${themeClasses.textPrimary} mb-1`}>
           Preferred Time
         </label>
         <select
@@ -65,7 +66,7 @@ const MeetingRequestForm: React.FC<MeetingRequestFormProps> = ({ personName }) =
         </select>
       </div>
       <div>
-        <label htmlFor="purpose" className="block text-sm font-medium text-[#13274D] mb-1">
+        <label htmlFor="purpose" className={`block font-medium ${themeClasses.textPrimary} mb-1`}>
           Purpose of Meeting
         </label>
         <textarea
@@ -76,7 +77,7 @@ const MeetingRequestForm: React.FC<MeetingRequestFormProps> = ({ personName }) =
         ></textarea>
       </div>
       <div className="pt-2">
-        <Button className="bg-[#13274D] hover:bg-[#31466F] text-white">
+        <Button className={themeClasses.primaryButton}>
           Request Meeting
         </Button>
       </div>

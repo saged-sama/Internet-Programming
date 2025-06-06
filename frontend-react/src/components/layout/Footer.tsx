@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
+import themeClasses from '../../lib/theme-utils';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#13274D] text-white">
-      <div className="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
+    <footer className={`${themeClasses.bgPrimary} text-white`}>
+      <div className="max-w-7xl mx-auto py-8 px-4 overflow-hidden sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center mb-4">
@@ -12,9 +13,9 @@ export default function Footer() {
                 alt="University Logo" 
                 className="h-10 w-10 mr-2" 
               />
-              <h2 className="text-lg font-semibold text-[#ECB31D]">University Portal</h2>
+              <a href="#" className={`${themeClasses.textAccentYellow} hover:text-accent`}>University Portal</a>
             </div>
-            <p className="text-gray-300 text-sm">
+            <p className="text-muted">
               Providing quality education and research opportunities since 1992.
               Our mission is to educate, inspire, and transform lives through
               excellence in teaching, research, and service.
@@ -22,31 +23,31 @@ export default function Footer() {
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold mb-4 text-[#ECB31D]">Quick Links</h2>
+            <h2 className={`font-semibold mb-4 ${themeClasses.textAccentYellow}`}>Quick Links</h2>
             <ul className="space-y-2 text-gray-300 text-sm">
-              <li><Link to="/" className="hover:text-[#F5C940]">Home</Link></li>
-              <li><Link to="/notices" className="hover:text-[#F5C940]">Notices</Link></li>
-              <li><Link to="/events" className="hover:text-[#F5C940]">Events</Link></li>
-              <li><Link to="/directory" className="hover:text-[#F5C940]">Directory</Link></li>
-              <li><Link to="/meetings" className="hover:text-[#F5C940]">Meetings</Link></li>
-              <li><Link to="/contact" className="hover:text-[#F5C940]">Contact</Link></li>
+              <li><Link to="/" className="hover:text-accent">Home</Link></li>
+              <li><Link to="/notices" className="hover:text-accent">Notices</Link></li>
+              <li><Link to="/events" className="hover:text-accent">Events</Link></li>
+              <li><Link to="/directory" className="hover:text-accent">Directory</Link></li>
+              <li><Link to="/meetings" className="hover:text-accent">Meetings</Link></li>
+              <li><Link to="/contact" className="hover:text-accent">Contact</Link></li>
             </ul>
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold mb-4 text-[#ECB31D]">Resources</h2>
+            <h2 className={`font-semibold mb-4 ${themeClasses.textAccentYellow}`}>Resources</h2>
             <ul className="space-y-2 text-gray-300 text-sm">
-              <li><Link to="#" className="hover:text-[#F5C940]">Library</Link></li>
-              <li><Link to="#" className="hover:text-[#F5C940]">Research</Link></li>
-              <li><Link to="#" className="hover:text-[#F5C940]">Academic Calendar</Link></li>
-              <li><Link to="#" className="hover:text-[#F5C940]">Student Portal</Link></li>
-              <li><Link to="#" className="hover:text-[#F5C940]">Faculty Resources</Link></li>
+              <li><Link to="#" className="hover:text-accent">Library</Link></li>
+              <li><Link to="#" className="hover:text-accent">Research</Link></li>
+              <li><Link to="#" className="hover:text-accent">Academic Calendar</Link></li>
+              <li><Link to="#" className="hover:text-accent">Student Portal</Link></li>
+              <li><Link to="#" className="hover:text-accent">Faculty Resources</Link></li>
             </ul>
           </div>
 
           <div>
-            <h2 className="text-lg font-semibold mb-4 text-[#ECB31D]">Contact Us</h2>
-            <address className="not-italic text-gray-300 text-sm">
+            <h2 className={`font-semibold mb-4 ${themeClasses.textAccentYellow}`}>Contact Us</h2>
+            <address className="not-italic text-muted">
               <p>123 University Avenue</p>
               <p>Dhaka, Bangladesh</p>
               <p className="mt-2">Email: info@university.edu</p>
@@ -68,8 +69,8 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-8 border-t border-[#31466F] pt-8 text-center">
-          <p className="text-gray-300 text-sm">&copy; {new Date().getFullYear()} University Portal. All rights reserved.</p>
+        <div className="mt-8 border-t border-primary-light pt-4 text-center">
+          <p className="text-muted">&copy; {new Date().getFullYear()} University Portal. All rights reserved.</p>
         </div>
       </div>
     </footer>
