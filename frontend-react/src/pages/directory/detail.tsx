@@ -5,8 +5,6 @@ import { Button } from '../../components/ui/button';
 import ProfileHeader from '../../components/directory/ProfileHeader';
 import ProfileTabs from '../../components/directory/ProfileTabs';
 import type { Person } from '../../lib/types';
-
-// @ts-ignore: Allow importing JSON
 import peopleData from '../../assets/people.json';
 
 export default function DirectoryDetailPage() {

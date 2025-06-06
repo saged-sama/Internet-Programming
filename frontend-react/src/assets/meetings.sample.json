@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "title": "Faculty Senate Meeting",
+    "description": "Monthly faculty senate meeting to discuss academic policies and university governance.",
+    "date": "2025-06-15",
+    "time": "14:00-16:00",
+    "location": "Admin Building, Conference Room A",
+    "organizer": "Dr. Ahmed Khan, Faculty Senate Chair",
+    "type": "Faculty",
+    "isRegistrationRequired": false
+  },
+  {
+    "id": 2,
+    "title": "Computer Science Department Meeting",
+    "description": "Bi-weekly department meeting to discuss curriculum updates, research initiatives, and student affairs.",
+    "date": "2025-06-10",
+    "time": "10:00-12:00",
+    "location": "CS Building, Room 301",
+    "organizer": "Dr. Sarah Rahman, Department Chair",
+    "type": "Department",
+    "isRegistrationRequired": false
+  },
+  {
+    "id": 3,
+    "title": "Student Government Association",
+    "description": "Weekly meeting of the Student Government Association to discuss campus initiatives and student concerns.",
+    "date": "2025-06-08",
+    "time": "17:00-19:00",
+    "location": "Student Center, Meeting Room B",
+    "organizer": "Nusrat Jahan, SGA President",
+    "type": "Student",
+    "isRegistrationRequired": false
+  },
+  {
+    "id": 4,
+    "title": "Research Grant Workshop",
+    "description": "Workshop on applying for research grants and funding opportunities for faculty and graduate students.",
+    "date": "2025-06-20",
+    "time": "13:00-17:00",
+    "location": "Library, Conference Room",
+    "organizer": "Office of Research and Development",
+    "type": "Administrative",
+    "isRegistrationRequired": true
+  },
+  {
+    "id": 5,
+    "title": "Engineering Department Budget Review",
+    "description": "Annual budget review meeting for the Engineering Department.",
+    "date": "2025-06-12",
+    "time": "09:00-11:00",
+    "location": "Engineering Building, Room 205",
+    "organizer": "Dr. Karim Hossain, Department Chair",
+    "type": "Department",
+    "isRegistrationRequired": false
+  }
+]
