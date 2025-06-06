@@ -1,5 +1,5 @@
 import './App.css'
-import { Route, Routes } from 'react-router'
+import { Route, Routes } from 'react-router-dom'
 import LandingPage from './pages/landing'
 import NoticesPage from './pages/notices'
 import EventsPage from './pages/events'
@@ -11,6 +11,8 @@ import LoginPage from './pages/auth/login'
 import SignupPage from './pages/auth/signup'
 import ForgotPasswordPage from './pages/auth/forgot-password'
 import RegistrationSuccessPage from './pages/auth/registration-success'
+import DegreesPage from './pages/degrees'
+import CoursesPage from './pages/courses'
 
 function App() {
   return (
@@ -22,6 +24,10 @@ function App() {
       <Route path='/directory' element={<DirectoryPage />} />
       <Route path='/directory/:id' element={<DirectoryDetailPage />} />
       <Route path='/meetings' element={<MeetingsPage />} />
+      <Route path='/degrees' element={<DegreesPage />} />
+      <Route path='/degrees/:id' element={<DegreesPage />} />
+      <Route path='/courses' element={<CoursesPage />} />
+      <Route path='/courses/:degreeId' element={<CoursesPage />} />
       {/* Authentication Routes */}
       <Route path='/auth/login' element={<LoginPage />} />
       <Route path='/auth/signup' element={<SignupPage />} />
