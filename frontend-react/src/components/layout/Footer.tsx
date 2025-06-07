@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
-import themeClasses from "../../lib/theme-utils";
 
 export default function Footer() {
   return (
-    <footer className={`${themeClasses.bgPrimary} text-white`}>
+    <footer className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto py-8 px-4 overflow-hidden sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -15,7 +14,7 @@ export default function Footer() {
               />
               <a
                 href="#"
-                className={`${themeClasses.textAccentYellow} hover:text-accent`}
+                className="text-accent hover:text-secondary"
               >
                 University Portal
               </a>
@@ -29,11 +28,11 @@ export default function Footer() {
 
           <div>
             <h2
-              className={`font-semibold mb-4 ${themeClasses.textAccentYellow}`}
+              className="font-semibold mb-4 text-accent"
             >
               Quick Links
             </h2>
-            <ul className="space-y-2 text-gray-300 text-sm">
+            <ul className="space-y-2 text-muted">
               <li>
                 <Link to="/" className="hover:text-accent">
                   Home
@@ -69,11 +68,11 @@ export default function Footer() {
 
           <div>
             <h2
-              className={`font-semibold mb-4 ${themeClasses.textAccentYellow}`}
+              className="font-semibold mb-4 text-accent"
             >
               Resources
             </h2>
-            <ul className="space-y-2 text-gray-300 text-sm">
+            <ul className="space-y-2 text-muted">
               <li>
                 <Link to="/resources" className="hover:text-accent">
                   Financials & Resources
@@ -109,7 +108,7 @@ export default function Footer() {
 
           <div>
             <h2
-              className={`font-semibold mb-4 ${themeClasses.textAccentYellow}`}
+              className="font-semibold mb-4 text-accent"
             >
               Contact Us
             </h2>
@@ -120,7 +119,7 @@ export default function Footer() {
               <p>Phone: +880 1234 567890</p>
             </address>
             <div className="mt-4 flex space-x-4">
-              <a href="#" className="text-[#ECB31D] hover:text-[#F5C940]">
+              <a href="#" className="text-accent hover:text-secondary">
                 <span className="sr-only">Facebook</span>
                 <svg
                   className="h-6 w-6"
@@ -135,7 +134,7 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a href="#" className="text-[#ECB31D] hover:text-[#F5C940]">
+              <a href="#" className="text-accent hover:text-secondary">
                 <span className="sr-only">Twitter</span>
                 <svg
                   className="h-6 w-6"
@@ -149,7 +148,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="mt-8 border-t border-primary-light pt-4 text-center">
+        <div className="mt-8 border-t border-border pt-4 text-center">
           <p className="text-muted">
             &copy; {new Date().getFullYear()} University Portal. All rights
             reserved.

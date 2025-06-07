@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     <div>
       {/* Top section with logo and buttons */}
-      <div className="bg-white py-2 px-4">
+      <div className="bg-card py-2 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center">
             <img
@@ -73,45 +73,45 @@ export default function Navbar() {
       </div>
 
       {/* Main navigation bar */}
-      <nav className={`${themeClasses.bgPrimary} shadow-md`}>
+      <nav className="bg-primary shadow-md">
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex space-x-8">
-            <Link to="/" className="text-white hover:text-accent font-medium">
+            <Link to="/" className="text-primary-foreground hover:text-accent font-medium">
               Home
             </Link>
             <Link
               to="/notices"
-              className="text-white hover:text-accent font-medium"
+              className="text-primary-foreground hover:text-accent font-medium"
             >
               Notices
             </Link>
             <Link
               to="/events"
-              className="text-white hover:text-accent font-medium"
+              className="text-primary-foreground hover:text-accent font-medium"
             >
               Events
             </Link>
             <Link
               to="/directory"
-              className="text-white hover:text-accent font-medium"
+              className="text-primary-foreground hover:text-accent font-medium"
             >
               Directory
             </Link>
             <Link
               to="/meetings"
-              className="text-white hover:text-accent font-medium"
+              className="text-primary-foreground hover:text-accent font-medium"
             >
               Meetings
             </Link>
             <Link
               to="/resources"
-              className="text-white hover:text-accent font-medium"
+              className="text-primary-foreground hover:text-accent font-medium"
             >
               Resources
             </Link>
             <Link
               to="/contact"
-              className="text-white hover:text-accent font-medium"
+              className="text-primary-foreground hover:text-accent font-medium"
             >
               Contact
             </Link>
@@ -120,7 +120,7 @@ export default function Navbar() {
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
-                className="w-4 h-4 text-muted"
+                className="w-4 h-4 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -136,7 +136,7 @@ export default function Navbar() {
             </div>
             <input
               type="search"
-              className="block w-64 p-2 pl-10 text-white border-primary-light rounded-full bg-primary-dark focus:ring-accent focus:border-accent"
+              className="block w-64 p-2 pl-10 text-primary-foreground border-border rounded-full bg-primary-dark focus:ring focus:border-accent"
               placeholder="Search..."
             />
           </div>
@@ -148,7 +148,7 @@ export default function Navbar() {
         <Button
           variant="ghost"
           size="sm"
-          className="text-white bg-primary-dark rounded-full"
+          className="text-primary-foreground bg-primary rounded-full"
           onClick={toggleMobileMenu}
         >
           <svg
@@ -170,7 +170,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-white">
+        <div className="md:hidden fixed inset-0 z-40 bg-card">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <div className="flex justify-between items-center border-b pb-3 mb-3">
               <div className="flex items-center">
@@ -179,7 +179,7 @@ export default function Navbar() {
                   alt="University Logo"
                   className="h-8 w-8 mr-2"
                 />
-                <span className="text-xl font-bold">CSEDU</span>
+                <span className="font-bold">CSEDU</span>
               </div>
               <Button variant="ghost" size="sm" onClick={toggleMobileMenu}>
                 <svg
@@ -200,43 +200,43 @@ export default function Navbar() {
             </div>
             <Link
               to="/"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Home
             </Link>
             <Link
               to="/notices"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Notices
             </Link>
             <Link
               to="/events"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Events
             </Link>
             <Link
               to="/directory"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Directory
             </Link>
             <Link
               to="/meetings"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Meetings
             </Link>
             <Link
               to="/resources"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Resources
             </Link>
             <Link
               to="/contact"
-              className="block px-3 py-2 font-medium text-foreground hover:bg-accent-light"
+              className="block px-3 py-2 font-medium text-foreground hover:bg-accent/10"
             >
               Contact
             </Link>
