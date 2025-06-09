@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import themeClasses from '../../lib/theme-utils';
+// @ts-ignore
 import contactSubjects from '../../assets/contactSubjects.json';
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
@@ -33,13 +34,13 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-card p-4 rounded-lg shadow-sm">
+    <div className="bg-white p-6 rounded-lg shadow-sm">
       {formStatus === 'success' ? (
-        <div className="text-success font-semibold text-center py-4">Thank you for contacting us! We will get back to you soon.</div>
+        <div className="text-green-600 font-semibold text-center py-4">Thank you for contacting us! We will get back to you soon.</div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block font-medium text-foreground mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Your Name
             </label>
             <input
@@ -49,11 +50,11 @@ const ContactForm: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
             />
           </div>
           <div>
-            <label htmlFor="email" className="block font-medium text-foreground mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
             </label>
             <input
@@ -63,11 +64,11 @@ const ContactForm: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
             />
           </div>
           <div>
-            <label htmlFor="subject" className="block font-medium text-foreground mb-1">
+            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
               Subject
             </label>
             <select
@@ -76,7 +77,7 @@ const ContactForm: React.FC = () => {
               value={formData.subject}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
             >
               <option value="">Select a subject</option>
               {contactSubjects.map((subject: string) => (
@@ -85,7 +86,7 @@ const ContactForm: React.FC = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="message" className="block font-medium text-foreground mb-1">
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
               Message
             </label>
             <textarea
@@ -95,7 +96,7 @@ const ContactForm: React.FC = () => {
               value={formData.message}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#ECB31D]"
             ></textarea>
           </div>
           <Button 

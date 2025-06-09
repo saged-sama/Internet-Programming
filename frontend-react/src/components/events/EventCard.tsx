@@ -21,13 +21,13 @@ export default function EventCard({ event }: EventCardProps) {
   return (
     <div className={`bg-card rounded-lg shadow-md overflow-hidden h-full flex flex-col border ${themeClasses.borderPrimary} hover:shadow-lg transition-shadow ${themeClasses.hoverBorderAccentYellow}`}>
       <img src={event.image} alt={event.title} className="w-full h-48 object-cover" />
-      <div className="p-4">
+      <div className="p-6">
         <div className="flex justify-between items-start mb-2">
-          <span className={`inline-flex items-center rounded-full ${themeClasses.bgAccentYellow} ${themeClasses.textPrimary} font-medium px-2 py-1`}>
+          <span className={`inline-flex items-center rounded-full ${themeClasses.bgAccentYellow} ${themeClasses.textPrimary} text-xs font-semibold px-2 py-1`}>
             {event.category}
           </span>
           {event.registrationRequired && (
-            <span className="inline-flex items-center rounded-full bg-destructive/20 px-2 py-1 font-medium text-destructive">
+            <span className="inline-flex items-center rounded-full bg-destructive/20 px-2.5 py-0.5 font-medium text-destructive">
               Registration Required
             </span>
           )}

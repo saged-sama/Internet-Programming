@@ -4,8 +4,8 @@ import themeClasses from '../../lib/theme-utils';
 import departments from '../../assets/contactDepartments.json';
 
 const DepartmentContacts: React.FC = () => (
-  <div className="bg-card p-4 rounded-lg shadow-sm">
-    <h2 className={`font-semibold mb-4 ${themeClasses.textPrimary}`}>Department Contacts</h2>
+  <div className="bg-white p-6 rounded-lg shadow-sm">
+    <h2 className={`text-xl font-semibold mb-4 ${themeClasses.textPrimary}`}>Department Contacts</h2>
     <div className="space-y-4">
       {departments.map((dept: any, index: number) => (
         <div key={index} className="flex items-start">
@@ -15,9 +15,9 @@ const DepartmentContacts: React.FC = () => (
             </svg>
           </div>
           <div>
-            <p className="font-medium text-foreground">{dept.name}</p>
-            <p className="text-muted-foreground">{dept.email}</p>
-            <p className="text-muted-foreground">{dept.phone}</p>
+            <p className="font-medium text-gray-900">{dept.name}</p>
+            <p className="text-gray-600 text-sm">{dept.email}</p>
+            <p className="text-gray-600 text-sm">{dept.phone}</p>
           </div>
         </div>
       ))}

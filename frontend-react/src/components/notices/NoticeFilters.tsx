@@ -17,7 +17,7 @@ export default function NoticeFilters({
   setSearchQuery,
 }: NoticeFiltersProps) {
   return (
-    <div className="bg-card p-4 rounded-lg shadow-sm mb-6">
+    <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
@@ -38,7 +38,7 @@ export default function NoticeFilters({
           <input
             type="text"
             placeholder="Search notices..."
-            className="w-full md:w-64 px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className={`w-full md:w-64 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

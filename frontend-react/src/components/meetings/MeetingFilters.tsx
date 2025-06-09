@@ -11,9 +11,9 @@ interface MeetingFiltersProps {
 }
 
 const MeetingFilters: React.FC<MeetingFiltersProps> = ({ meetingTypes, selectedType, setSelectedType, selectedDate, setSelectedDate, searchQuery, setSearchQuery }) => (
-  <div className="mb-4 flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
+  <div className="mb-6 flex flex-col md:flex-row md:items-end md:space-x-4 space-y-4 md:space-y-0">
     <div>
-      <label className="block font-medium text-foreground">Type</label>
+      <label className="block text-sm font-medium text-gray-700">Type</label>
       <select
         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
         value={selectedType}
@@ -25,7 +25,7 @@ const MeetingFilters: React.FC<MeetingFiltersProps> = ({ meetingTypes, selectedT
       </select>
     </div>
     <div>
-      <label className="block font-medium text-foreground">Date</label>
+      <label className="block text-sm font-medium text-gray-700">Date</label>
       <input
         type="date"
         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
@@ -34,7 +34,7 @@ const MeetingFilters: React.FC<MeetingFiltersProps> = ({ meetingTypes, selectedT
       />
     </div>
     <div className="flex-1">
-      <label className="block font-medium text-foreground">Search</label>
+      <label className="block text-sm font-medium text-gray-700">Search</label>
       <input
         type="text"
         placeholder="Search by title, description, or organizer"

@@ -1,5 +1,4 @@
 import { Button } from '../ui/button';
-import themeClasses from '../../lib/theme-utils';
 
 interface EventFiltersProps {
   categories: string[];
@@ -17,13 +16,13 @@ export default function EventFilters({
   setSearchQuery
 }: EventFiltersProps) {
   return (
-    <div className="bg-card p-4 rounded-lg shadow-sm mb-4">
+    <div className="bg-card p-6 rounded-lg shadow-sm mb-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex flex-wrap gap-2">
           {categories.map(category => (
             <Button
               key={category}
-              className={selectedCategory === category || (!selectedCategory && category === 'All') ? themeClasses.primaryButton : themeClasses.outlineButton}
+              variant={selectedCategory === category || (!selectedCategory && category === 'All') ? 'default' : 'outline'}
               size="sm"
               onClick={() => setSelectedCategory(category === 'All' ? null : category)}
             >
@@ -35,7 +34,7 @@ export default function EventFilters({
           <input
             type="text"
             placeholder="Search events..."
-            className="w-full md:w-64 px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full md:w-64 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />

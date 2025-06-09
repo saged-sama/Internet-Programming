@@ -6,13 +6,13 @@ import ImageSlider from './ImageSlider';
 export default function HeroSection() {
   return (
     <section className={themeClasses.primaryGradient}>
-  <div className="max-w-7xl mx-auto px-4 py-12">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
       <div>
         <h1 className="mb-4">
   Department of Computer Science and Engineering
 </h1>
-<p className="mb-6 text-muted-foreground">
+<p className="mb-8 text-muted-foreground">
   University of Dhaka - A leading academic institution in Bangladesh
 </p>
         <div className="flex flex-wrap gap-4">

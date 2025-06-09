@@ -2,7 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
-import themeClasses from '../../lib/theme-utils';
 import ProfileHeader from '../../components/directory/ProfileHeader';
 import ProfileTabs from '../../components/directory/ProfileTabs';
 import type { Person } from '../../lib/types';
@@ -30,7 +29,7 @@ export default function DirectoryDetailPage() {
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#13274D]"></div>
           </div>
         </div>
       </Layout>
@@ -42,9 +41,9 @@ export default function DirectoryDetailPage() {
       <Layout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <h1 className={themeClasses.textPrimary}>Person Not Found</h1>
-            <p className={`${themeClasses.textPrimaryLight} mb-4`}>The person you're looking for doesn't exist or has been removed.</p>
-            <Button asChild className={themeClasses.primaryButton}>
+            <h1 className="text-2xl font-bold text-[#13274D] mb-4">Person Not Found</h1>
+            <p className="text-gray-600 mb-6">The person you're looking for doesn't exist or has been removed.</p>
+            <Button asChild className="bg-[#13274D] hover:bg-[#31466F]">
               <Link to="/directory">Back to Directory</Link>
             </Button>
           </div>
@@ -55,20 +54,20 @@ export default function DirectoryDetailPage() {
 
   return (
     <Layout>
-      <div className="bg-background py-6">
-        <div className="max-w-7xl mx-auto px-4">
+      <div className="bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="mb-8">
-            <ol className="flex items-center space-x-2">
+            <ol className="flex items-center space-x-2 text-sm">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary">Home</Link>
+                <Link to="/" className="text-gray-500 hover:text-[#13274D]">Home</Link>
               </li>
               <li className="text-gray-500">/</li>
               <li>
-                <Link to="/directory" className="text-muted-foreground hover:text-primary">Directory</Link>
+                <Link to="/directory" className="text-gray-500 hover:text-[#13274D]">Directory</Link>
               </li>
               <li className="text-gray-500">/</li>
-              <li className="text-primary font-medium">{person.name}</li>
+              <li className="text-[#13274D] font-medium">{person.name}</li>
             </ol>
           </nav>
 
@@ -76,14 +75,14 @@ export default function DirectoryDetailPage() {
           <ProfileHeader person={person} />
 
           {/* Tabs */}
-          <div className="mb-6 border-b border-border">
+          <div className="mb-6 border-b border-gray-200">
             <nav className="flex space-x-8">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`py-4 px-1 border-b-2 font-medium ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'overview' 
-                    ? `border-accent text-primary` 
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                    ? 'border-[#ECB31D] text-[#13274D]' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 Overview
@@ -91,10 +90,10 @@ export default function DirectoryDetailPage() {
               {person.publications && (
                 <button
                   onClick={() => setActiveTab('publications')}
-                  className={`py-4 px-1 border-b-2 font-medium ${
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'publications' 
-                      ? `border-accent text-primary` 
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                      ? 'border-[#ECB31D] text-[#13274D]' 
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
                   Publications
@@ -102,10 +101,10 @@ export default function DirectoryDetailPage() {
               )}
               <button
                 onClick={() => setActiveTab('schedule')}
-                className={`py-4 px-1 border-b-2 font-medium ${
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'schedule' 
-                    ? `border-accent text-primary` 
-                    : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted'
+                    ? 'border-[#ECB31D] text-[#13274D]' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 Schedule Meeting
