@@ -79,10 +79,26 @@ export default function Navbar() {
             <Link to="/contact" className="text-white hover:text-yellow-300 font-medium">
               Contact
             </Link>
-             <Link to="/resources" className="text-white hover:text-yellow-300 font-medium"
-            >
+             <Link to="/resources" className="text-white hover:text-yellow-300 font-medium">
               Resources
             </Link>
+            <div className="relative group">
+              <div className="flex items-center text-white hover:text-yellow-300 font-medium cursor-pointer">
+                <span>Scheduling</span>
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className="py-2">
+                  <Link to="/scheduling/class-schedule" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Class Schedule</Link>
+                  <Link to="/scheduling/room-availability" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Room Availability</Link>
+                  <Link to="/scheduling/admin-approval" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Approval</Link>
+                  <Link to="/exams/timetables" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Exam Timetables</Link>
+                  <Link to="/assignments" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Assignments</Link>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="relative">
@@ -152,6 +168,28 @@ export default function Navbar() {
             <Link to="/contact" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
               Contact
             </Link>
+            <div className="px-3 py-2">
+              <div className="text-base font-medium text-gray-700">Scheduling</div>
+              <div className="pl-4 mt-1 space-y-1">
+                <Link to="/scheduling/class-schedule" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  Class Schedule
+                </Link>
+                <Link to="/scheduling/room-availability" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  Room Availability
+                </Link>
+                <Link to="/scheduling/admin-approval" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  Admin Approval
+                </Link>
+                <Link to="/exams/timetables" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  Exam Timetables
+                </Link>
+                <Link to="/assignments" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
+                  Assignments
+                </Link>
+              </div>
+            </div>
+            <Link to="/auth/login" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Login</Link>
+            <Link to="/auth/student-login" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Student Portal</Link>
           </div>
         </div>
       )}

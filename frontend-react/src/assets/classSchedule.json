@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "courseCode": "CSE101",
+    "courseTitle": "Introduction to Computer Science",
+    "batch": "27",
+    "semester": "1",
+    "room": "301",
+    "day": "Monday",
+    "startTime": "09:00",
+    "endTime": "10:30",
+    "instructor": "Dr. John Smith"
+  },
+  {
+    "id": 2,
+    "courseCode": "CSE201",
+    "courseTitle": "Data Structures",
+    "batch": "28",
+    "semester": "2",
+    "room": "302",
+    "day": "Tuesday",
+    "startTime": "11:00",
+    "endTime": "12:30",
+    "instructor": "Dr. Sarah Johnson"
+  },
+  {
+    "id": 3,
+    "courseCode": "CSE301",
+    "courseTitle": "Database Systems",
+    "batch": "29",
+    "semester": "3",
+    "room": "303",
+    "day": "Wednesday",
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "instructor": "Dr. Michael Brown"
+  },
+  {
+    "id": 4,
+    "courseCode": "CSE401",
+    "courseTitle": "Artificial Intelligence",
+    "batch": "30",
+    "semester": "4",
+    "room": "304",
+    "day": "Thursday",
+    "startTime": "09:00",
+    "endTime": "10:30",
+    "instructor": "Dr. Emily Davis"
+  },
+  {
+    "id": 5,
+    "courseCode": "CSE501",
+    "courseTitle": "Machine Learning",
+    "batch": "31",
+    "semester": "5",
+    "room": "305",
+    "day": "Friday",
+    "startTime": "11:00",
+    "endTime": "12:30",
+    "instructor": "Dr. Robert Wilson"
+  },
+  {
+    "id": 6,
+    "courseCode": "CSE601",
+    "courseTitle": "Computer Networks",
+    "batch": "27",
+    "semester": "6",
+    "room": "301",
+    "day": "Monday",
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "instructor": "Dr. Jennifer Lee"
+  },
+  {
+    "id": 7,
+    "courseCode": "CSE701",
+    "courseTitle": "Advanced Algorithms",
+    "batch": "28",
+    "semester": "7",
+    "room": "302",
+    "day": "Tuesday",
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "instructor": "Dr. David Wilson"
+  },
+  {
+    "id": 8,
+    "courseCode": "CSE801",
+    "courseTitle": "Thesis",
+    "batch": "29",
+    "semester": "8",
+    "room": "303",
+    "day": "Wednesday",
+    "startTime": "09:00",
+    "endTime": "10:30",
+    "instructor": "Dr. Lisa Johnson"
+  },
+  {
+    "id": 9,
+    "courseCode": "CSE102",
+    "courseTitle": "Programming Fundamentals",
+    "batch": "30",
+    "semester": "1",
+    "room": "304",
+    "day": "Thursday",
+    "startTime": "11:00",
+    "endTime": "12:30",
+    "instructor": "Dr. Mark Thompson"
+  },
+  {
+    "id": 10,
+    "courseCode": "CSE202",
+    "courseTitle": "Object Oriented Programming",
+    "batch": "31",
+    "semester": "2",
+    "room": "305",
+    "day": "Friday",
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "instructor": "Dr. Anna Davis"
+  }
+]

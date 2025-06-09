@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "room": "301",
+    "requestedBy": "Dr. John Smith",
+    "email": "john.smith@university.edu",
+    "purpose": "Guest Lecture",
+    "date": "2025-06-15",
+    "startTime": "14:00",
+    "endTime": "16:00",
+    "attendees": 30,
+    "status": "Approved",
+    "requestDate": "2025-06-01"
+  },
+  {
+    "id": 2,
+    "room": "302",
+    "requestedBy": "Dr. Sarah Johnson",
+    "email": "sarah.johnson@university.edu",
+    "purpose": "Research Meeting",
+    "date": "2025-06-18",
+    "startTime": "10:00",
+    "endTime": "12:00",
+    "attendees": 15,
+    "status": "Pending",
+    "requestDate": "2025-06-05"
+  },
+  {
+    "id": 3,
+    "room": "303",
+    "requestedBy": "Student Council",
+    "email": "student.council@university.edu",
+    "purpose": "Club Meeting",
+    "date": "2025-06-20",
+    "startTime": "16:00",
+    "endTime": "18:00",
+    "attendees": 25,
+    "status": "Approved",
+    "requestDate": "2025-06-02"
+  },
+  {
+    "id": 4,
+    "room": "301",
+    "requestedBy": "Dr. Michael Brown",
+    "email": "michael.brown@university.edu",
+    "purpose": "Thesis Defense",
+    "date": "2025-06-22",
+    "startTime": "11:00",
+    "endTime": "13:00",
+    "attendees": 20,
+    "status": "Rejected",
+    "requestDate": "2025-06-03",
+    "rejectionReason": "Room already booked for another event"
+  },
+  {
+    "id": 5,
+    "room": "302",
+    "requestedBy": "Dr. Emily Davis",
+    "email": "emily.davis@university.edu",
+    "purpose": "Workshop",
+    "date": "2025-06-25",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "attendees": 30,
+    "status": "Pending",
+    "requestDate": "2025-06-08"
+  }
+]
