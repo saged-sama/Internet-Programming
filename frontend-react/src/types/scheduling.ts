@@ -23,7 +23,7 @@ export interface DaySlots {
 
 export interface RoomAvailability {
   id: number;
-  roomNumber: string;
+  room: string;
   capacity: number;
   facilities: string[];
   availableSlots: {
@@ -37,7 +37,7 @@ export interface RoomAvailability {
 
 export interface RoomBooking {
   id: number;
-  roomNumber: string;
+  room: string;
   requestedBy: string;
   email: string;
   purpose: string;
@@ -58,7 +58,7 @@ export interface BookingFormData {
   startTime: string;
   endTime: string;
   attendees: number;
-  roomNumber: string;
+  room: string;
 }
 
 // New types for exam timetables, assignments, and student grades
