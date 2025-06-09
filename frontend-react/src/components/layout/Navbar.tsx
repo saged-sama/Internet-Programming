@@ -64,6 +64,12 @@ export default function Navbar() {
             <Link to="/events" className="text-white hover:text-yellow-300 font-medium">
               Events
             </Link>
+            <Link to="/degrees" className="text-white hover:text-yellow-300 font-medium">
+              Degrees
+            </Link>
+            <Link to="/courses" className="text-white hover:text-yellow-300 font-medium">
+              Courses
+            </Link>
             <Link to="/directory" className="text-white hover:text-yellow-300 font-medium">
               Directory
             </Link>
@@ -130,6 +136,12 @@ export default function Navbar() {
             </Link>
             <Link to="/events" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
               Events
+            </Link>
+            <Link to="/degrees" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+              Degrees
+            </Link>
+            <Link to="/courses" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
+              Courses
             </Link>
             <Link to="/directory" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
               Directory

@@ -11,19 +11,23 @@ import LoginPage from "./pages/auth/login";
 import SignupPage from "./pages/auth/signup";
 import ForgotPasswordPage from "./pages/auth/forgot-password";
 import RegistrationSuccessPage from "./pages/auth/registration-success";
-import { ResourcesPage } from "./pages/resources/ResourcesPage";
+import DegreesPage from "./pages/degrees";
+import CoursesPage from "./pages/courses";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/notices" element={<NoticesPage />} />
-      <Route path="/events" element={<EventsPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/directory" element={<DirectoryPage />} />
-      <Route path="/directory/:id" element={<DirectoryDetailPage />} />
-      <Route path="/meetings" element={<MeetingsPage />} />
-      <Route path="/resources" element={<ResourcesPage />} />
+      <Route path='/' element={<LandingPage />} />
+      <Route path='/notices' element={<NoticesPage />} />
+      <Route path='/events' element={<EventsPage />} />
+      <Route path='/contact' element={<ContactPage />} />
+      <Route path='/directory' element={<DirectoryPage />} />
+      <Route path='/directory/:id' element={<DirectoryDetailPage />} />
+      <Route path='/meetings' element={<MeetingsPage />} />
+      <Route path='/degrees' element={<DegreesPage />} />
+      <Route path='/degrees/:id' element={<DegreesPage />} />
+      <Route path='/courses' element={<CoursesPage />} />
+      <Route path='/courses/:degreeId' element={<CoursesPage />} />
       {/* Authentication Routes */}
       <Route path="/auth/login" element={<LoginPage />} />
       <Route path="/auth/signup" element={<SignupPage />} />
