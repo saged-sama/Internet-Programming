@@ -49,4 +49,31 @@ export interface Award {
   amount?: number;
   description: string;
   status: 'pending' | 'approved' | 'rejected';
+}
+
+export interface ResearchPaper {
+  id: string;
+  title: string;
+  authors: string[];
+  abstract: string;
+  publicationDate: string;
+  journal: string;
+  doi: string;
+  keywords: string[];
+  pdfUrl: string;
+  status: 'published' | 'under_review' | 'draft';
+}
+
+export interface CourseMaterial {
+  id: string;
+  title: string;
+  courseCode: string;
+  courseName: string;
+  type: 'lecture' | 'assignment' | 'reading' | 'other';
+  description: string;
+  uploadDate: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: string;
+  uploadedBy: string;
 } 

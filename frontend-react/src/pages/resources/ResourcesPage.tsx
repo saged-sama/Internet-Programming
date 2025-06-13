@@ -3,6 +3,8 @@ import { FeeStructure } from "../../components/financials/FeeStructure";
 import { LabEquipmentBooking } from "../../components/lab/LabEquipmentBooking";
 import { ProjectsShowcase } from "../../components/projects/ProjectsShowcase";
 import { AwardsGrants } from "../../components/awards/AwardsGrants";
+import { ResearchPapers } from "../../components/research/ResearchPapers";
+import { CourseMaterials } from "../../components/courses/CourseMaterials";
 import {
   Tabs,
   TabsContent,
@@ -15,6 +17,8 @@ import type {
   BookingSlot,
   Project,
   Award,
+  ResearchPaper,
+  CourseMaterial,
 } from "../../types/financials";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
@@ -26,6 +30,8 @@ export function ResourcesPage() {
   const [bookings, setBookings] = useState<BookingSlot[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [awards, setAwards] = useState<Award[]>([]);
+  const [papers, setPapers] = useState<ResearchPaper[]>([]);
+  const [materials, setMaterials] = useState<CourseMaterial[]>([]);
 
   useEffect(() => {
     // Load mock data with proper type casting
@@ -34,6 +40,8 @@ export function ResourcesPage() {
     setBookings(financialsData.bookings as BookingSlot[]);
     setProjects(financialsData.projects as Project[]);
     setAwards(financialsData.awards as Award[]);
+    setPapers(financialsData.researchPapers as ResearchPaper[]);
+    setMaterials(financialsData.courseMaterials as CourseMaterial[]);
   }, []);
 
   const handlePayment = async (feeId: string) => {
@@ -101,12 +109,30 @@ export function ResourcesPage() {
         <h1>Resources & Financials</h1>
 
         <Tabs defaultValue="fees" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="fees">Fee Structure</TabsTrigger>
-            <TabsTrigger value="lab">Lab Equipment</TabsTrigger>
-            <TabsTrigger value="projects">Projects</TabsTrigger>
-            <TabsTrigger value="awards">Awards & Grants</TabsTrigger>
-          </TabsList>
+          <div className="relative">
+            <div className="overflow-x-auto pb-2">
+              <TabsList className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+                <TabsTrigger value="fees" className="whitespace-nowrap">
+                  Fee Structure
+                </TabsTrigger>
+                <TabsTrigger value="lab" className="whitespace-nowrap">
+                  Lab Equipment
+                </TabsTrigger>
+                <TabsTrigger value="projects" className="whitespace-nowrap">
+                  Projects
+                </TabsTrigger>
+                <TabsTrigger value="awards" className="whitespace-nowrap">
+                  Awards & Grants
+                </TabsTrigger>
+                <TabsTrigger value="papers" className="whitespace-nowrap">
+                  Research Papers
+                </TabsTrigger>
+                <TabsTrigger value="materials" className="whitespace-nowrap">
+                  Course Materials
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </div>
 
           <TabsContent value="fees">
             <FeeStructure fees={fees} onPayment={handlePayment} />
@@ -119,7 +145,7 @@ export function ResourcesPage() {
               onBook={handleBooking}
               onApprove={(id) => handleBookingApproval(id, true)}
               onReject={(id) => handleBookingApproval(id, false)}
-              isAdmin={true} // This should come from auth context
+              isAdmin={true}
             />
           </TabsContent>
 
@@ -130,10 +156,18 @@ export function ResourcesPage() {
           <TabsContent value="awards">
             <AwardsGrants
               awards={awards}
-              isAdmin={true} // This should come from auth context
+              isAdmin={true}
               onApprove={(id) => handleAwardApproval(id, true)}
               onReject={(id) => handleAwardApproval(id, false)}
             />
+          </TabsContent>
+
+          <TabsContent value="papers">
+            <ResearchPapers papers={papers} />
+          </TabsContent>
+
+          <TabsContent value="materials">
+            <CourseMaterials materials={materials} />
           </TabsContent>
         </Tabs>
       </main>

@@ -116,5 +116,59 @@
       "type": "research",
       "status": "approved"
     }
+  ],
+  "researchPapers": [
+    {
+      "id": "paper1",
+      "title": "Machine Learning Applications in Healthcare",
+      "authors": ["Dr. Sarah Johnson", "John Smith", "Emma Wilson"],
+      "abstract": "This paper explores the application of machine learning algorithms in medical diagnosis and treatment planning...",
+      "publicationDate": "2024-01-15",
+      "journal": "Journal of Medical AI",
+      "doi": "10.1234/jmai.2024.001",
+      "keywords": ["Machine Learning", "Healthcare", "AI", "Medical Diagnosis"],
+      "pdfUrl": "/papers/healthcare-ml.pdf",
+      "status": "published"
+    },
+    {
+      "id": "paper2",
+      "title": "Blockchain Security Protocols",
+      "authors": ["Dr. Michael Chen", "Alice Johnson", "Bob Wilson"],
+      "abstract": "A comprehensive study of blockchain security mechanisms and their applications in financial systems...",
+      "publicationDate": "2023-12-01",
+      "journal": "International Journal of Blockchain",
+      "doi": "10.5678/ijb.2023.045",
+      "keywords": ["Blockchain", "Security", "Cryptography", "FinTech"],
+      "pdfUrl": "/papers/blockchain-security.pdf",
+      "status": "published"
+    }
+  ],
+  "courseMaterials": [
+    {
+      "id": "cm1",
+      "title": "Introduction to Machine Learning",
+      "courseCode": "CS501",
+      "courseName": "Advanced Machine Learning",
+      "type": "lecture",
+      "description": "Lecture slides covering fundamental concepts of machine learning algorithms",
+      "uploadDate": "2024-02-15",
+      "fileUrl": "/materials/cs501-lecture1.pdf",
+      "fileType": "pdf",
+      "fileSize": "2.5 MB",
+      "uploadedBy": "Dr. Sarah Johnson"
+    },
+    {
+      "id": "cm2",
+      "title": "Blockchain Programming Assignment",
+      "courseCode": "CS502",
+      "courseName": "Blockchain Development",
+      "type": "assignment",
+      "description": "Practical assignment on implementing smart contracts",
+      "uploadDate": "2024-02-20",
+      "fileUrl": "/materials/cs502-assignment1.zip",
+      "fileType": "code",
+      "fileSize": "1.8 MB",
+      "uploadedBy": "Dr. Michael Chen"
+    }
   ]
 } 
