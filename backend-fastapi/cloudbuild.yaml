@@ -22,7 +22,7 @@ steps:
     args: [
       'run', 'deploy', 'fastapi-service',
       '--image', 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app',
-      '--region', 'asia-southeast1',
+      '--region', 'global',
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
