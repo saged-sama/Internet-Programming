@@ -6,7 +6,7 @@ steps:
     args: [
       'build',
       '-t',
-      'asia-southeast1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app',
+      'us-central1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app',
       '.'
     ]
     dir: 'backend-fastapi'
@@ -14,18 +14,18 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
-      'asia-southeast1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app'
+      'us-central1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app'
     ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: [
       'run', 'deploy', 'fastapi-service',
-      '--image', 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app',
-      '--region', 'global',
+      '--image', 'us-central1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app',
+      '--region', 'us-central1',
       '--platform', 'managed',
       '--allow-unauthenticated'
     ]
 
 images:
-  - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/fastapi-repo/fastapi-app'
