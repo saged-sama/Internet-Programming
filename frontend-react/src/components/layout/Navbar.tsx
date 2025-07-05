@@ -21,32 +21,28 @@ export default function Navbar() {
       label: "For You",
       to: "/foryou",
       dropdown: [
-       
         { label: "Research", to: "/research" },
         { label: "Awards", to: "/awards" },
         { label: "Events", to: "/events" },
-      
+
         { label: "Contact", to: "/contact" },
       ],
     },
   ];
 
   const bottomNav = [
-    
     {
       label: "Academics",
       to: "/academics",
       dropdown: [
         { label: "Degrees", to: "/degrees" },
-    { label: "Courses", to: "/courses" },
+        { label: "Courses", to: "/courses" },
       ],
     },
     { label: "People", to: "/directory" },
     { label: "Notice", to: "/notices" },
     { label: "Resources", to: "/resources" },
     { label: "Meetings", to: "/meetings" },
-    
-    
   ];
 
   const isActive = (to: string) => location.pathname === to;
@@ -58,7 +54,13 @@ export default function Navbar() {
         className="flex flex-col justify-center items-center h-full z-10 mr-6"
         style={{ minWidth: "110px" }}
       >
-        <img src="/logo.svg" alt="Logo" className="h-28 w-auto" />
+        <Link to="/">
+          <img
+            src="/logo.svg"
+            alt="Logo"
+            className="h-28 w-auto cursor-pointer"
+          />
+        </Link>
       </div>
       {/* Main Navbar Content */}
       <div className="flex-1 flex flex-col justify-center relative">
