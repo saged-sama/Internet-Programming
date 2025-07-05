@@ -14,8 +14,7 @@ import type {
   BookingSlot,
   CourseMaterial,
 } from "../../types/financials";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
+
 import financialsData from "../../assets/financials.json";
 
 export function ResourcesPage() {
@@ -276,7 +275,7 @@ export function ResourcesPage() {
           </TabsContent>
         </Tabs>
       </main>
-      <Footer />
+      
     </>
   );
 }

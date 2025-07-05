@@ -12,6 +12,7 @@ import type {
   ResearchPaper,
 } from "../../types/financials";
 
+
 import financialsData from "../../assets/financials.json";
 
 export function ResearchPage() {

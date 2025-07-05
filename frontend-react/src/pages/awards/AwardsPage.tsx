@@ -3,7 +3,6 @@ import { AwardsGrants } from "../../components/awards/AwardsGrants";
 import type {
   Award,
 } from "../../types/financials";
-import Layout from "../../components/layout/Layout";
 import financialsData from "../../assets/financials.json";
 
 export function AwardsPage() {
