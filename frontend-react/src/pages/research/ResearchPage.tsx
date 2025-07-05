@@ -11,7 +11,7 @@ import type {
   Project,
   ResearchPaper,
 } from "../../types/financials";
-import Layout from "../../components/layout/Layout";
+
 import financialsData from "../../assets/financials.json";
 
 export function ResearchPage() {
@@ -25,7 +25,7 @@ export function ResearchPage() {
   }, []);
 
   return (
-    <Layout>
+    
       <div className="container mx-auto py-8 space-y-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-4">Research & Innovation</h1>
@@ -57,6 +57,6 @@ export function ResearchPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    
   );
 } 
