@@ -20,8 +20,7 @@ import type {
   ResearchPaper,
   CourseMaterial,
 } from "../../types/financials";
-import Navbar from "../../components/layout/Navbar";
-import Footer from "../../components/layout/Footer";
+
 import financialsData from "../../assets/financials.json";
 
 export function ResourcesPage() {
@@ -104,7 +103,7 @@ export function ResourcesPage() {
 
   return (
     <>
-      <Navbar />
+     
       <main className="container mx-auto py-8 space-y-8">
         <h1>Resources & Financials</h1>
 
@@ -171,7 +170,7 @@ export function ResourcesPage() {
           </TabsContent>
         </Tabs>
       </main>
-      <Footer />
+      
     </>
   );
 }
