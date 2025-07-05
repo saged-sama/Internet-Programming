@@ -32,6 +32,8 @@ export default function Navbar() {
     
     { label: "Notice", to: "/notices" },
     { label: "Resources", to: "/resources" },
+    { label: "Research", to: "/research" },
+    { label: "Awards", to: "/awards" },
     { label: "Meetings", to: "/meetings" },
     { label: "Degrees", to: "/degrees" },
     { label: "Courses", to: "/courses" },
