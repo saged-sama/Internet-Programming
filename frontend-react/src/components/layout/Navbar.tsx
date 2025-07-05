@@ -17,7 +17,18 @@ export default function Navbar() {
       to: isLoggedIn() ? getDashboardRoute() : "/auth/login",
     },
     { label: "About", to: "/about" },
-    { label: "For You", to: "/foryou" },
+    {
+      label: "For You",
+      to: "/foryou",
+      dropdown: [
+        { label: "Resources", to: "/resources" },
+        { label: "Research", to: "/research" },
+        { label: "Awards", to: "/awards" },
+        { label: "Meetings", to: "/meetings" },
+        { label: "Directory", to: "/directory" },
+        { label: "Contact", to: "/contact" },
+      ],
+    },
   ];
 
   const bottomNav = [
@@ -33,17 +44,10 @@ export default function Navbar() {
         { label: "Assignments", to: "/assignments" },
       ],
     },
-
     { label: "Notice", to: "/notices" },
-    { label: "Resources", to: "/resources" },
-    { label: "Research", to: "/research" },
-    { label: "Awards", to: "/awards" },
-    { label: "Meetings", to: "/meetings" },
     { label: "Degrees", to: "/degrees" },
     { label: "Courses", to: "/courses" },
     { label: "Events", to: "/events" },
-    { label: "Directory", to: "/directory" },
-    { label: "Contact", to: "/contact" },
   ];
 
   const isActive = (to: string) => location.pathname === to;
@@ -69,17 +73,66 @@ export default function Navbar() {
           </div>
           {/* Top nav links */}
           <div className="flex flex-1 justify-end items-center space-x-8 z-10 mr-6 mt-4">
-            {topNav.map((item) => (
-              <Link
-                key={item.label}
-                to={item.to}
-                className={`text-base font-medium transition-colors ${
-                  isActive(item.to) ? "text-[#ECB31D]" : "text-gray-200"
-                } hover:text-[#ECB31D]`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {topNav.map((item) => {
+              const isDropdownActive =
+                item.dropdown &&
+                item.dropdown.some((drop) => isActive(drop.to));
+
+              if (item.dropdown) {
+                return (
+                  <div key={item.label} className="relative group">
+                    <span
+                      className={`${
+                        isDropdownActive ? "text-[#ECB31D]" : "text-gray-200"
+                      } font-medium cursor-pointer flex items-center text-base hover:text-[#ECB31D] transition-colors`}
+                    >
+                      {item.label}
+                      <svg
+                        className="w-3 h-3 ml-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </span>
+                    <div className="absolute left-0 mt-2 w-52 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                      <div className="py-2">
+                        {item.dropdown.map((drop) => (
+                          <Link
+                            key={drop.label}
+                            to={drop.to}
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-[#ECB31D] hover:text-[#13274D] transition-colors ${
+                              isActive(drop.to) ? "font-bold" : ""
+                            }`}
+                          >
+                            {drop.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className={`text-base font-medium transition-colors ${
+                      isActive(item.to) ? "text-[#ECB31D]" : "text-gray-200"
+                    } hover:text-[#ECB31D]`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
+            })}
           </div>
 
           {/* Auth Buttons */}
@@ -111,7 +164,7 @@ export default function Navbar() {
           </div>
 
           {/* Bottom nav links */}
-          <div className="flex space-x-8 -ml-[80px] z-10">
+          <div className="flex space-x-8 ml-[160px] z-10">
             {bottomNav.map((item) => {
               const isDropdownActive =
                 item.dropdown &&
