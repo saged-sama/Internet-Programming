@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Layout from '@/components/layout/Layout';
 import ExamTimetableFilter from '@/components/exams/ExamTimetableFilter';
 import ExamTimetableTable from '@/components/exams/ExamTimetableTable';
 import type { ExamTimetable } from '@/types/scheduling';
@@ -218,6 +219,6 @@ export default function ExamTimetablesPage() {
         {/* Exam Table */}
         <ExamTimetableTable exams={filteredExams} />
       </div>
-   
+    
   );
 }

@@ -146,5 +146,18 @@
     "phone": "+880 1234 567897",
     "image": "https://placehold.co/200x200?text=Nasreen",
     "officeLocation": "Arts Building, Room 120"
+  },
+  {
+    "id": 13,
+    "name": "Dr. Md. Ashraf Hossain",
+    "role": "Chairman",
+    "department": "Computer Science",
+    "title": "Professor",
+    "email": "ashraf.hossain@university.edu",
+    "phone": "+880 1234 567898",
+    "expertise": ["Artificial Intelligence", "Machine Learning", "Data Science"],
+    "image": "https://placehold.co/200x200?text=Dr.+Ashraf",
+    "officeHours": "Monday, Wednesday: 10:00 AM - 12:00 PM",
+    "officeLocation": "CS Building, Room 302"
   }
 ]

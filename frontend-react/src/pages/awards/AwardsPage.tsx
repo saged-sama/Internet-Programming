@@ -25,7 +25,7 @@ export function AwardsPage() {
   };
 
   return (
-    
+   
       <div className="container mx-auto py-8 space-y-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-4">Awards & Recognition</h1>
@@ -41,6 +41,6 @@ export function AwardsPage() {
           onReject={(id) => handleAwardApproval(id, false)}
         />
       </div>
-    
+
   );
 } 
