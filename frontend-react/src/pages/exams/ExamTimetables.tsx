@@ -219,6 +219,6 @@ export default function ExamTimetablesPage() {
         {/* Exam Table */}
         <ExamTimetableTable exams={filteredExams} />
       </div>
-    </Layout>
+    
   );
 }
