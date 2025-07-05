@@ -1,203 +1,221 @@
-import { useState } from 'react';
-import type { Assignment } from '@/types/scheduling';
+import { useState, useEffect } from "react";
+import type { Assignment } from "@/types/scheduling";
 
 interface AssignmentFormProps {
-  onSubmit: (assignment: Omit<Assignment, 'id' | 'submissionCount' | 'status'>) => void;
+  onSubmit: (
+    assignmentData: Omit<Assignment, "id" | "submissionCount" | "status">
+  ) => void;
   onCancel: () => void;
+  assignment?: Assignment; // For editing mode
 }
 
-export default function AssignmentForm({ onSubmit, onCancel }: AssignmentFormProps) {
-  const [title, setTitle] = useState('');
-  const [courseCode, setCourseCode] = useState('');
-  const [courseTitle, setCourseTitle] = useState('');
-  const [batch, setBatch] = useState('');
-  const [semester, setSemester] = useState('');
-  const [description, setDescription] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [totalMarks, setTotalMarks] = useState(0);
-  const [createdBy, setCreatedBy] = useState('');
+export default function AssignmentForm({
+  onSubmit,
+  onCancel,
+  assignment,
+}: AssignmentFormProps) {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    courseCode: "",
+    courseTitle: "",
+    batch: "",
+    semester: "",
+    deadline: "",
+    createdBy: "",
+  });
 
-  // Predefined semester and batch options
-  const semesterOptions = ['1', '2', '3', '4', '5', '6', '7', '8'];
-  const batchOptions = ['27', '28', '29', '30', '31'];
-  const courseOptions = [
-    { code: 'CSE101', title: 'Introduction to Computer Science' },
-    { code: 'CSE201', title: 'Data Structures' },
-    { code: 'CSE301', title: 'Database Systems' },
-    { code: 'CSE401', title: 'Artificial Intelligence' },
-    { code: 'CSE501', title: 'Machine Learning' },
-    { code: 'CSE601', title: 'Computer Networks' },
-    { code: 'CSE701', title: 'Advanced Algorithms' },
-    { code: 'CSE801', title: 'Thesis' }
-  ];
+  const isEditing = !!assignment;
+
+  useEffect(() => {
+    if (assignment) {
+      setFormData({
+        title: assignment.title,
+        description: assignment.description,
+        courseCode: assignment.courseCode,
+        courseTitle: assignment.courseTitle,
+        batch: assignment.batch,
+        semester: assignment.semester,
+        deadline: assignment.deadline,
+        createdBy: assignment.createdBy,
+      });
+    }
+  }, [assignment]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    onSubmit({
-      title,
-      courseCode,
-      courseTitle,
-      batch,
-      semester,
-      description,
-      deadline,
-      totalMarks,
-      createdBy
-    });
+    onSubmit(formData);
   };
 
-  const handleCourseChange = (code: string) => {
-    setCourseCode(code);
-    const course = courseOptions.find(c => c.code === code);
-    if (course) {
-      setCourseTitle(course.title);
-    }
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className="bg-card p-6 rounded-lg shadow-sm">
-      <h3 className="mb-4 font-medium">Create New Assignment</h3>
-      
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div className="bg-card rounded-lg shadow-sm border border-muted p-6">
+      <h3 className="text-lg font-medium mb-4">
+        {isEditing ? "Edit Assignment" : "Create New Assignment"}
+      </h3>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="title" className="block mb-2 text-sm text-muted-foreground">
+            <label htmlFor="title" className="block text-sm font-medium mb-1">
               Assignment Title
             </label>
             <input
-              id="title"
               type="text"
-              className="w-full p-2 border rounded-md bg-background"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
               required
+              className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
-          
+
           <div>
-            <label htmlFor="course" className="block mb-2 text-sm text-muted-foreground">
-              Course
-            </label>
-            <select
-              id="course"
-              className="w-full p-2 border rounded-md bg-background"
-              value={courseCode}
-              onChange={(e) => handleCourseChange(e.target.value)}
-              required
+            <label
+              htmlFor="courseCode"
+              className="block text-sm font-medium mb-1"
             >
-              <option value="">Select Course</option>
-              {courseOptions.map((course) => (
-                <option key={course.code} value={course.code}>
-                  {course.code} - {course.title}
-                </option>
-              ))}
-            </select>
+              Course Code
+            </label>
+            <input
+              type="text"
+              id="courseCode"
+              name="courseCode"
+              value={formData.courseCode}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
           </div>
-          
+        </div>
+
+        <div>
+          <label
+            htmlFor="courseTitle"
+            className="block text-sm font-medium mb-1"
+          >
+            Course Title
+          </label>
+          <input
+            type="text"
+            id="courseTitle"
+            name="courseTitle"
+            value={formData.courseTitle}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="batch" className="block mb-2 text-sm text-muted-foreground">
+            <label htmlFor="batch" className="block text-sm font-medium mb-1">
               Batch
             </label>
-            <select
+            <input
+              type="text"
               id="batch"
-              className="w-full p-2 border rounded-md bg-background"
-              value={batch}
-              onChange={(e) => setBatch(e.target.value)}
+              name="batch"
+              value={formData.batch}
+              onChange={handleChange}
               required
-            >
-              <option value="">Select Batch</option>
-              {batchOptions.map((b) => (
-                <option key={b} value={b}>
-                  Batch {b}
-                </option>
-              ))}
-            </select>
+              className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            />
           </div>
-          
+
           <div>
-            <label htmlFor="semester" className="block mb-2 text-sm text-muted-foreground">
+            <label
+              htmlFor="semester"
+              className="block text-sm font-medium mb-1"
+            >
               Semester
             </label>
             <select
               id="semester"
-              className="w-full p-2 border rounded-md bg-background"
-              value={semester}
-              onChange={(e) => setSemester(e.target.value)}
+              name="semester"
+              value={formData.semester}
+              onChange={handleChange}
               required
+              className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">Select Semester</option>
-              {semesterOptions.map((sem) => (
-                <option key={sem} value={sem}>
-                  Semester {sem}
-                </option>
-              ))}
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
             </select>
           </div>
-          
+
           <div>
-            <label htmlFor="deadline" className="block mb-2 text-sm text-muted-foreground">
+            <label
+              htmlFor="deadline"
+              className="block text-sm font-medium mb-1"
+            >
               Deadline
             </label>
             <input
-              id="deadline"
               type="datetime-local"
-              className="w-full p-2 border rounded-md bg-background"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
+              id="deadline"
+              name="deadline"
+              value={formData.deadline}
+              onChange={handleChange}
               required
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="totalMarks" className="block mb-2 text-sm text-muted-foreground">
-              Total Marks
-            </label>
-            <input
-              id="totalMarks"
-              type="number"
-              min="0"
-              className="w-full p-2 border rounded-md bg-background"
-              value={totalMarks || ''}
-              onChange={(e) => setTotalMarks(parseInt(e.target.value) || 0)}
-              required
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="createdBy" className="block mb-2 text-sm text-muted-foreground">
-              Created By
-            </label>
-            <input
-              id="createdBy"
-              type="text"
-              className="w-full p-2 border rounded-md bg-background"
-              value={createdBy}
-              onChange={(e) => setCreatedBy(e.target.value)}
-              required
+              className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
-        
-        <div className="mb-4">
-          <label htmlFor="description" className="block mb-2 text-sm text-muted-foreground">
+
+        <div>
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium mb-1"
+          >
             Description
           </label>
           <textarea
             id="description"
-            rows={4}
-            className="w-full p-2 border rounded-md bg-background"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
             required
+            rows={4}
+            className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
-        
-        <div className="flex justify-end space-x-2">
+
+        <div>
+          <label htmlFor="createdBy" className="block text-sm font-medium mb-1">
+            Created By
+          </label>
+          <input
+            type="text"
+            id="createdBy"
+            name="createdBy"
+            value={formData.createdBy}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4">
           <button
             type="button"
-            className="px-4 py-2 border border-muted rounded-md hover:bg-muted"
             onClick={onCancel}
+            className="px-4 py-2 text-muted-foreground hover:text-foreground"
           >
             Cancel
           </button>
@@ -205,7 +223,7 @@ export default function AssignmentForm({ onSubmit, onCancel }: AssignmentFormPro
             type="submit"
             className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
           >
-            Create Assignment
+            {isEditing ? "Update Assignment" : "Create Assignment"}
           </button>
         </div>
       </form>
