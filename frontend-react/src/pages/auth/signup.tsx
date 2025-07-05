@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
 import themeClasses, { themeValues } from '../../lib/theme-utils';
 
@@ -105,15 +104,11 @@ export default function SignupPage() {
   };
 
   return (
-    <Layout>
+
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full mx-auto">
           <div>
-            <img
-              className="mx-auto h-16 w-auto"
-              src="https://placehold.co/100x100?text=CSEDU"
-              alt="CSEDU Logo"
-            />
+          
             <h2 className={`mt-6 text-center text-3xl font-extrabold ${themeClasses.textPrimary}`}>
               Create your account
             </h2>
@@ -341,6 +336,5 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

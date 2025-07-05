@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
 import ProfileHeader from '../../components/directory/ProfileHeader';
 import ProfileTabs from '../../components/directory/ProfileTabs';
@@ -26,19 +25,19 @@ export default function DirectoryDetailPage() {
 
   if (loading) {
     return (
-      <Layout>
+    
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#13274D]"></div>
           </div>
         </div>
-      </Layout>
+      
     );
   }
 
   if (!person) {
     return (
-      <Layout>
+    
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-[#13274D] mb-4">Person Not Found</h1>
@@ -48,12 +47,12 @@ export default function DirectoryDetailPage() {
             </Button>
           </div>
         </div>
-      </Layout>
+  
     );
   }
 
   return (
-    <Layout>
+    
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
@@ -116,6 +115,6 @@ export default function DirectoryDetailPage() {
           <ProfileTabs person={person} activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
       </div>
-    </Layout>
+
   );
 }

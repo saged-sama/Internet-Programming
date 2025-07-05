@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Layout from '../../components/layout/Layout';
+
 import { Button } from '../../components/ui/button';
 import themeClasses from '../../lib/theme-utils';
 import peopleData from '../../assets/people.json';
@@ -23,7 +23,7 @@ export default function DirectoryPage() {
   const filteredPeople = filterPeople(people, searchQuery, selectedRole, selectedDepartment);
 
   return (
-    <Layout>
+   
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -71,6 +71,6 @@ export default function DirectoryPage() {
           )}
         </div>
       </div>
-    </Layout>
+  
   );
 }

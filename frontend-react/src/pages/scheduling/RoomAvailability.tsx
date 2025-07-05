@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Layout from '@/components/layout/Layout';
 import RoomAvailabilityCard from '@/components/scheduling/RoomAvailabilityCard';
 import RoomBookingForm from '@/components/scheduling/RoomBookingForm';
 import type { RoomAvailability, BookingFormData } from '@/types/scheduling';
@@ -48,7 +47,6 @@ export default function RoomAvailabilityPage() {
   };
 
   return (
-    <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="mb-2">Room Availability</h1>
@@ -86,6 +84,5 @@ export default function RoomAvailabilityPage() {
           </div>
         )}
       </div>
-    </Layout>
   );
 }

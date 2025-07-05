@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Layout from '../../components/layout/Layout';
 import { CourseDetails } from './components/CourseDetails';
 import type { Course } from '../../types/course';
 
@@ -293,7 +292,7 @@ export default function CoursesPage() {
   };
   
   return (
-    <Layout>
+
       <div className="container mx-auto py-6 px-4">
         {selectedCourse ? (
           <>
@@ -483,6 +482,5 @@ export default function CoursesPage() {
           </>
         )}
       </div>
-    </Layout>
   );
 } 

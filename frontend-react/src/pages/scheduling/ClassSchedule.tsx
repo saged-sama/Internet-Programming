@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Layout from '@/components/layout/Layout';
 import ClassScheduleFilter from '@/components/scheduling/ClassScheduleFilter';
 import ClassScheduleTable from '@/components/scheduling/ClassScheduleTable';
 import type { ClassSchedule } from '@/types/scheduling';
@@ -75,7 +74,7 @@ export default function ClassSchedulePage() {
   };
 
   return (
-    <Layout>
+  
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
@@ -185,6 +184,6 @@ export default function ClassSchedulePage() {
 
 
       </div>
-    </Layout>
+    
   );
 }

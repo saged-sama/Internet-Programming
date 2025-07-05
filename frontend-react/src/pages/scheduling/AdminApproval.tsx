@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Layout from '@/components/layout/Layout';
 import AdminBookingApproval from '@/components/scheduling/AdminBookingApproval';
 import type { RoomBooking } from '@/types/scheduling';
 import roomBookingsData from '@/assets/roomBookings.json';
@@ -38,7 +37,6 @@ export default function AdminApprovalPage() {
   };
 
   return (
-    <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="mb-2">Room Booking Approval</h1>
@@ -117,6 +115,5 @@ export default function AdminApprovalPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

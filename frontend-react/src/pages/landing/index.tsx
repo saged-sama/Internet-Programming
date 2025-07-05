@@ -1,4 +1,4 @@
-import Layout from '../../components/layout/Layout';
+
 import HeroSection from './components/HeroSection';
 import BigAchievements from './components/BigAchievements';
 import ProjectsShowcase from './components/ProjectsShowcase';
@@ -14,14 +14,13 @@ import EventsSection from './components/EventsSection';
  */
 export default function LandingPage() {
   return (
-    <Layout>
+<div>
       <HeroSection />
       <BigAchievements />
       <ProjectsShowcase />
       <AwardsSection />
       <AnnouncementsSection />
       <AcademicResourcesSection />
-      <EventsSection />
-    </Layout>
+      <EventsSection /></div>
   );
 }
