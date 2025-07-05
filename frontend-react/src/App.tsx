@@ -17,6 +17,8 @@ import ClassSchedulePage from "./pages/scheduling/ClassSchedule";
 import RoomAvailabilityPage from "./pages/scheduling/RoomAvailability";
 import AdminApprovalPage from "./pages/scheduling/AdminApproval";
 import { ResourcesPage } from "./pages/resources/ResourcesPage";
+import { ResearchPage } from "./pages/research/ResearchPage";
+import { AwardsPage } from "./pages/awards/AwardsPage";
 import ExamTimetablesPage from "./pages/exams/ExamTimetables";
 import AssignmentsPage from "./pages/assignments/Assignments";
 import StudentLoginPage from "./pages/auth/StudentLogin";
@@ -49,7 +51,9 @@ function App() {
         <Route path="/courses" element={<CoursesPage />} />
         <Route path="/courses/:degreeId" element={<CoursesPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
-        {/* Authentication Routes */}
+        <Route path="/research" element={<ResearchPage />} />
+      <Route path="/awards" element={<AwardsPage />} />
+      {/* Authentication Routes */}
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
