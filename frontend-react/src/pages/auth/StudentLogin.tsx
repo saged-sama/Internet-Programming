@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Layout from '@/components/layout/Layout';
 import GradeInputPanel from '@/components/faculty/GradeInputPanel';
 import type { StudentGrade } from '@/types/scheduling';
 import studentGradesData from '@/assets/studentGrades.json';
@@ -45,7 +44,7 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <Layout>
+  
       <div className="container mx-auto py-8 px-4">
         {!isLoggedIn ? (
           <div className="max-w-md mx-auto bg-card p-8 rounded-lg shadow-sm">
@@ -217,6 +216,6 @@ export default function StudentLoginPage() {
           </div>
         )}
       </div>
-    </Layout>
+
   );
 }

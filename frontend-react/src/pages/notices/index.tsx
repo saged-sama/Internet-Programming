@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Layout from '../../components/layout/Layout';
+
 import { Button } from '../../components/ui/button';
 import { Link } from 'react-router-dom';
 import themeClasses from '../../lib/theme-utils';
@@ -35,7 +35,7 @@ export default function NoticesPage() {
   });
 
   return (
-    <Layout>
+ 
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -83,6 +83,6 @@ export default function NoticesPage() {
           </div>
         </div>
       </div>
-    </Layout>
+
   );
 }

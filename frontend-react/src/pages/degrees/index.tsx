@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import type { DegreeFilterOptions, DegreeProgram } from '../../types/degree';
 import { DegreeCard } from './components/DegreeCard';
 import { DegreeFilter } from './components/DegreeFilter';
-import Layout from '../../components/layout/Layout';
 import { degreePrograms } from './data/degreePrograms';
 
 export default function DegreesPage() {
@@ -67,7 +66,6 @@ export default function DegreesPage() {
   };
 
   return (
-    <Layout>
       <div className="container mx-auto py-6 px-4">
         <h1 className="mb-6">Degree Outlines</h1>
         
@@ -129,6 +127,6 @@ export default function DegreesPage() {
           </div>
         </div>
       </div>
-    </Layout>
+
   );
 }

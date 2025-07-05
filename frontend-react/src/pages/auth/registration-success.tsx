@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom';
-import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
 import themeClasses from '../../lib/theme-utils';
 
 export default function RegistrationSuccessPage() {
   return (
-    <Layout>
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="text-center">
@@ -54,6 +52,5 @@ export default function RegistrationSuccessPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

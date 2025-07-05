@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Layout from '../../components/layout/Layout';
 import { Button } from '../../components/ui/button';
 
 import eventsData from '../../assets/eventsData.json';
@@ -38,7 +37,7 @@ export default function EventsPage() {
   });
 
   return (
-    <Layout>
+  
       <div className="bg-background py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -73,6 +72,5 @@ export default function EventsPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

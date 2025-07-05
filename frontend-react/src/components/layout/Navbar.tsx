@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { isLoggedIn, getDashboardRoute } from "../../lib/auth";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -11,13 +12,16 @@ export default function Navbar() {
   };
 
   const topNav = [
-    { label: "Dashboard", to: "/" },
+    {
+      label: "Dashboard",
+      to: isLoggedIn() ? getDashboardRoute() : "/auth/login",
+    },
     { label: "About", to: "/about" },
     { label: "For You", to: "/foryou" },
   ];
 
   const bottomNav = [
-    {label:"Home", to:"/"},
+    { label: "Home", to: "/" },
     {
       label: "Scheduling",
       to: "/degrees",
@@ -29,7 +33,7 @@ export default function Navbar() {
         { label: "Assignments", to: "/assignments" },
       ],
     },
-    
+
     { label: "Notice", to: "/notices" },
     { label: "Resources", to: "/resources" },
     { label: "Meetings", to: "/meetings" },

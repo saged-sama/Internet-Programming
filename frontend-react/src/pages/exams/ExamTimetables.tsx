@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Layout from '@/components/layout/Layout';
 import ExamTimetableFilter from '@/components/exams/ExamTimetableFilter';
 import ExamTimetableTable from '@/components/exams/ExamTimetableTable';
 import type { ExamTimetable } from '@/types/scheduling';
@@ -44,7 +43,7 @@ export default function ExamTimetablesPage() {
   };
 
   return (
-    <Layout>
+  
       <div className="container mx-auto py-8 px-4">
         <div className="mb-6">
           <h1 className="mb-2">Exam Timetables</h1>
@@ -60,6 +59,6 @@ export default function ExamTimetablesPage() {
 
         <ExamTimetableTable exams={filteredExams} />
       </div>
-    </Layout>
+   
   );
 }

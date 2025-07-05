@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '../../components/ui/button';
-import Layout from '../../components/layout/Layout';
 import themeClasses from '../../lib/theme-utils';
 import MeetingFilters from '../../components/meetings/MeetingFilters';
 import MeetingList from '../../components/meetings/MeetingList';
@@ -23,7 +22,6 @@ export default function MeetingsPage() {
   const sortedDates = getSortedDates(meetingsByDate);
 
   return (
-    <Layout>
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -102,6 +100,5 @@ export default function MeetingsPage() {
           </div>
         </div>
       </div>
-    </Layout>
   );
 }

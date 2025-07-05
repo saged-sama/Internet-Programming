@@ -1,4 +1,4 @@
-import Layout from '../../components/layout/Layout';
+
 import HeroSection from './components/HeroSection';
 import AnnouncementsSection from './components/AnnouncementsSection';
 import AcademicResourcesSection from './components/AcademicResourcesSection';
@@ -11,11 +11,10 @@ import EventsSection from './components/EventsSection';
  */
 export default function LandingPage() {
   return (
-    <Layout>
+<div>
       <HeroSection />
       <AnnouncementsSection />
       <AcademicResourcesSection />
-      <EventsSection />
-    </Layout>
+      <EventsSection /></div>
   );
 }

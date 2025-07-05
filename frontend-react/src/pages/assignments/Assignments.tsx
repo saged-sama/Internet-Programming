@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Layout from '@/components/layout/Layout';
 import AssignmentList from '@/components/assignments/AssignmentList';
 import AssignmentForm from '@/components/assignments/AssignmentForm';
 import AssignmentDetail from '@/components/assignments/AssignmentDetail';
@@ -62,7 +61,7 @@ export default function AssignmentsPage() {
   };
 
   return (
-    <Layout>
+    
       <div className="container mx-auto py-8 px-4">
         <div className="mb-6 flex justify-between items-center">
           <div>
@@ -103,6 +102,6 @@ export default function AssignmentsPage() {
           />
         )}
       </div>
-    </Layout>
+
   );
 }
