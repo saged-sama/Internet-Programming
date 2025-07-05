@@ -1,49 +1,80 @@
 # FastAPI Backend
 
-This project uses [FastAPI](https://fastapi.tiangolo.com/) for building APIs.
+A FastAPI backend application with PostgreSQL database integration.
 
 ## Project Structure
-
 ```
-.
+backend-fastapi/
 ├── app/
-│   └── ...           # Your FastAPI application code
-├── requirements.txt  # Python dependencies
+│   ├── main.py
+│   ├── models/
+│   ├── routes/
+│   └── utils/
+├── requirements.txt
 └── README.md
 ```
 
-## Installation
+## Environment Variables
+Create a `.env` file in the root directory:
+```
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+SECRET_KEY=your_secret_key_here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/saged-sama/Internet-Programming
-    cd Internet-Programming/backend-fastapi
-    ```
+## Setup and Installation
 
-2. **Create a virtual environment and activate it:**
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # On Windows: .\.venv\Scripts\activate
-    ```
-
-3. **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-## Running for Development
-
+### Create Virtual Environment
 ```bash
-uvicorn app.main:app --reload
-# or
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# On Windows:
+.\.venv\Scripts\activate
+# On macOS/Linux:
+source .venv/bin/activate
+```
+
+### Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+## Running the Application
+
+### Using Uvicorn
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Using FastAPI CLI
+```bash
 fastapi dev app/main.py
 ```
-- Replace `app.main:app` with the actual path to your FastAPI app instance.
 
-## Building for Production
+### Using Docker
+Create a `Dockerfile`:
+```dockerfile
+FROM python:3.9
 
-Use a production server like [Gunicorn](https://gunicorn.org/) with [Uvicorn workers](https://www.uvicorn.org/deployment/):
+WORKDIR /app
 
-```bash
-gunicorn app.main:app -k uvicorn.workers.UvicornWorker
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
+
+Build and run:
+```bash
+docker build -t fastapi-backend .
+docker run -p 8000:8000 --env-file .env fastapi-backend
+```
+
+## Access
+- API: http://localhost:8000
+- Docs: http://localhost:8000/docs
