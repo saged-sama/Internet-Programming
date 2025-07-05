@@ -14,14 +14,17 @@ import type {
   BookingSlot,
   CourseMaterial,
 } from "../../types/financials";
-
 import financialsData from "../../assets/financials.json";
+import { getCurrentUser } from "../../lib/auth";
 
 export function ResourcesPage() {
   const [fees, setFees] = useState<FeeStructureType[]>([]);
   const [equipment, setEquipment] = useState<LabEquipment[]>([]);
   const [bookings, setBookings] = useState<BookingSlot[]>([]);
   const [materials, setMaterials] = useState<CourseMaterial[]>([]);
+
+  const currentUser = getCurrentUser();
+  const isAdmin = currentUser?.role === "admin";
 
   // Sample user info - in a real app, this would come from auth context
   const userInfo = {
@@ -175,18 +178,24 @@ export function ResourcesPage() {
     setMaterials(financialsData.courseMaterials as CourseMaterial[]);
   }, []);
 
-  const handlePayment = async (feeId: string, paymentMethod: string, transactionId: string) => {
+  const handlePayment = async (
+    feeId: string,
+    paymentMethod: string,
+    transactionId: string
+  ) => {
     // Update fee status in the state
-    setFees(fees.map(fee => 
-      fee.id === feeId
-        ? { 
-            ...fee, 
-            status: "paid" as const, 
-            paymentDate: new Date().toISOString(),
-            transactionId
-          }
-        : fee
-    ));
+    setFees(
+      fees.map((fee) =>
+        fee.id === feeId
+          ? {
+              ...fee,
+              status: "paid" as const,
+              paymentDate: new Date().toISOString(),
+              transactionId,
+            }
+          : fee
+      )
+    );
   };
 
   const handleBooking = async (
@@ -225,12 +234,14 @@ export function ResourcesPage() {
 
   return (
     <>
-      
       <main className="container mx-auto py-8 space-y-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-4">Academic Resources</h1>
+          <h1 className="text-3xl font-bold text-primary mb-4">
+            Academic Resources
+          </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Access essential academic resources including fee structure, lab equipment booking, and course materials
+            Access essential academic resources including fee structure, lab
+            equipment booking, and course materials
           </p>
         </div>
 
@@ -252,8 +263,8 @@ export function ResourcesPage() {
           </div>
 
           <TabsContent value="fees">
-            <EnhancedFeeStructure 
-              fees={fees} 
+            <EnhancedFeeStructure
+              fees={fees}
               onPayment={handlePayment}
               userInfo={userInfo}
             />
@@ -266,7 +277,7 @@ export function ResourcesPage() {
               onBook={handleBooking}
               onApprove={(id) => handleBookingApproval(id, true)}
               onReject={(id) => handleBookingApproval(id, false)}
-              isAdmin={true}
+              isAdmin={isAdmin}
             />
           </TabsContent>
 
@@ -275,7 +286,6 @@ export function ResourcesPage() {
           </TabsContent>
         </Tabs>
       </main>
-      
     </>
   );
 }
