@@ -17,6 +17,7 @@ export default function Navbar() {
   ];
 
   const bottomNav = [
+    {label:"Home", to:"/"},
     {
       label: "Scheduling",
       to: "/degrees",
@@ -28,6 +29,7 @@ export default function Navbar() {
         { label: "Assignments", to: "/assignments" },
       ],
     },
+    
     { label: "Notice", to: "/notices" },
     { label: "Resources", to: "/resources" },
     { label: "Meetings", to: "/meetings" },
