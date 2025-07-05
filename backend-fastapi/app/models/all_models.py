@@ -1,0 +1,59 @@
+from enum import Enum
+from typing import Optional
+from datetime import date
+from sqlmodel import Field, SQLModel
+
+class ContactSubjectEnum(str, Enum):
+    General_Inquiry = "General Inquiry"
+    Admissions = "Admissions"
+    Academic = "Academic"
+    Financial_Aid = "Financial Aid"
+    Technical_Support = "Technical Support"
+    Other = "Other"
+
+class AcademicResource(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    icon: Optional[str]
+    description: Optional[str]
+    link: Optional[str]
+
+class Announcement(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    date: date
+    category: Optional[str]
+    description: Optional[str]
+
+class Notice(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    date: date
+    category: Optional[str]
+    description: Optional[str]
+    is_important: bool = False
+
+class ContactDepartment(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: Optional[str]
+    phone: Optional[str]
+
+class ContactInfo(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    address_line1: Optional[str]
+    address_line2: Optional[str]
+    city: Optional[str]
+    postal_code: Optional[str]
+    campus: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+
+class Award(SQLModel, table=True):
+    id: str = Field(primary_key=True)
+    title: Optional[str]
+    description: Optional[str]
+    recipient: Optional[str] = Field(default=None, foreign_key="user.id")
+    year: Optional[int]
+    type: Optional[str]
+    status: Optional[str]
