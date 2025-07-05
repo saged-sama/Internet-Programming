@@ -84,7 +84,7 @@ export default function ExamTimetablesPage() {
   };
 
   return (
-    <Layout>
+    
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
