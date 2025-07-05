@@ -21,33 +21,32 @@ export default function Navbar() {
       label: "For You",
       to: "/foryou",
       dropdown: [
-        { label: "Resources", to: "/resources" },
+       
         { label: "Research", to: "/research" },
         { label: "Awards", to: "/awards" },
-        { label: "Meetings", to: "/meetings" },
-        { label: "Directory", to: "/directory" },
+        { label: "Events", to: "/events" },
+      
         { label: "Contact", to: "/contact" },
       ],
     },
   ];
 
   const bottomNav = [
-    { label: "Home", to: "/" },
+    
     {
-      label: "Scheduling",
-      to: "/degrees",
+      label: "Academics",
+      to: "/academics",
       dropdown: [
-        { label: "Class Schedule", to: "/scheduling/class-schedule" },
-        { label: "Room Availability", to: "/scheduling/room-availability" },
-        { label: "Admin Approval", to: "/scheduling/admin-approval" },
-        { label: "Exam Timetables", to: "/exams/timetables" },
-        { label: "Assignments", to: "/assignments" },
+        { label: "Degrees", to: "/degrees" },
+    { label: "Courses", to: "/courses" },
       ],
     },
+    { label: "People", to: "/directory" },
     { label: "Notice", to: "/notices" },
-    { label: "Degrees", to: "/degrees" },
-    { label: "Courses", to: "/courses" },
-    { label: "Events", to: "/events" },
+    { label: "Resources", to: "/resources" },
+    { label: "Meetings", to: "/meetings" },
+    
+    
   ];
 
   const isActive = (to: string) => location.pathname === to;
