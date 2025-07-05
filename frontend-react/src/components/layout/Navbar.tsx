@@ -41,7 +41,7 @@ export default function Navbar() {
   const isActive = (to: string) => location.pathname === to;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 w-full flex flex-row items-center bg-[#0E183C] rounded-2xl mt-4 shadow-lg min-h-[120px]">
+    <div className="max-w-7xl mx-auto px-6 w-full flex flex-row items-center bg-[#3F4864] rounded-2xl mt-4 shadow-lg min-h-[120px]">
       {/* Logo Column */}
       <div
         className="flex flex-col justify-center items-center h-full z-10 mr-6"
