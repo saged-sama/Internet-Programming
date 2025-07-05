@@ -1,11 +1,11 @@
-
-import HeroSection from './components/HeroSection';
-import BigAchievements from './components/BigAchievements';
-import ProjectsShowcase from './components/ProjectsShowcase';
-import AwardsSection from './components/AwardsSection';
-import AnnouncementsSection from './components/AnnouncementsSection';
-import AcademicResourcesSection from './components/AcademicResourcesSection';
-import EventsSection from './components/EventsSection';
+import HeroSection from "./components/HeroSection";
+import BigAchievements from "./components/BigAchievements";
+import ProjectsShowcase from "./components/ProjectsShowcase";
+import AwardsSection from "./components/AwardsSection";
+import AnnouncementsSection from "./components/AnnouncementsSection";
+import AcademicResourcesSection from "./components/AcademicResourcesSection";
+import EventsSection from "./components/EventsSection";
+import FeatureHighlights from "./components/FeatureHighlights";
 
 /**
  * LandingPage component for the University of Dhaka CSE Department portal.
@@ -14,13 +14,15 @@ import EventsSection from './components/EventsSection';
  */
 export default function LandingPage() {
   return (
-<div>
+    <>
       <HeroSection />
+      <FeatureHighlights />
       <BigAchievements />
       <ProjectsShowcase />
       <AwardsSection />
       <AnnouncementsSection />
       <AcademicResourcesSection />
-      <EventsSection /></div>
+      <EventsSection />
+    </>
   );
 }
