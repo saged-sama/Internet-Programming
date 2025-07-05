@@ -53,7 +53,7 @@ class Award(SQLModel, table=True):
     id: str = Field(primary_key=True)
     title: Optional[str]
     description: Optional[str]
-    recipient: Optional[str]
+    recipient: Optional[str] = Field(default=None, foreign_key="user.id")
     year: Optional[int]
     type: Optional[str]
     status: Optional[str]
