@@ -77,4 +77,4 @@ docker run -p 8000:8000 --env-file .env fastapi-backend
 
 ## Access
 - API: http://localhost:8000
-- Docs: http://localhost:8000/docs
+- Docs: http://localhost:8000/docs (Use this for testing)

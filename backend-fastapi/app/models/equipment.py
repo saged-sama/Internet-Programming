@@ -1,8 +1,6 @@
 from datetime import datetime
-from typing import List, Optional
-from sqlmodel import Field, Relationship, SQLModel
-
-from app.models.user import User
+from typing import Optional
+from sqlmodel import Field, SQLModel
 
 class LabEquipment(SQLModel, table=True):
     id: str = Field(primary_key=True)

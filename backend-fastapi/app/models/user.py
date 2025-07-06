@@ -11,6 +11,11 @@ class UserRoles(str, Enum):
     staff = "staff"
     admin = "admin"
 
+class StudentTypeEnum(str, Enum):
+    Regular = "Regular"
+    Transfer = "Transfer"
+    Exchange = "Exchange"
+
 class User(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
     name: str
@@ -23,6 +28,7 @@ class User(SQLModel, table=True):
     bio: Optional[str]
     address: Optional[str]
     date_of_birth: Optional[date]
+    hashed_password: Optional[str] = Field(default=None, sa_column_kwargs={"server_default": None})
 
 class FacultyProfile(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
@@ -42,6 +48,8 @@ class StudentProfile(SQLModel, table=True):
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
+    current_program: Optional[str] = Field(foreign_key="program.id")
+    student_type: Optional[str]
     cgpa: Optional[float]
     extracurricular_activities: Optional[str]
 

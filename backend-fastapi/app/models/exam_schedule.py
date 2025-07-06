@@ -1,10 +1,8 @@
-from datetime import date, datetime, time
+from datetime import datetime, time
 from enum import Enum
 from typing import Optional
 
-from sqlmodel import Field, Relationship, SQLModel
-
-from app.models.course import Course
+from sqlmodel import Field, SQLModel
 
 class ExamTypeEnum(str, Enum):
     Midterm = "Midterm"

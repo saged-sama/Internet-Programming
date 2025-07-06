@@ -27,7 +27,7 @@ oath2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def get_user(session: SessionDependency, username: str):
     if not username:
         return None
-    user = session.exec(select(User).where(User.username == username)).first()
+    user = session.exec(select(User).where(User.email == username)).first()
     return user
 
 def authenticate_user(session: SessionDependency, username: str, password: str):
@@ -35,7 +35,7 @@ def authenticate_user(session: SessionDependency, username: str, password: str):
     # print(f"Authenticating user: {user}")
     if not user:
         return False
-    if not verify_password(password, user.password):
+    if not verify_password(password, user.hashed_password):
         return False
     return user
 
