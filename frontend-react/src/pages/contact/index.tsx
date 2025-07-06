@@ -1,4 +1,4 @@
-import Layout from '../../components/layout/Layout';
+
 import themeClasses from '../../lib/theme-utils';
 import ContactInfo from '../../components/contact/ContactInfo';
 import DepartmentContacts from '../../components/contact/DepartmentContacts';
@@ -7,7 +7,7 @@ import ContactMap from '../../components/contact/ContactMap';
 
 export default function ContactPage() {
   return (
-    <Layout>
+   
       <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -27,6 +27,6 @@ export default function ContactPage() {
           <ContactMap />
         </div>
       </div>
-    </Layout>
+  
   );
 }

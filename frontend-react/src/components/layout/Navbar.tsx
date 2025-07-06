@@ -1,198 +1,233 @@
-import { Link } from 'react-router-dom';
-import { Button } from '../ui/button';
-import themeClasses from '../../lib/theme-utils';
-import { useState } from 'react';
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "../ui/button";
+import { useState } from "react";
+import { isLoggedIn, getDashboardRoute } from "../../lib/auth";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  const topNav = [
+    {
+      label: "Dashboard",
+      to: isLoggedIn() ? getDashboardRoute() : "/auth/login",
+    },
+    { label: "About", to: "/about" },
+    {
+      label: "For You",
+      to: "/foryou",
+      dropdown: [
+        { label: "Research", to: "/research" },
+        { label: "Awards", to: "/awards" },
+        { label: "Events", to: "/events" },
+
+        { label: "Contact", to: "/contact" },
+      ],
+    },
+  ];
+
+  const bottomNav = [
+    {
+      label: "Academics",
+      to: "/academics",
+      dropdown: [
+        { label: "Degrees", to: "/degrees" },
+        { label: "Courses", to: "/courses" },
+      ],
+    },
+    { label: "People", to: "/directory" },
+    { label: "Notice", to: "/notices" },
+    { label: "Resources", to: "/resources" },
+    { label: "Meetings", to: "/meetings" },
+  ];
+
+  const isActive = (to: string) => location.pathname === to;
+
   return (
-    <div>
-      {/* Top section with logo and buttons */}
-      <div className="bg-white py-2 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <img 
-              src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Dhaka_University_logo.svg/800px-Dhaka_University_logo.svg.png" 
-              alt="University Logo" 
-              className="h-8 w-8 mr-2" 
-            />
-            <Link to="/" className="text-xl font-bold text-gray-900">
-              CSEDU
-            </Link>
+    <div className="max-w-7xl mx-auto px-6 w-full flex flex-row items-center bg-[#3F4864] rounded-2xl mt-4 shadow-lg min-h-[120px]">
+      {/* Logo Column */}
+      <div
+        className="flex flex-col justify-center items-center h-full z-10 mr-6"
+        style={{ minWidth: "110px" }}
+      >
+        <Link to="/">
+          <img
+            src="/logo.svg"
+            alt="Logo"
+            className="h-28 w-auto cursor-pointer"
+          />
+        </Link>
+      </div>
+      {/* Main Navbar Content */}
+      <div className="flex-1 flex flex-col justify-center relative">
+        {/* Top Row */}
+        <div className="w-full flex items-center px-6  min-h-[96px]">
+          {/* Gold Line Behind Logo to Dashboard */}
+          <div className="absolute top-[33px] -left-13 right-[43%] h-1 bg-[#ECB31D] rounded-full z-0 -translate-y-1/2" />
+          {/* Diamond indicator aligned with Dashboard */}
+          <div className="absolute left-[57%] top-[33px] -translate-y-1/2 z-10">
+            <div className="w-4 h-4 bg-[#ECB31D] rotate-45" />
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <Link to="/about" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-              About
-            </Link>
-            <Link to="/events" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-              Events
-            </Link>
-            
-            <div className="flex items-center space-x-1">
-              <span className="text-sm font-medium text-gray-600">FOR YOU</span>
-              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-            
-            <Button variant="outline" size="sm" className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white">
-              <Link to="/auth/login">Login</Link>
+          {/* Top nav links */}
+          <div className="flex flex-1 justify-end items-center space-x-8 z-10 mr-6 mt-4">
+            {topNav.map((item) => {
+              const isDropdownActive =
+                item.dropdown &&
+                item.dropdown.some((drop) => isActive(drop.to));
+
+              if (item.dropdown) {
+                return (
+                  <div key={item.label} className="relative group">
+                    <span
+                      className={`${
+                        isDropdownActive ? "text-[#ECB31D]" : "text-gray-200"
+                      } font-medium cursor-pointer flex items-center text-base hover:text-[#ECB31D] transition-colors`}
+                    >
+                      {item.label}
+                      <svg
+                        className="w-3 h-3 ml-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </span>
+                    <div className="absolute left-0 mt-2 w-52 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                      <div className="py-2">
+                        {item.dropdown.map((drop) => (
+                          <Link
+                            key={drop.label}
+                            to={drop.to}
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-[#ECB31D] hover:text-[#13274D] transition-colors ${
+                              isActive(drop.to) ? "font-bold" : ""
+                            }`}
+                          >
+                            {drop.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className={`text-base font-medium transition-colors ${
+                      isActive(item.to) ? "text-[#ECB31D]" : "text-gray-200"
+                    } hover:text-[#ECB31D]`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
+            })}
+          </div>
+
+          {/* Auth Buttons */}
+          <div className="flex items-center space-x-3 z-10">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-[#ECB31D] bg-transparent text-[#ECB31D] hover:bg-[#ECB31D] hover:text-[#13274D] px-4 py-2 rounded-lg text-sm"
+            >
+              <Link to="/auth/login">Sign In</Link>
             </Button>
-            <Button size="sm" className="bg-yellow-500 hover:bg-yellow-600 text-white">
-              <Link to="/auth/signup">Register</Link>
+            <Button
+              size="sm"
+              className="bg-[#ECB31D] hover:bg-[#F5C940] text-[#13274D] px-4 py-2 rounded-lg font-semibold text-sm"
+            >
+              <Link to="/auth/signup">Sign Up</Link>
             </Button>
+          </div>
+        </div>
+
+        {/* Bottom Row */}
+        <div className="w-full flex items-center py-1 px-16 relative min-h-[40px]">
+          {/* Bottom Gold Line */}
+          <div className="absolute left-[444px] right-[calc(100%-1074px)] -top-[14px] -translate-y-1/2 h-1 bg-[#ECB31D] rounded-full z-0" />
+
+          {/* Circle indicator */}
+          <div className="absolute left-[434px] -top-[15px] -translate-y-1/2 z-10 transition-all duration-300">
+            <div className="w-4 h-4 bg-[#ECB31D] rounded-full" />
+          </div>
+
+          {/* Bottom nav links */}
+          <div className="flex space-x-8 ml-[160px] z-10">
+            {bottomNav.map((item) => {
+              const isDropdownActive =
+                item.dropdown &&
+                item.dropdown.some((drop) => isActive(drop.to));
+              if (item.dropdown) {
+                return (
+                  <div key={item.label} className="relative group">
+                    <span
+                      className={`${
+                        isDropdownActive ? "text-white" : "text-[#ECB31D]"
+                      } font-medium cursor-pointer flex items-center text-sm hover:text-gray-200 transition-colors`}
+                    >
+                      {item.label}
+                      <svg
+                        className="w-3 h-3 ml-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </span>
+                    <div className="absolute left-0 mt-2 w-52 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                      <div className="py-2">
+                        {item.dropdown.map((drop) => (
+                          <Link
+                            key={drop.label}
+                            to={drop.to}
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-[#ECB31D] hover:text-[#13274D] transition-colors ${
+                              isActive(drop.to) ? "font-bold" : ""
+                            }`}
+                          >
+                            {drop.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className={`font-medium transition-colors text-sm ${
+                      isActive(item.to) ? "text-white" : "text-[#ECB31D]"
+                    } hover:text-gray-200`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
+            })}
           </div>
         </div>
       </div>
-      
-      {/* Main navigation bar */}
-      <nav className={`${themeClasses.bgPrimary} shadow-md`}>
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex space-x-8">
-            <Link to="/" className="text-white hover:text-yellow-300 font-medium">
-              Home
-            </Link>
-            <Link to="/notices" className="text-white hover:text-yellow-300 font-medium">
-              Notices
-            </Link>
-            <Link to="/events" className="text-white hover:text-yellow-300 font-medium">
-              Events
-            </Link>
-            <Link to="/degrees" className="text-white hover:text-yellow-300 font-medium">
-              Degrees
-            </Link>
-            <Link to="/courses" className="text-white hover:text-yellow-300 font-medium">
-              Courses
-            </Link>
-            <Link to="/directory" className="text-white hover:text-yellow-300 font-medium">
-              Directory
-            </Link>
-            <Link to="/meetings" className="text-white hover:text-yellow-300 font-medium">
-              Meetings
-            </Link>
-            <Link to="/contact" className="text-white hover:text-yellow-300 font-medium">
-              Contact
-            </Link>
-             <Link to="/resources" className="text-white hover:text-yellow-300 font-medium">
-              Resources
-            </Link>
-            <div className="relative group">
-              <div className="flex items-center text-white hover:text-yellow-300 font-medium cursor-pointer">
-                <span>Scheduling</span>
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-              <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                <div className="py-2">
-                  <Link to="/scheduling/class-schedule" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Class Schedule</Link>
-                  <Link to="/scheduling/room-availability" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Room Availability</Link>
-                  <Link to="/scheduling/admin-approval" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin Approval</Link>
-                  <Link to="/exams/timetables" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Exam Timetables</Link>
-                  <Link to="/assignments" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Assignments</Link>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <input 
-              type="search" 
-              className="block w-64 p-2 pl-10 text-sm text-white border border-gray-600 rounded-full bg-gray-800 focus:ring-blue-500 focus:border-blue-500" 
-              placeholder="Search..."
-            />
-          </div>
-        </div>
-      </nav>
-      
-      {/* Mobile menu toggle button for smaller screens */}
-      <div className="md:hidden fixed top-4 right-4 z-50">
-        <Button variant="ghost" size="sm" className="text-white bg-gray-800 rounded-full" onClick={toggleMobileMenu}>
-          <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </Button>
-      </div>
-      
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-white">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <div className="flex justify-between items-center border-b pb-3 mb-3">
-              <div className="flex items-center">
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Dhaka_University_logo.svg/800px-Dhaka_University_logo.svg.png" 
-                  alt="University Logo" 
-                  className="h-8 w-8 mr-2" 
-                />
-                <span className="text-xl font-bold">CSEDU</span>
-              </div>
-              <Button variant="ghost" size="sm" onClick={toggleMobileMenu}>
-                <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </Button>
-            </div>
-            <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Home
-            </Link>
-            <Link to="/notices" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Notices
-            </Link>
-            <Link to="/events" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Events
-            </Link>
-            <Link to="/degrees" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Degrees
-            </Link>
-            <Link to="/courses" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Courses
-            </Link>
-            <Link to="/directory" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Directory
-            </Link>
-            <Link to="/meetings" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Meetings
-            </Link>
-            <Link to="/contact" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">
-              Contact
-            </Link>
-            <div className="px-3 py-2">
-              <div className="text-base font-medium text-gray-700">Scheduling</div>
-              <div className="pl-4 mt-1 space-y-1">
-                <Link to="/scheduling/class-schedule" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                  Class Schedule
-                </Link>
-                <Link to="/scheduling/room-availability" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                  Room Availability
-                </Link>
-                <Link to="/scheduling/admin-approval" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                  Admin Approval
-                </Link>
-                <Link to="/exams/timetables" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                  Exam Timetables
-                </Link>
-                <Link to="/assignments" className="block py-1 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                  Assignments
-                </Link>
-              </div>
-            </div>
-            <Link to="/auth/login" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Login</Link>
-            <Link to="/auth/student-login" className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50">Student Portal</Link>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

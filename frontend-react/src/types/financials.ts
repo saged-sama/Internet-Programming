@@ -1,11 +1,19 @@
 export interface FeeStructure {
   id: string;
   title: string;
+  description?: string;
   amount: number;
   deadline: string;
   status: 'pending' | 'paid' | 'overdue';
   transactionId?: string;
   paymentDate?: string;
+  category?: 'development' | 'admission' | 'tuition' | 'other';
+  semester?: string;
+  academicYear?: string;
+  installmentOptions?: {
+    count: number;
+    amount: number;
+  };
 }
 
 export interface LabEquipment {
