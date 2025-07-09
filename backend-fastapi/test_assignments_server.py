@@ -5,7 +5,17 @@ from datetime import datetime
 from fastapi import HTTPException
 from typing import Optional
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(title="Test Assignments API", version="1.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # In-memory storage for assignments
 test_assignments = []
@@ -13,6 +23,7 @@ test_assignments = []
 class AssignmentCreateRequest(BaseModel):
     title: str
     course_code: str
+    course_title: str
     batch: str
     semester: str
     deadline: datetime
@@ -26,6 +37,7 @@ class AssignmentResponse(BaseModel):
 class AssignmentUpdateRequest(BaseModel):
     title: Optional[str] = None
     course_code: Optional[str] = None
+    course_title: Optional[str] = None
     batch: Optional[str] = None
     semester: Optional[str] = None
     deadline: Optional[datetime] = None

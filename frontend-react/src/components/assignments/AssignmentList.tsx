@@ -30,6 +30,7 @@ export default function AssignmentList({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {assignments.map((assignment) => {
         const isDeadlinePassed = isPast(new Date(assignment.deadline));
+        const status = isDeadlinePassed ? "Closed" : "Open";
 
         return (
           <div
@@ -41,12 +42,12 @@ export default function AssignmentList({
                 <h4 className="font-medium">{assignment.title}</h4>
                 <div
                   className={`text-xs px-2 py-1 rounded-full ${
-                    assignment.status === "Open"
+                    status === "Open"
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
                   }`}
                 >
-                  {assignment.status}
+                  {status}
                 </div>
               </div>
 

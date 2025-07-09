@@ -14,6 +14,7 @@ router = APIRouter(prefix="/staff-api/assignments", tags=["assignments"])
 class AssignmentCreateRequest(BaseModel):
     title: str
     course_code: str
+    course_title: str
     batch: str
     semester: str
     deadline: datetime
@@ -23,6 +24,7 @@ class AssignmentCreateRequest(BaseModel):
 class AssignmentUpdateRequest(BaseModel):
     title: Optional[str] = None
     course_code: Optional[str] = None
+    course_title: Optional[str] = None
     batch: Optional[str] = None
     semester: Optional[str] = None
     deadline: Optional[datetime] = None
@@ -35,7 +37,7 @@ async def create_assignment(
     current_user: User = Depends(get_current_user)
 ):
     # Optionally, check if current_user is faculty or admin
-    if current_user.role not in ("faculty", "admin"):
+    if current_user.role not in ("faculty"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only faculty or admin can create assignments"
@@ -44,6 +46,7 @@ async def create_assignment(
     assignment = Assignment(
         title=assignment_data.title,
         course_code=assignment_data.course_code,
+        course_title=assignment_data.course_title,
         batch=assignment_data.batch,
         semester=assignment_data.semester,
         deadline=assignment_data.deadline,

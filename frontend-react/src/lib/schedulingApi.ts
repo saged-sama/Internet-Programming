@@ -6,6 +6,7 @@ import type {
 } from '@/types/scheduling';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/scheduling';
+const API_BASE = "http://localhost:8000";
 
 // Helper function to get auth token
 const getAuthToken = () => {
@@ -210,6 +211,40 @@ export const classScheduleApi = {
     },
   },
 };
+
+export async function fetchAssignments() {
+  const res = await fetch(`${API_BASE}/staff-api/assignments`);
+  if (!res.ok) throw new Error("Failed to fetch assignments");
+  return res.json();
+}
+
+export async function createAssignment(data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/assignments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to create assignment");
+  return res.json();
+}
+
+export async function updateAssignment(id: number, data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/assignments/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update assignment");
+  return res.json();
+}
+
+export async function deleteAssignment(id: number) {
+  const res = await fetch(`${API_BASE}/staff-api/assignments/${id}`, {
+    method: "DELETE"
+  });
+  if (!res.ok) throw new Error("Failed to delete assignment");
+  return res.json();
+}
 
 // Export all APIs
 export const schedulingApi = {

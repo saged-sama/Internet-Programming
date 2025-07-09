@@ -7,6 +7,7 @@ from sqlmodel import Field, SQLModel
 class Assignment(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
     course_code: Optional[str] = Field(foreign_key="course.course_code")
+    course_title: Optional[str] = None
     batch: Optional[str]
     semester: Optional[str] = Field(foreign_key="program.id")
     title: str
