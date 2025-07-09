@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.utils.db import create_db_and_tables
 from .routes import auth, scheduling
+from .routes import assignments
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,3 +23,4 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(scheduling.router)
+app.include_router(assignments.router)
