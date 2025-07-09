@@ -27,6 +27,8 @@ export default function ClassScheduleAdmin() {
   const [filterBatch, setFilterBatch] = useState('');
   const [filterSemester, setFilterSemester] = useState('');
   const [filterRoom, setFilterRoom] = useState('');
+  const [roomOptions, setRoomOptions] = useState<string[]>([]);
+  const [loadingRooms, setLoadingRooms] = useState(false);
 
   const [formData, setFormData] = useState<ScheduleFormData>({
     course_code: '',
@@ -42,10 +44,10 @@ export default function ClassScheduleAdmin() {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const batchOptions = ['27', '28', '29', '30', '31'];
   const semesterOptions = ['1', '2', '3', '4', '5', '6', '7', '8'];
-  const roomOptions = ['A101', 'A102', 'A103', 'B201', 'B202', 'B203', 'C301', 'C302', 'Lab1', 'Lab2'];
 
   useEffect(() => {
     loadSchedules();
+    loadRooms();
   }, []);
 
   useEffect(() => {
@@ -74,6 +76,21 @@ export default function ClassScheduleAdmin() {
       console.error('Error loading schedules:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadRooms = async () => {
+    try {
+      setLoadingRooms(true);
+      const roomData = await schedulingApi.roomAvailability.getAll();
+      const availableRooms = roomData.map(room => room.room).sort();
+      setRoomOptions(availableRooms);
+    } catch (err) {
+      console.error('Error loading rooms:', err);
+      // Fallback to default rooms if API fails
+      setRoomOptions(['A101', 'A102', 'A103', 'B201', 'B202', 'B203', 'C301', 'C302', 'Lab1', 'Lab2']);
+    } finally {
+      setLoadingRooms(false);
     }
   };
 
@@ -284,8 +301,11 @@ export default function ClassScheduleAdmin() {
                 className="w-full p-2 border rounded-md bg-background"
                 value={filterRoom}
                 onChange={(e) => setFilterRoom(e.target.value)}
+                disabled={loadingRooms}
               >
-                <option value="">All Rooms</option>
+                <option value="">
+                  {loadingRooms ? 'Loading rooms...' : 'All Rooms'}
+                </option>
                 {roomOptions.map((room) => (
                   <option key={room} value={room}>{room}</option>
                 ))}
@@ -494,8 +514,11 @@ export default function ClassScheduleAdmin() {
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md bg-background"
                     required
+                    disabled={loadingRooms}
                   >
-                    <option value="">Select Room</option>
+                    <option value="">
+                      {loadingRooms ? 'Loading rooms...' : 'Select Room'}
+                    </option>
                     {roomOptions.map((room) => (
                       <option key={room} value={room}>{room}</option>
                     ))}
