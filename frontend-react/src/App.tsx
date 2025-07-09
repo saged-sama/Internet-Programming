@@ -22,6 +22,7 @@ import { ResourcesPage } from "./pages/resources/ResourcesPage";
 import { ResearchPage } from "./pages/research/ResearchPage";
 import { AwardsPage } from "./pages/awards/AwardsPage";
 import ExamTimetablesPage from "./pages/exams/ExamTimetables";
+import ExamManagementPage from "./pages/exams/ExamManagement";
 import AssignmentsPage from "./pages/assignments/Assignments";
 import StudentLoginPage from "./pages/auth/StudentLogin";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
@@ -94,6 +95,14 @@ function App() {
         />
         {/* Exam and Assignment Routes */}
         <Route path="/exams/timetables" element={<ExamTimetablesPage />} />
+        <Route 
+          path="/exams/management" 
+          element={
+            <ProtectedRoute>
+              <ExamManagementPage />
+            </ProtectedRoute>
+          } 
+        />
         <Route path="/assignments" element={<AssignmentsPage />} />
         <Route path="/auth/student-login" element={<StudentLoginPage />} />
         <Route
