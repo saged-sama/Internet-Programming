@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import AdminBookingApproval from '@/components/scheduling/AdminBookingApproval';
 import type { RoomBooking } from '@/types/scheduling';
-import roomBookingsData from '@/assets/roomBookings.json';
+import { schedulingApi } from '@/lib/schedulingApi';
 
 export default function AdminApprovalPage() {
   const [bookings, setBookings] = useState<RoomBooking[]>([]);
@@ -9,32 +9,81 @@ export default function AdminApprovalPage() {
     type: 'approve' | 'reject';
     id: number;
   } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadBookings = async () => {
+    try {
+      setLoading(true);
+      const bookingData = await schedulingApi.roomBooking.getAll();
+      setBookings(bookingData);
+    } catch (err) {
+      setError('Failed to load booking data');
+      console.error('Error loading bookings:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Load room bookings data
-    const loadedBookings = roomBookingsData as RoomBooking[];
-    setBookings(loadedBookings);
+    loadBookings();
   }, []);
 
-  const handleApprove = (id: number) => {
-    // In a real application, this would send the approval to a backend API
-    setBookings((prevBookings) =>
-      prevBookings.map((booking) =>
-        booking.id === id ? { ...booking, status: 'Approved' } : booking
-      )
-    );
-    setActionTaken({ type: 'approve', id });
+  const handleApprove = async (id: number) => {
+    try {
+      await schedulingApi.roomBooking.approve(id);
+      setActionTaken({ type: 'approve', id });
+      // Reload bookings to get updated data
+      loadBookings();
+    } catch (err) {
+      console.error('Error approving booking:', err);
+      alert('Failed to approve booking. Please try again.');
+    }
   };
 
-  const handleReject = (id: number, reason: string) => {
-    // In a real application, this would send the rejection to a backend API
-    setBookings((prevBookings) =>
-      prevBookings.map((booking) =>
-        booking.id === id ? { ...booking, status: 'Rejected', rejectionReason: reason } : booking
-      )
-    );
-    setActionTaken({ type: 'reject', id });
+  const handleReject = async (id: number, reason: string) => {
+    try {
+      await schedulingApi.roomBooking.reject(id, reason);
+      setActionTaken({ type: 'reject', id });
+      // Reload bookings to get updated data
+      loadBookings();
+    } catch (err) {
+      console.error('Error rejecting booking:', err);
+      alert('Failed to reject booking. Please try again.');
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading booking requests...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-card p-8 rounded-lg shadow-sm border text-center">
+          <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <p className="text-destructive text-lg mb-2">{error}</p>
+          <button 
+            onClick={loadBookings} 
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
       <div className="container mx-auto px-4 py-8">

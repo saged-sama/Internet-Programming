@@ -51,7 +51,7 @@ export interface RoomBooking {
 }
 
 export interface BookingFormData {
-  name: string;
+  requestedBy: string;
   email: string;
   purpose: string;
   date: string;

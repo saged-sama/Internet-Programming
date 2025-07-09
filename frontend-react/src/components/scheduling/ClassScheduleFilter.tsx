@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 interface ClassScheduleFilterProps {
   rooms: string[];
-  onFilterChange: (filters: { batch: string; semester: string; room: string }) => void;
+  onFilterChange: (filters: { batch: string; semester: string; room: string }) => void | Promise<void>;
 }
 
 export default function ClassScheduleFilter({

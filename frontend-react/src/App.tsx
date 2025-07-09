@@ -14,7 +14,9 @@ import RegistrationSuccessPage from "./pages/auth/registration-success";
 import DegreesPage from "./pages/degrees";
 import CoursesPage from "./pages/courses";
 import ClassSchedulePage from "./pages/scheduling/ClassSchedule";
+import ClassScheduleAdmin from "./pages/scheduling/ClassScheduleAdmin";
 import RoomAvailabilityPage from "./pages/scheduling/RoomAvailability";
+import RoomAvailabilityAdmin from "./pages/scheduling/RoomAvailabilityAdmin";
 import AdminApprovalPage from "./pages/scheduling/AdminApproval";
 import { ResourcesPage } from "./pages/resources/ResourcesPage";
 import { ResearchPage } from "./pages/research/ResearchPage";
@@ -65,6 +67,22 @@ function App() {
         <Route
           path="/scheduling/class-schedule"
           element={<ClassSchedulePage />}
+        />
+        <Route
+          path="/scheduling/admin/class-schedule"
+          element={
+            <ProtectedRoute>
+              <ClassScheduleAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scheduling/admin/room-availability"
+          element={
+            <ProtectedRoute>
+              <RoomAvailabilityAdmin />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/scheduling/room-availability"

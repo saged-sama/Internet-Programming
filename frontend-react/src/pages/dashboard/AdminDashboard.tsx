@@ -115,6 +115,24 @@ const quickActions = [
     color: "bg-blue-500",
   },
   {
+    title: "Manage Schedules",
+    icon: "🗓️",
+    route: "/scheduling/admin/class-schedule",
+    color: "bg-indigo-500",
+  },
+  {
+    title: "Manage Rooms",
+    icon: "🏢",
+    route: "/scheduling/admin/room-availability",
+    color: "bg-cyan-500",
+  },
+  {
+    title: "Booking Approvals",
+    icon: "✅",
+    route: "/scheduling/admin-approval",
+    color: "bg-yellow-500",
+  },
+  {
     title: "Publish Notice",
     icon: "📢",
     route: "/notices",
@@ -137,12 +155,6 @@ const quickActions = [
     icon: "📊",
     route: "/admin/reports",
     color: "bg-red-500",
-  },
-  {
-    title: "System Settings",
-    icon: "⚙️",
-    route: "/admin/settings",
-    color: "bg-gray-500",
   },
 ];
 
