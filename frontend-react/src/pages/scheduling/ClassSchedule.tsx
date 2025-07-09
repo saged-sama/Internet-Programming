@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ClassScheduleFilter from '@/components/scheduling/ClassScheduleFilter';
 import ClassScheduleTable from '@/components/scheduling/ClassScheduleTable';
 import type { ClassSchedule } from '@/types/scheduling';
 import { schedulingApi } from '@/lib/schedulingApi';
+import { getCurrentUser } from '@/lib/auth';
 
 export default function ClassSchedulePage() {
   const [schedules, setSchedules] = useState<ClassSchedule[]>([]);
@@ -16,20 +17,49 @@ export default function ClassSchedulePage() {
     room: ''
   });
 
+  // Get current user info
+  const currentUser = getCurrentUser();
+  
+  // Get student's current semester (hardcoded for now)
+  const getStudentCurrentSemester = () => {
+    // TODO: In future, get this from user profile or API
+    // For now, hardcode based on user role or return a default
+    if (currentUser?.role === 'student') {
+      // Hardcoded current semester for students
+      return '5'; // Assuming 5th semester
+    }
+    return ''; // Show all for non-students
+  };
+
+  const studentCurrentSemester = getStudentCurrentSemester();
+
   const loadScheduleData = async () => {
     try {
       setLoading(true);
       setError(null);
       
+      // For students, automatically filter by their current semester
+      const initialFilters = currentUser?.role === 'student' && studentCurrentSemester 
+        ? { semester: studentCurrentSemester } 
+        : {};
+      
       // Load schedules and rooms in parallel
       const [schedulesData, roomsData] = await Promise.all([
-        schedulingApi.classSchedule.getAll(),
+        schedulingApi.classSchedule.getAll(initialFilters),
         schedulingApi.classSchedule.getRooms()
       ]);
       
       setSchedules(schedulesData);
       setFilteredSchedules(schedulesData);
       setRooms(roomsData);
+      
+      // Set initial filters for students
+      if (currentUser?.role === 'student' && studentCurrentSemester) {
+        setCurrentFilters(prev => ({ 
+          ...prev, 
+          semester: studentCurrentSemester 
+        }));
+      }
     } catch (err) {
       setError('Failed to load class schedule data');
       console.error('Error loading schedule data:', err);
@@ -42,7 +72,7 @@ export default function ClassSchedulePage() {
     loadScheduleData();
   }, []);
 
-  const handleFilterChange = async (filters: { batch: string; semester: string; room: string }) => {
+  const handleFilterChange = useCallback(async (filters: { batch: string; semester: string; room: string }) => {
     setCurrentFilters(filters);
     
     try {
@@ -68,7 +98,7 @@ export default function ClassSchedulePage() {
 
       setFilteredSchedules(filtered);
     }
-  };
+  }, [schedules]);
 
   // Calculate summary statistics
   const getScheduleStats = () => {
@@ -93,10 +123,22 @@ export default function ClassSchedulePage() {
   const getFilterDescription = () => {
     const parts = [];
     if (currentFilters.batch) parts.push(`Batch ${currentFilters.batch}`);
-    if (currentFilters.semester) parts.push(`Semester ${currentFilters.semester}`);
+    if (currentFilters.semester) {
+      if (currentUser?.role === 'student' && currentFilters.semester === studentCurrentSemester) {
+        parts.push(`Current Semester (${currentFilters.semester})`);
+      } else {
+        parts.push(`Semester ${currentFilters.semester}`);
+      }
+    }
     if (currentFilters.room) parts.push(`Room ${currentFilters.room}`);
     
-    return parts.length > 0 ? parts.join(', ') : 'All schedules';
+    if (parts.length === 0) {
+      return currentUser?.role === 'student' && studentCurrentSemester 
+        ? `Current Semester (${studentCurrentSemester})` 
+        : 'All schedules';
+    }
+    
+    return parts.join(', ');
   };
 
   if (loading) {
@@ -140,10 +182,20 @@ export default function ClassSchedulePage() {
             <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center shadow-sm">
               <span className="text-2xl">📅</span>
             </div>
-            <div>
-              <h1 className="text-primary mb-1">Class Schedule</h1>
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-primary mb-1">Class Schedule</h1>
+                {currentUser?.role === 'student' && studentCurrentSemester && (
+                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
+                    Semester {studentCurrentSemester}
+                  </span>
+                )}
+              </div>
               <p className="text-muted-foreground">
-                View and manage weekly class schedules with interactive timetable and filters
+                {currentUser?.role === 'student' && studentCurrentSemester 
+                  ? `Your current semester class schedule and timetable`
+                  : `View and manage weekly class schedules with interactive timetable and filters`
+                }
               </p>
             </div>
           </div>
@@ -214,15 +266,31 @@ export default function ClassSchedulePage() {
               <span className="bg-secondary/10 text-primary px-3 py-1 rounded-full border border-secondary/20">
                 {getFilterDescription()}
               </span>
-              {(currentFilters.batch || currentFilters.semester || currentFilters.room) && (
+              {((currentFilters.batch || currentFilters.room) || 
+                (currentFilters.semester && (currentUser?.role !== 'student' || currentFilters.semester !== studentCurrentSemester))) && (
                 <button
                   onClick={() => {
-                    setCurrentFilters({ batch: '', semester: '', room: '' });
-                    setFilteredSchedules(schedules);
+                    // For students, preserve their current semester filter
+                    const preservedSemester = currentUser?.role === 'student' && studentCurrentSemester 
+                      ? studentCurrentSemester 
+                      : '';
+                    
+                    setCurrentFilters({ 
+                      batch: '', 
+                      semester: preservedSemester, 
+                      room: '' 
+                    });
+                    
+                    // Reload data with preserved filters
+                    if (preservedSemester) {
+                      handleFilterChange({ batch: '', semester: preservedSemester, room: '' });
+                    } else {
+                      setFilteredSchedules(schedules);
+                    }
                   }}
                   className="text-muted-foreground hover:text-primary underline transition-colors"
                 >
-                  Clear filters
+                  Clear additional filters
                 </button>
               )}
             </div>
@@ -231,9 +299,24 @@ export default function ClassSchedulePage() {
 
         {/* Filter Section */}
         <div className="mb-6">
+          {currentUser?.role === 'student' && studentCurrentSemester && (
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-primary">ℹ️</span>
+                <span className="text-primary font-medium">
+                  Showing your current semester ({studentCurrentSemester}) classes only.
+                </span>
+                <span className="text-muted-foreground">
+                  Use the filters below to narrow down by batch or room.
+                </span>
+              </div>
+            </div>
+          )}
           <ClassScheduleFilter
             rooms={rooms}
             onFilterChange={handleFilterChange}
+            currentSemester={studentCurrentSemester}
+            isStudent={currentUser?.role === 'student'}
           />
         </div>
 

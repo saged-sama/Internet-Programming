@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { ClassSchedule } from '@/types/scheduling';
 import { schedulingApi } from '@/lib/schedulingApi';
 
@@ -45,27 +45,6 @@ export default function ClassScheduleAdmin() {
   const batchOptions = ['27', '28', '29', '30', '31'];
   const semesterOptions = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
-  useEffect(() => {
-    loadSchedules();
-    loadRooms();
-  }, []);
-
-  useEffect(() => {
-    filterSchedules();
-  }, [schedules, searchTerm, filterBatch, filterSemester, filterRoom]);
-
-  // Handle escape key to close modal
-  useEffect(() => {
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showCreateForm) {
-        handleCancel();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => document.removeEventListener('keydown', handleEscapeKey);
-  }, [showCreateForm]);
-
   const loadSchedules = async () => {
     try {
       setLoading(true);
@@ -94,7 +73,26 @@ export default function ClassScheduleAdmin() {
     }
   };
 
-  const filterSchedules = () => {
+  const resetForm = useCallback(() => {
+    setFormData({
+      course_code: '',
+      batch: '',
+      semester: '',
+      room: '',
+      day: '',
+      start_time: '',
+      end_time: '',
+      instructor: '',
+    });
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    setShowCreateForm(false);
+    resetForm();
+    setEditingSchedule(null);
+  }, [resetForm]);
+
+  const filterSchedules = useCallback(() => {
     let filtered = schedules;
 
     if (searchTerm) {
@@ -118,20 +116,7 @@ export default function ClassScheduleAdmin() {
     }
 
     setFilteredSchedules(filtered);
-  };
-
-  const resetForm = () => {
-    setFormData({
-      course_code: '',
-      batch: '',
-      semester: '',
-      room: '',
-      day: '',
-      start_time: '',
-      end_time: '',
-      instructor: '',
-    });
-  };
+  }, [schedules, searchTerm, filterBatch, filterSemester, filterRoom]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -193,11 +178,26 @@ export default function ClassScheduleAdmin() {
     }
   };
 
-  const handleCancel = () => {
-    setShowCreateForm(false);
-    resetForm();
-    setEditingSchedule(null);
-  };
+  useEffect(() => {
+    loadSchedules();
+    loadRooms();
+  }, []);
+
+  useEffect(() => {
+    filterSchedules();
+  }, [filterSchedules]);
+
+  // Handle escape key to close modal
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showCreateForm) {
+        handleCancel();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [showCreateForm, handleCancel]);
 
   if (loading) {
     return (

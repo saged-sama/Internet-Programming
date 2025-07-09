@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Layout from '@/components/layout/Layout';
 import ExamTimetableFilter from '@/components/exams/ExamTimetableFilter';
 import ExamTimetableTable from '@/components/exams/ExamTimetableTable';
@@ -27,7 +27,7 @@ export default function ExamTimetablesPage() {
     setRooms(uniqueRooms);
   }, []);
 
-  const handleFilterChange = (filters: { batch: string; semester: string; course: string; room: string }) => {
+  const handleFilterChange = useCallback((filters: { batch: string; semester: string; course: string; room: string }) => {
     setCurrentFilters(filters);
     let filtered = [...exams];
 
@@ -48,7 +48,7 @@ export default function ExamTimetablesPage() {
     }
 
     setFilteredExams(filtered);
-  };
+  }, [exams]);
 
   // Calculate summary statistics
   const getExamStats = () => {

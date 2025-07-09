@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { BookingFormData, RoomAvailability } from '@/types/scheduling';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
@@ -22,6 +22,25 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
   });
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedSlot, setSelectedSlot] = useState<string>('');
+
+  // Reset form when room changes
+  useEffect(() => {
+    if (room) {
+      setFormData({
+        room: room.room,
+        requestedBy: '',
+        email: '',
+        purpose: '',
+        date: '',
+        startTime: '',
+        endTime: '',
+        attendees: 0,
+      });
+      setSelectedDate(undefined);
+      setSelectedSlot('');
+    }
+  }, [room]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -32,12 +51,44 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
   };
 
   const handleDateChange = (date: Date | undefined) => {
-    setSelectedDate(date);
-    if (date) {
-      const formattedDate = date.toISOString().split('T')[0];
+    try {
+      setSelectedDate(date);
+      if (date) {
+        const formattedDate = date.toISOString().split('T')[0];
+        setFormData((prev) => ({
+          ...prev,
+          date: formattedDate,
+        }));
+      } else {
+        // Clear the date when no date is selected
+        setFormData((prev) => ({
+          ...prev,
+          date: '',
+        }));
+      }
+    } catch (error) {
+      console.error('Error handling date change:', error);
+    }
+  };
+
+  const handleSlotChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const slotValue = e.target.value;
+    setSelectedSlot(slotValue);
+    
+    if (slotValue) {
+      // Parse the slot value to extract start and end time
+      // Format: "day-startTime-endTime" (e.g., "Monday-09:00-10:00")
+      const [day, startTime, endTime] = slotValue.split('-');
       setFormData((prev) => ({
         ...prev,
-        date: formattedDate,
+        startTime,
+        endTime,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        startTime: '',
+        endTime: '',
       }));
     }
   };
@@ -47,7 +98,26 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
     onSubmit(formData);
   };
 
+  // Generate slot options from room availability data
+  const generateSlotOptions = () => {
+    if (!room?.availableSlots) return [];
+    
+    const options: { value: string; label: string }[] = [];
+    
+    room.availableSlots.forEach((daySlot) => {
+      daySlot.slots.forEach((slot) => {
+        const value = `${daySlot.day}-${slot.startTime}-${slot.endTime}`;
+        const label = `${daySlot.day} (${slot.startTime} - ${slot.endTime})`;
+        options.push({ value, label });
+      });
+    });
+    
+    return options;
+  };
+
   if (!room) return null;
+
+  const slotOptions = generateSlotOptions();
 
   return (
     <div className="bg-card rounded-lg shadow-sm p-6">
@@ -97,14 +167,44 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block mb-2 text-muted-foreground">Date</label>
-            <div className="border border-input rounded-md p-2">
+            <div className="border border-input rounded-md p-2 bg-background">
               <Calendar
                 mode="single"
                 selected={selectedDate}
                 onSelect={handleDateChange}
-                disabled={(date) => date < new Date()}
-                className="rounded-md"
+                disabled={(date) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  return date < today;
+                }}
+                className="rounded-md w-full"
+                defaultMonth={new Date()}
+                fixedWeeks
               />
+            </div>
+            <div className="mt-2 p-2 bg-muted/30 rounded-md border">
+              <p className="text-sm text-muted-foreground">Selected date:</p>
+              <p className="text-sm font-medium text-primary">
+                {selectedDate 
+                  ? selectedDate.toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })
+                  : 'No date selected'
+                }
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Form date: {formData.date || 'Not set'}
+              </p>
+              <button
+                type="button"
+                onClick={() => handleDateChange(new Date())}
+                className="mt-1 text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded"
+              >
+                Test: Select Today
+              </button>
             </div>
           </div>
           <div className="space-y-4">
@@ -127,31 +227,37 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
               </p>
             </div>
             <div>
-              <label htmlFor="startTime" className="block mb-2 text-muted-foreground">
-                Start Time
+              <label htmlFor="timeSlot" className="block mb-2 text-muted-foreground">
+                Available Time Slots
               </label>
-              <Input
-                id="startTime"
-                name="startTime"
-                type="time"
-                value={formData.startTime}
-                onChange={handleInputChange}
+              <select
+                id="timeSlot"
+                value={selectedSlot}
+                onChange={handleSlotChange}
+                className="w-full p-2 border border-input rounded-md bg-background"
                 required
-              />
+              >
+                <option value="">Select a time slot</option>
+                {slotOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {slotOptions.length === 0 && (
+                <p className="text-muted-foreground text-xs mt-1">
+                  No available slots for this room
+                </p>
+              )}
             </div>
-            <div>
-              <label htmlFor="endTime" className="block mb-2 text-muted-foreground">
-                End Time
-              </label>
-              <Input
-                id="endTime"
-                name="endTime"
-                type="time"
-                value={formData.endTime}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            {selectedSlot && (
+              <div className="p-3 bg-muted/30 rounded-md border">
+                <p className="text-sm text-muted-foreground mb-1">Selected slot:</p>
+                <p className="text-sm font-medium text-primary">
+                  {formData.startTime} - {formData.endTime}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
