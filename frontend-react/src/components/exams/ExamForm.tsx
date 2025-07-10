@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ExamTimetable } from "@/types/scheduling";
+import { createExam } from "@/lib/schedulingApi";
 
 interface ExamFormData {
   courseCode: string;
@@ -44,6 +45,7 @@ export default function ExamForm({ exam, onSubmit, onCancel }: ExamFormProps) {
   });
 
   const [errors, setErrors] = useState<Partial<ExamFormData>>({});
+  const [submitError, setSubmitError] = useState<string>("");
 
   useEffect(() => {
     if (exam) {
@@ -106,9 +108,10 @@ export default function ExamForm({ exam, onSubmit, onCancel }: ExamFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
+      setSubmitError("");
       onSubmit(formData);
     }
   };
@@ -351,6 +354,9 @@ export default function ExamForm({ exam, onSubmit, onCancel }: ExamFormProps) {
             {exam ? "Update Exam" : "Create Exam"}
           </Button>
         </div>
+        {submitError && (
+          <p className="text-red-500 text-sm mt-1">{submitError}</p>
+        )}
       </form>
     </div>
   );

@@ -20,6 +20,18 @@ app.add_middleware(
 # In-memory storage for assignments
 test_assignments = []
 
+# In-memory storage for exams
+test_exams = []
+
+from enum import Enum
+
+class ExamTypeEnum(str, Enum):
+    Midterm = "Midterm"
+    Final = "Final"
+    Quiz = "Quiz"
+    Oral = "Oral"
+    Practical = "Practical"
+
 class AssignmentCreateRequest(BaseModel):
     title: str
     course_code: str
@@ -42,6 +54,34 @@ class AssignmentUpdateRequest(BaseModel):
     semester: Optional[str] = None
     deadline: Optional[datetime] = None
     description: Optional[str] = None
+
+class ExamCreateRequest(BaseModel):
+    course_code: str
+    course_title: str
+    batch: str
+    semester: str
+    exam_type: ExamTypeEnum
+    date: str  # yyyy-mm-dd
+    start_time: str  # HH:MM
+    end_time: str    # HH:MM
+    room: str
+    invigilator: str
+
+class ExamResponse(BaseModel):
+    message: str
+    exam_id: int
+
+class ExamUpdateRequest(BaseModel):
+    course_code: Optional[str] = None
+    course_title: Optional[str] = None
+    batch: Optional[str] = None
+    semester: Optional[str] = None
+    exam_type: Optional[ExamTypeEnum] = None
+    date: Optional[str] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    room: Optional[str] = None
+    invigilator: Optional[str] = None
 
 @app.post("/staff-api/assignments", response_model=AssignmentResponse)
 def create_assignment(assignment: AssignmentCreateRequest):
@@ -68,4 +108,31 @@ def delete_assignment(assignment_id: int):
         if assignment["id"] == assignment_id:
             test_assignments.pop(i)
             return {"message": "Assignment deleted successfully", "assignment_id": assignment_id}
-    raise HTTPException(status_code=404, detail="Assignment not found") 
+    raise HTTPException(status_code=404, detail="Assignment not found")
+
+@app.post("/staff-api/exams", response_model=ExamResponse)
+def create_exam(exam: ExamCreateRequest):
+    exam_id = len(test_exams) + 1
+    test_exams.append({"id": exam_id, **exam.dict()})
+    return {"message": "Exam created successfully", "exam_id": exam_id}
+
+@app.get("/staff-api/exams", response_model=List[dict])
+def list_exams():
+    return test_exams 
+
+@app.put("/staff-api/exams/{exam_id}", response_model=ExamResponse)
+def update_exam(exam_id: int, exam_data: ExamUpdateRequest):
+    for exam in test_exams:
+        if exam["id"] == exam_id:
+            for field, value in exam_data.dict(exclude_unset=True).items():
+                exam[field] = value
+            return {"message": "Exam updated successfully", "exam_id": exam_id}
+    raise HTTPException(status_code=404, detail="Exam not found")
+
+@app.delete("/staff-api/exams/{exam_id}", response_model=ExamResponse)
+def delete_exam(exam_id: int):
+    for i, exam in enumerate(test_exams):
+        if exam["id"] == exam_id:
+            test_exams.pop(i)
+            return {"message": "Exam deleted successfully", "exam_id": exam_id}
+    raise HTTPException(status_code=404, detail="Exam not found") 

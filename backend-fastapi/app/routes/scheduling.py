@@ -2,7 +2,7 @@ from datetime import date, time, datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select, and_, or_
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from app.utils.db import get_session
 from app.utils.auth import get_current_user
@@ -10,6 +10,7 @@ from app.models.room import Room, RoomAvailabilitySlot, RoomBooking
 from app.models.class_schedule import ClassSchedule
 from app.models.course import Course
 from app.models.user import User
+from app.models.exam_schedule import ExamTimeTable, ExamTypeEnum
 
 router = APIRouter(prefix="/api/scheduling", tags=["scheduling"])
 
@@ -482,3 +483,175 @@ async def create_sample_rooms(session: Session = Depends(get_session)):
     
     session.commit()
     return {"message": "Sample room data created successfully"} 
+
+class ExamCreateRequest(BaseModel):
+    course_code: str
+    course_title: str
+    batch: str
+    semester: str
+    exam_type: ExamTypeEnum
+    date: str  # yyyy-mm-dd
+    start_time: str  # HH:MM
+    end_time: str    # HH:MM
+    room: str
+    invigilator: str
+
+    @validator('date')
+    def validate_date(cls, v):
+        from datetime import datetime
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format")
+        return v
+
+    @validator('start_time', 'end_time')
+    def validate_time(cls, v):
+        from datetime import datetime
+        try:
+            datetime.strptime(v, "%H:%M")
+        except ValueError:
+            raise ValueError("Time must be in HH:MM format")
+        return v
+
+@router.post("/staff-api/exams", response_model=dict)
+async def create_exam(
+    exam_data: ExamCreateRequest,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    # Only allow faculty or admin
+    if current_user.role not in ("faculty", "admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only faculty or admin can create exams"
+        )
+    from datetime import datetime
+    # Parse datetime and duration
+    exam_date = datetime.strptime(exam_data.date, "%Y-%m-%d")
+    start_time = datetime.strptime(exam_data.start_time, "%H:%M").time()
+    end_time = datetime.strptime(exam_data.end_time, "%H:%M").time()
+    # Calculate duration
+    duration_seconds = (datetime.combine(exam_date, end_time) - datetime.combine(exam_date, start_time)).total_seconds()
+    if duration_seconds <= 0:
+        raise HTTPException(status_code=400, detail="End time must be after start time")
+    duration = (datetime.min + (datetime.combine(exam_date, end_time) - datetime.combine(exam_date, start_time))).time()
+    # Compose exam_schedule as datetime
+    exam_schedule = datetime.combine(exam_date, start_time)
+    # Create ExamTimeTable record
+    exam = ExamTimeTable(
+        course_code=exam_data.course_code,
+        semester=exam_data.semester,
+        exam_type=exam_data.exam_type,
+        exam_schedule=exam_schedule,
+        duration=duration,
+        room=exam_data.room,
+        invigilator=exam_data.invigilator
+    )
+    session.add(exam)
+    session.commit()
+    session.refresh(exam)
+    return {"message": "Exam created successfully", "exam_id": exam.id} 
+
+class ExamResponse(BaseModel):
+    id: str
+    course_code: str
+    semester: str
+    exam_type: ExamTypeEnum
+    exam_schedule: str
+    duration: str
+    room: str
+    invigilator: str
+
+@router.get("/staff-api/exams", response_model=List[ExamResponse])
+async def get_exams(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    # Only allow faculty or admin
+    if current_user.role not in ("faculty", "admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only faculty or admin can view exams"
+        )
+    exams = session.exec(select(ExamTimeTable)).all()
+    result = []
+    for exam in exams:
+        result.append(ExamResponse(
+            id=exam.id,
+            course_code=exam.course_code,
+            semester=exam.semester,
+            exam_type=exam.exam_type,
+            exam_schedule=exam.exam_schedule.isoformat() if exam.exam_schedule else None,
+            duration=exam.duration.isoformat() if exam.duration else None,
+            room=exam.room,
+            invigilator=exam.invigilator
+        ))
+    return result 
+
+class ExamUpdateRequest(BaseModel):
+    course_code: Optional[str] = None
+    course_title: Optional[str] = None
+    batch: Optional[str] = None
+    semester: Optional[str] = None
+    exam_type: Optional[ExamTypeEnum] = None
+    date: Optional[str] = None  # yyyy-mm-dd
+    start_time: Optional[str] = None  # HH:MM
+    end_time: Optional[str] = None    # HH:MM
+    room: Optional[str] = None
+    invigilator: Optional[str] = None
+
+@router.put("/staff-api/exams/{exam_id}", response_model=dict)
+async def update_exam(
+    exam_id: str,
+    exam_data: ExamUpdateRequest,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in ("faculty", "admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only faculty or admin can update exams"
+        )
+    exam = session.get(ExamTimeTable, exam_id)
+    if not exam:
+        raise HTTPException(status_code=404, detail="Exam not found")
+    update_fields = exam_data.dict(exclude_unset=True)
+    # Handle date/time/duration logic if any time fields are updated
+    if any(f in update_fields for f in ("date", "start_time", "end_time")):
+        from datetime import datetime
+        exam_date = datetime.strptime(update_fields.get("date") or exam.exam_schedule.date().isoformat(), "%Y-%m-%d")
+        start_time = datetime.strptime(update_fields.get("start_time") or exam.exam_schedule.time().strftime("%H:%M"), "%H:%M").time()
+        end_time = datetime.strptime(update_fields.get("end_time") or (datetime.min + exam.duration).time().strftime("%H:%M"), "%H:%M").time()
+        duration_seconds = (datetime.combine(exam_date, end_time) - datetime.combine(exam_date, start_time)).total_seconds()
+        if duration_seconds <= 0:
+            raise HTTPException(status_code=400, detail="End time must be after start time")
+        duration = (datetime.min + (datetime.combine(exam_date, end_time) - datetime.combine(exam_date, start_time))).time()
+        exam.exam_schedule = datetime.combine(exam_date, start_time)
+        exam.duration = duration
+    # Update other fields
+    for field, value in update_fields.items():
+        if field not in ("date", "start_time", "end_time"):
+            setattr(exam, field, value)
+    session.add(exam)
+    session.commit()
+    session.refresh(exam)
+    return {"message": "Exam updated successfully", "exam_id": exam.id}
+
+@router.delete("/staff-api/exams/{exam_id}", response_model=dict)
+async def delete_exam(
+    exam_id: str,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role not in ("faculty", "admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only faculty or admin can delete exams"
+        )
+    exam = session.get(ExamTimeTable, exam_id)
+    if not exam:
+        raise HTTPException(status_code=404, detail="Exam not found")
+    session.delete(exam)
+    session.commit()
+    return {"message": "Exam deleted successfully", "exam_id": exam_id} 

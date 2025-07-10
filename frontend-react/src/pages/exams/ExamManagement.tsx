@@ -10,7 +10,12 @@ import {
 } from "@/components/ui/select";
 import ExamForm from "@/components/exams/ExamForm";
 import type { ExamTimetable } from "@/types/scheduling";
-import examTimetablesData from "@/assets/examTimetables.json";
+import {
+  fetchExams,
+  deleteExam,
+  updateExam,
+  createExam,
+} from "@/lib/schedulingApi";
 
 export default function ExamManagement() {
   const [exams, setExams] = useState<ExamTimetable[]>([]);
@@ -25,10 +30,18 @@ export default function ExamManagement() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    // Load exams from JSON data
-    const loadedExams = examTimetablesData as ExamTimetable[];
-    setExams(loadedExams);
-    setFilteredExams(loadedExams);
+    // Load exams from backend
+    async function loadExams() {
+      try {
+        const loadedExams = await fetchExams();
+        setExams(loadedExams);
+        setFilteredExams(loadedExams);
+      } catch (error) {
+        setExams([]);
+        setFilteredExams([]);
+      }
+    }
+    loadExams();
   }, []);
 
   useEffect(() => {
@@ -73,36 +86,72 @@ export default function ExamManagement() {
     setShowCreateForm(true);
   };
 
-  const handleDeleteExam = (exam: ExamTimetable) => {
+  const handleDeleteExam = async (exam: ExamTimetable) => {
     if (
       window.confirm(
         `Are you sure you want to delete the exam for ${exam.courseCode}?`
       )
     ) {
-      setExams(exams.filter((e) => e.id !== exam.id));
-      showSuccess("Exam deleted successfully!");
+      try {
+        await deleteExam(exam.id);
+        setExams(exams.filter((e) => e.id !== exam.id));
+        showSuccess("Exam deleted successfully!");
+      } catch (error) {
+        setSuccessMessage("Failed to delete exam");
+        setShowSuccessMessage(true);
+      }
     }
   };
 
-  const handleSubmitExam = (examData: Omit<ExamTimetable, "id">) => {
+  const handleSubmitExam = async (examData: Omit<ExamTimetable, "id">) => {
     if (editingExam) {
       // Update existing exam
-      setExams(
-        exams.map((exam) =>
-          exam.id === editingExam.id
-            ? { ...examData, id: editingExam.id }
-            : exam
-        )
-      );
-      showSuccess("Exam updated successfully!");
+      try {
+        await updateExam(editingExam.id, {
+          course_code: examData.courseCode,
+          course_title: examData.courseTitle,
+          batch: examData.batch,
+          semester: examData.semester,
+          exam_type: examData.examType,
+          date: examData.date,
+          start_time: examData.startTime,
+          end_time: examData.endTime,
+          room: examData.room,
+          invigilator: examData.invigilator,
+        });
+        // Refetch exams from backend to ensure UI is in sync
+        const loadedExams = await fetchExams();
+        setExams(loadedExams);
+        setFilteredExams(loadedExams);
+        showSuccess("Exam updated successfully!");
+      } catch (error) {
+        setSuccessMessage("Failed to update exam");
+        setShowSuccessMessage(true);
+      }
     } else {
       // Create new exam
-      const newExam: ExamTimetable = {
-        id: Date.now(),
-        ...examData,
-      };
-      setExams([newExam, ...exams]);
-      showSuccess("Exam created successfully!");
+      try {
+        await createExam({
+          course_code: examData.courseCode,
+          course_title: examData.courseTitle,
+          batch: examData.batch,
+          semester: examData.semester,
+          exam_type: examData.examType,
+          date: examData.date,
+          start_time: examData.startTime,
+          end_time: examData.endTime,
+          room: examData.room,
+          invigilator: examData.invigilator,
+        });
+        // Only refetch exams, do not push locally
+        const loadedExams = await fetchExams();
+        setExams(loadedExams);
+        setFilteredExams(loadedExams);
+        showSuccess("Exam created successfully!");
+      } catch (error) {
+        setSuccessMessage("Failed to create exam");
+        setShowSuccessMessage(true);
+      }
     }
     setShowCreateForm(false);
     setEditingExam(null);

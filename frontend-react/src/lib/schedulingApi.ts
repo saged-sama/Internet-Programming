@@ -246,6 +246,54 @@ export async function deleteAssignment(id: number) {
   return res.json();
 }
 
+export async function createExam(data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/exams`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to create exam");
+  return res.json();
+}
+
+export async function updateExam(id: string | number, data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/exams/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update exam");
+  return res.json();
+}
+
+export async function deleteExam(id: string | number) {
+  const res = await fetch(`${API_BASE}/staff-api/exams/${id}`, {
+    method: "DELETE"
+  });
+  if (!res.ok) throw new Error("Failed to delete exam");
+  return res.json();
+}
+
+export async function fetchExams() {
+  const res = await fetch(`${API_BASE}/staff-api/exams`);
+  if (!res.ok) throw new Error("Failed to fetch exams");
+  const data = await res.json();
+  // Map snake_case to camelCase for frontend compatibility
+  return data.map((exam: any) => ({
+    id: exam.id,
+    courseCode: exam.course_code,
+    courseTitle: exam.course_title ?? "",
+    batch: exam.batch ?? "",
+    semester: exam.semester,
+    examType: exam.exam_type,
+    date: exam.date ?? (exam.exam_schedule ? exam.exam_schedule.split('T')[0] : ""),
+    startTime: exam.start_time ?? (exam.exam_schedule ? exam.exam_schedule.split('T')[1]?.slice(0,5) : ""),
+    endTime: exam.end_time ?? (exam.duration ? exam.duration.slice(0,5) : ""),
+    room: exam.room,
+    invigilator: exam.invigilator ?? "",
+  }));
+}
+
 // Export all APIs
 export const schedulingApi = {
   roomAvailability: roomAvailabilityApi,
