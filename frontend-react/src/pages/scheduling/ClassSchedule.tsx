@@ -9,12 +9,14 @@ export default function ClassSchedulePage() {
   const [schedules, setSchedules] = useState<ClassSchedule[]>([]);
   const [filteredSchedules, setFilteredSchedules] = useState<ClassSchedule[]>([]);
   const [rooms, setRooms] = useState<string[]>([]);
+  const [courses, setCourses] = useState<Array<{ course_code: string; course_title: string; credits: number }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentFilters, setCurrentFilters] = useState<{ batch: string; semester: string; room: string }>({
+  const [currentFilters, setCurrentFilters] = useState<{ batch: string; semester: string; room: string; courseCode: string }>({
     batch: '',
     semester: '',
-    room: ''
+    room: '',
+    courseCode: ''
   });
 
   // Get current user info
@@ -43,15 +45,17 @@ export default function ClassSchedulePage() {
         ? { semester: studentCurrentSemester } 
         : {};
       
-      // Load schedules and rooms in parallel
-      const [schedulesData, roomsData] = await Promise.all([
+      // Load schedules, rooms, and courses in parallel
+      const [schedulesData, roomsData, coursesData] = await Promise.all([
         schedulingApi.classSchedule.getAll(initialFilters),
-        schedulingApi.classSchedule.getRooms()
+        schedulingApi.classSchedule.getRooms(),
+        schedulingApi.classSchedule.getCourses()
       ]);
       
       setSchedules(schedulesData);
       setFilteredSchedules(schedulesData);
       setRooms(roomsData);
+      setCourses(coursesData);
       
       // Set initial filters for students
       if (currentUser?.role === 'student' && studentCurrentSemester) {
@@ -72,7 +76,7 @@ export default function ClassSchedulePage() {
     loadScheduleData();
   }, []);
 
-  const handleFilterChange = useCallback(async (filters: { batch: string; semester: string; room: string }) => {
+  const handleFilterChange = useCallback(async (filters: { batch: string; semester: string; room: string; courseCode: string }) => {
     setCurrentFilters(filters);
     
     try {
@@ -94,6 +98,10 @@ export default function ClassSchedulePage() {
 
       if (filters.room) {
         filtered = filtered.filter((schedule) => schedule.room === filters.room);
+      }
+
+      if (filters.courseCode) {
+        filtered = filtered.filter((schedule) => schedule.courseCode === filters.courseCode);
       }
 
       setFilteredSchedules(filtered);
@@ -129,6 +137,10 @@ export default function ClassSchedulePage() {
       } else {
         parts.push(`Semester ${currentFilters.semester}`);
       }
+    }
+    if (currentFilters.courseCode) {
+      const course = courses.find(c => c.course_code === currentFilters.courseCode);
+      parts.push(`Course ${currentFilters.courseCode}${course ? ` - ${course.course_title}` : ''}`);
     }
     if (currentFilters.room) parts.push(`Room ${currentFilters.room}`);
     
@@ -266,7 +278,7 @@ export default function ClassSchedulePage() {
               <span className="bg-secondary/10 text-primary px-3 py-1 rounded-full border border-secondary/20">
                 {getFilterDescription()}
               </span>
-              {((currentFilters.batch || currentFilters.room) || 
+              {((currentFilters.batch || currentFilters.room || currentFilters.courseCode) || 
                 (currentFilters.semester && (currentUser?.role !== 'student' || currentFilters.semester !== studentCurrentSemester))) && (
                 <button
                   onClick={() => {
@@ -278,12 +290,13 @@ export default function ClassSchedulePage() {
                     setCurrentFilters({ 
                       batch: '', 
                       semester: preservedSemester, 
-                      room: '' 
+                      room: '',
+                      courseCode: ''
                     });
                     
                     // Reload data with preserved filters
                     if (preservedSemester) {
-                      handleFilterChange({ batch: '', semester: preservedSemester, room: '' });
+                      handleFilterChange({ batch: '', semester: preservedSemester, room: '', courseCode: '' });
                     } else {
                       setFilteredSchedules(schedules);
                     }
@@ -314,6 +327,7 @@ export default function ClassSchedulePage() {
           )}
           <ClassScheduleFilter
             rooms={rooms}
+            courses={courses}
             onFilterChange={handleFilterChange}
             currentSemester={studentCurrentSemester}
             isStudent={currentUser?.role === 'student'}

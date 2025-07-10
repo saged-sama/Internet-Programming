@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { ClassSchedule } from '@/types/scheduling';
-import { schedulingApi } from '@/lib/schedulingApi';
+import { schedulingApi, coursesApi } from '@/lib/schedulingApi';
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -29,6 +29,12 @@ export default function ClassScheduleAdmin() {
   const [filterRoom, setFilterRoom] = useState('');
   const [roomOptions, setRoomOptions] = useState<string[]>([]);
   const [loadingRooms, setLoadingRooms] = useState(false);
+  const [courseOptions, setCourseOptions] = useState<Array<{ id: string; code: string; name: string; description: string; credits: number }>>([]);
+  const [instructorOptions, setInstructorOptions] = useState<Array<{ id: string; name: string; email: string }>>([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
+  const [loadingInstructors, setLoadingInstructors] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<ScheduleFormData>({
     course_code: '',
@@ -73,6 +79,34 @@ export default function ClassScheduleAdmin() {
     }
   };
 
+  const loadCourses = async () => {
+    try {
+      setLoadingCourses(true);
+      const coursesData = await coursesApi.getAll();
+      setCourseOptions(coursesData);
+    } catch (err) {
+      console.error('Error loading courses:', err);
+      // Fallback to empty array if API fails
+      setCourseOptions([]);
+    } finally {
+      setLoadingCourses(false);
+    }
+  };
+
+  const loadInstructors = async () => {
+    try {
+      setLoadingInstructors(true);
+      const instructorsData = await schedulingApi.classSchedule.getInstructors();
+      setInstructorOptions(instructorsData);
+    } catch (err) {
+      console.error('Error loading instructors:', err);
+      // Fallback to empty array if API fails
+      setInstructorOptions([]);
+    } finally {
+      setLoadingInstructors(false);
+    }
+  };
+
   const resetForm = useCallback(() => {
     setFormData({
       course_code: '',
@@ -87,10 +121,12 @@ export default function ClassScheduleAdmin() {
   }, []);
 
   const handleCancel = useCallback(() => {
+    if (submitting) return; // Prevent canceling during submission
     setShowCreateForm(false);
     resetForm();
     setEditingSchedule(null);
-  }, [resetForm]);
+    setSubmitting(false);
+  }, [resetForm, submitting]);
 
   const filterSchedules = useCallback(() => {
     let filtered = schedules;
@@ -147,7 +183,11 @@ export default function ClassScheduleAdmin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (submitting) return; // Prevent double submission
+    
     try {
+      setSubmitting(true);
+      
       if (editingSchedule) {
         // Update existing schedule
         await schedulingApi.classSchedule.admin.update(editingSchedule.id, formData);
@@ -163,17 +203,24 @@ export default function ClassScheduleAdmin() {
     } catch (err) {
       console.error('Error saving schedule:', err);
       alert('Failed to save schedule. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async (schedule: ClassSchedule) => {
+    if (deletingId !== null) return; // Prevent multiple deletes
+    
     if (window.confirm(`Are you sure you want to delete the schedule for ${schedule.courseCode}?`)) {
       try {
+        setDeletingId(schedule.id);
         await schedulingApi.classSchedule.admin.delete(schedule.id);
         await loadSchedules();
       } catch (err) {
         console.error('Error deleting schedule:', err);
         alert('Failed to delete schedule. Please try again.');
+      } finally {
+        setDeletingId(null);
       }
     }
   };
@@ -181,6 +228,8 @@ export default function ClassScheduleAdmin() {
   useEffect(() => {
     loadSchedules();
     loadRooms();
+    loadCourses();
+    loadInstructors();
   }, []);
 
   useEffect(() => {
@@ -396,6 +445,7 @@ export default function ClassScheduleAdmin() {
                           size="sm"
                           variant="outline"
                           className="text-xs"
+                          disabled={deletingId !== null || submitting}
                         >
                           Edit
                         </Button>
@@ -404,8 +454,16 @@ export default function ClassScheduleAdmin() {
                           size="sm"
                           variant="destructive"
                           className="text-xs"
+                          disabled={deletingId !== null || submitting}
                         >
-                          Delete
+                          {deletingId === schedule.id ? (
+                            <div className="flex items-center gap-1">
+                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                              Deleting...
+                            </div>
+                          ) : (
+                            'Delete'
+                          )}
                         </Button>
                       </div>
                     </td>
@@ -433,7 +491,8 @@ export default function ClassScheduleAdmin() {
               </h2>
               <button
                 onClick={handleCancel}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                disabled={submitting}
               >
                 ✕
               </button>
@@ -443,29 +502,59 @@ export default function ClassScheduleAdmin() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label htmlFor="course_code" className="block mb-2 text-muted-foreground">
-                    Course Code
+                    Course
                   </label>
-                  <Input
+                  <select
                     id="course_code"
                     name="course_code"
                     value={formData.course_code}
                     onChange={handleInputChange}
-                    placeholder="e.g., CSE101"
+                    className="w-full p-2 border rounded-md bg-background"
                     required
-                  />
+                    disabled={loadingCourses || submitting}
+                  >
+                    <option value="">
+                      {loadingCourses ? 'Loading courses...' : 'Select Course'}
+                    </option>
+                    {courseOptions.map((course) => (
+                      <option key={course.code} value={course.code}>
+                        {course.code} - {course.name} ({course.credits} credits)
+                      </option>
+                    ))}
+                  </select>
+                  {courseOptions.length === 0 && !loadingCourses && (
+                    <p className="text-muted-foreground text-xs mt-1">
+                      No courses available. Please add courses first.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="instructor" className="block mb-2 text-muted-foreground">
                     Instructor
                   </label>
-                  <Input
+                  <select
                     id="instructor"
                     name="instructor"
                     value={formData.instructor}
                     onChange={handleInputChange}
-                    placeholder="Instructor name"
+                    className="w-full p-2 border rounded-md bg-background"
                     required
-                  />
+                    disabled={loadingInstructors || submitting}
+                  >
+                    <option value="">
+                      {loadingInstructors ? 'Loading instructors...' : 'Select Instructor'}
+                    </option>
+                    {instructorOptions.map((instructor) => (
+                      <option key={instructor.id} value={instructor.id}>
+                        {instructor.name} ({instructor.email})
+                      </option>
+                    ))}
+                  </select>
+                  {instructorOptions.length === 0 && !loadingInstructors && (
+                    <p className="text-muted-foreground text-xs mt-1">
+                      No instructors available. Please add faculty users first.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="batch" className="block mb-2 text-muted-foreground">
@@ -478,6 +567,7 @@ export default function ClassScheduleAdmin() {
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md bg-background"
                     required
+                    disabled={submitting}
                   >
                     <option value="">Select Batch</option>
                     {batchOptions.map((batch) => (
@@ -496,6 +586,7 @@ export default function ClassScheduleAdmin() {
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md bg-background"
                     required
+                    disabled={submitting}
                   >
                     <option value="">Select Semester</option>
                     {semesterOptions.map((semester) => (
@@ -514,7 +605,7 @@ export default function ClassScheduleAdmin() {
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md bg-background"
                     required
-                    disabled={loadingRooms}
+                    disabled={loadingRooms || submitting}
                   >
                     <option value="">
                       {loadingRooms ? 'Loading rooms...' : 'Select Room'}
@@ -535,6 +626,7 @@ export default function ClassScheduleAdmin() {
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md bg-background"
                     required
+                    disabled={submitting}
                   >
                     <option value="">Select Day</option>
                     {days.map((day) => (
@@ -553,6 +645,7 @@ export default function ClassScheduleAdmin() {
                     value={formData.start_time}
                     onChange={handleInputChange}
                     required
+                    disabled={submitting}
                   />
                 </div>
                 <div>
@@ -566,16 +659,33 @@ export default function ClassScheduleAdmin() {
                     value={formData.end_time}
                     onChange={handleInputChange}
                     required
+                    disabled={submitting}
                   />
                 </div>
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" onClick={handleCancel} variant="outline">
+                <Button 
+                  type="button" 
+                  onClick={handleCancel} 
+                  variant="outline"
+                  disabled={submitting}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-primary text-primary-foreground">
-                  {editingSchedule ? 'Update Schedule' : 'Create Schedule'}
+                <Button 
+                  type="submit" 
+                  className="bg-primary text-primary-foreground"
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      {editingSchedule ? 'Updating...' : 'Creating...'}
+                    </div>
+                  ) : (
+                    editingSchedule ? 'Update Schedule' : 'Create Schedule'
+                  )}
                 </Button>
               </div>
             </form>

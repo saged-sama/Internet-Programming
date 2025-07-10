@@ -9,6 +9,8 @@ from .routes import (
     programs,
     assignments,
     scheduling,
+    rooms,
+    exams,
     events,
     meetings
 )
@@ -22,7 +24,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:4173", "https://gossip-sand.vercel.app"],
+    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:4173", "https://gossip-sand.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,6 +38,8 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(courses.router, prefix="/api")
 app.include_router(programs.router, prefix="/api")
 app.include_router(scheduling.router)
+app.include_router(rooms.router)
+app.include_router(exams.router)
 app.include_router(assignments.router)
 app.include_router(events.router)
 app.include_router(meetings.router)
