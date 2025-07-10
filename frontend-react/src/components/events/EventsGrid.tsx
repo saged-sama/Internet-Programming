@@ -1,17 +1,5 @@
 import EventCard from './EventCard';
-
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  category: string;
-  description: string;
-  image: string;
-  registrationRequired: boolean;
-  registrationDeadline?: string;
-}
+import type { Event } from '../../api/events';
 
 interface EventsGridProps {
   events: Event[];

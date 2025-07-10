@@ -8,7 +8,9 @@ from .routes import (
     courses,
     programs,
     assignments,
-    scheduling
+    scheduling,
+    events,
+    meetings
 )
 
 @asynccontextmanager
@@ -35,4 +37,6 @@ app.include_router(courses.router, prefix="/api")
 app.include_router(programs.router, prefix="/api")
 app.include_router(scheduling.router)
 app.include_router(assignments.router)
+app.include_router(events.router)
+app.include_router(meetings.router)
 
