@@ -1,188 +1,374 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Mock data for dashboard
-const stats = [
-  {
-    title: "Total Students",
-    value: "2,847",
-    change: "+12%",
-    changeType: "positive",
-  },
-  {
-    title: "Total Faculty",
-    value: "156",
-    change: "+3%",
-    changeType: "positive",
-  },
-  {
-    title: "Active Courses",
-    value: "89",
-    change: "+5%",
-    changeType: "positive",
-  },
-  {
-    title: "Pending Approvals",
-    value: "23",
-    change: "-8%",
-    changeType: "negative",
-  },
-];
+// Types for API responses
+interface Course {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  credits: number;
+  degreeLevel?: string;
+  semester?: string;
+  instructor?: string;
+  prerequisites: string[];
+  topics: string[];
+  objectives: string[];
+  outcomes: string[];
+}
 
-const recentActivities = [
-  {
-    id: 1,
-    type: "course",
-    action: "New course added",
-    item: "CSE 401 - Advanced Web Development",
-    time: "2 hours ago",
-    user: "Dr. Sarah Johnson",
-  },
-  {
-    id: 2,
-    type: "notice",
-    action: "Notice published",
-    item: "Academic Calendar Update",
-    time: "4 hours ago",
-    user: "Admin Team",
-  },
-  {
-    id: 3,
-    type: "event",
-    action: "Event created",
-    item: "Tech Career Fair 2024",
-    time: "6 hours ago",
-    user: "Career Services",
-  },
-  {
-    id: 4,
-    type: "student",
-    action: "Student registered",
-    item: "Ahmed Hassan - CSE",
-    time: "1 day ago",
-    user: "System",
-  },
-  {
-    id: 5,
-    type: "faculty",
-    action: "Faculty profile updated",
-    item: "Dr. Michael Chen",
-    time: "1 day ago",
-    user: "HR Department",
-  },
-];
+interface Program {
+  id: string;
+  title: string;
+  level: string;
+  description: string;
+  creditsRequired: number;
+  duration: string;
+  concentrations: string[];
+  admissionRequirements: string[];
+  careerOpportunities: string[];
+  curriculum: Record<string, unknown>;
+  updatedAt?: string;
+  departmentId?: string;
+}
 
-const pendingApprovals = [
-  {
-    id: 1,
-    type: "Room Booking",
-    title: "Conference Room A - 2pm",
-    requester: "Dr. Emily Brown",
-    department: "Computer Science",
-    date: "2024-01-15",
-  },
-  {
-    id: 2,
-    type: "Event",
-    title: "Student Workshop",
-    requester: "Student Council",
-    department: "Student Affairs",
-    date: "2024-01-18",
-  },
-  {
-    id: 3,
-    type: "Notice",
-    title: "Department Meeting Notice",
-    requester: "Dr. James Wilson",
-    department: "Electrical Engineering",
-    date: "2024-01-16",
-  },
-  {
-    id: 4,
-    type: "Course",
-    title: "New Elective Course",
-    requester: "Dr. Lisa Park",
-    department: "Mathematics",
-    date: "2024-01-20",
-  },
-];
+interface ApiResponse<T> {
+  data: T[];
+  total: number;
+  page?: number;
+  limit?: number;
+}
 
-const quickActions = [
-  {
-    title: "Add New Course",
-    icon: "📚",
-    route: "/courses",
-    color: "bg-blue-500",
-  },
-  {
-    title: "Manage Schedules",
-    icon: "🗓️",
-    route: "/scheduling/admin/class-schedule",
-    color: "bg-indigo-500",
-  },
-  {
-    title: "Manage Rooms",
-    icon: "🏢",
-    route: "/scheduling/admin/room-availability",
-    color: "bg-cyan-500",
-  },
-  {
-    title: "Booking Approvals",
-    icon: "✅",
-    route: "/scheduling/admin-approval",
-    color: "bg-yellow-500",
-  },
-  {
-    title: "Publish Notice",
-    icon: "📢",
-    route: "/notices",
-    color: "bg-green-500",
-  },
-  {
-    title: "Create Event",
-    icon: "📅",
-    route: "/events",
-    color: "bg-purple-500",
-  },
-  {
-    title: "Manage Users",
-    icon: "👥",
-    route: "/admin/users",
-    color: "bg-orange-500",
-  },
-  {
-    title: "View Reports",
-    icon: "📊",
-    route: "/admin/reports",
-    color: "bg-red-500",
-  },
-];
+interface CreateCourseRequest {
+  course_code: string;
+  course_title: string;
+  course_description?: string;
+  course_credits?: number;
+  degree_level?: string;
+  semester?: string;
+  instructor?: string;
+  prerequisites?: string[];
+  topics?: string[];
+  objectives?: string[];
+  learning_outcomes?: string[];
+}
 
-const departmentStats = [
-  { name: "Computer Science", students: 456, faculty: 23, courses: 34 },
-  { name: "Electrical Engineering", students: 389, faculty: 19, courses: 28 },
-  { name: "Mechanical Engineering", students: 312, faculty: 16, courses: 25 },
-  { name: "Mathematics", students: 234, faculty: 12, courses: 18 },
-  { name: "Physics", students: 198, faculty: 10, courses: 15 },
-];
+// API functions
+const api = {
+  async getCourses(): Promise<ApiResponse<Course>> {
+    const response = await fetch('http://localhost:8000/api/courses/');
+    if (!response.ok) throw new Error('Failed to fetch courses');
+    return response.json();
+  },
+
+  async getPrograms(): Promise<ApiResponse<Program>> {
+    const response = await fetch('http://localhost:8000/api/programs/');
+    if (!response.ok) throw new Error('Failed to fetch programs');
+    return response.json();
+  },
+
+  async createCourse(courseData: CreateCourseRequest): Promise<Course> {
+    console.log('Sending course data to backend:', courseData);
+    
+    const response = await fetch('http://localhost:8000/api/courses/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(courseData),
+    });
+    
+    console.log('Backend response status:', response.status);
+    
+    if (!response.ok) {
+      let errorMessage = 'Failed to create course';
+      try {
+        const error = await response.json();
+        errorMessage = error.detail || error.message || errorMessage;
+      } catch {
+        // If response is not JSON, use status text
+        errorMessage = response.statusText || errorMessage;
+      }
+      console.error('Course creation failed:', errorMessage);
+      throw new Error(errorMessage);
+    }
+    
+    const result = await response.json();
+    console.log('Course creation response:', result);
+    return result;
+  }
+};
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState("overview");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showCourseModal, setShowCourseModal] = useState(false);
+  const [courseFormData, setCourseFormData] = useState<CreateCourseRequest>({
+    course_code: '',
+    course_title: '',
+    course_description: '',
+    course_credits: 3,
+    degree_level: '',
+    semester: '',
+    instructor: '',
+    prerequisites: [],
+    topics: [],
+    objectives: [],
+    learning_outcomes: []
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [coursesResponse, programsResponse] = await Promise.all([
+          api.getCourses(),
+          api.getPrograms()
+        ]);
+        
+        setCourses(coursesResponse.data);
+        setPrograms(programsResponse.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load dashboard data');
+        console.error('Dashboard data fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Calculate real statistics from API data
+  const stats = [
+    {
+      title: "Total Courses",
+      value: courses.length.toString(),
+      change: "+5%",
+      changeType: "positive" as const,
+    },
+    {
+      title: "Total Programs",
+      value: programs.length.toString(),
+      change: "+3%",
+      changeType: "positive" as const,
+    },
+    {
+      title: "Undergraduate Programs",
+      value: programs.filter(p => p.level.toLowerCase().includes('bachelor')).length.toString(),
+      change: "+2%",
+      changeType: "positive" as const,
+    },
+    {
+      title: "Graduate Programs",
+      value: programs.filter(p => p.level.toLowerCase().includes('master') || p.level.toLowerCase().includes('phd')).length.toString(),
+      change: "+1%",
+      changeType: "positive" as const,
+    },
+  ];
+
+  // Calculate department statistics from real data
+  const departmentStats = programs.reduce((acc, program) => {
+    const dept = program.departmentId || 'General';
+    if (!acc[dept]) {
+      acc[dept] = {
+        name: dept,
+        programs: 0,
+        courses: 0,
+        credits: 0
+      };
+    }
+    acc[dept].programs += 1;
+    acc[dept].credits += program.creditsRequired;
+    return acc;
+  }, {} as Record<string, { name: string; programs: number; courses: number; credits: number }>);
+
+  // Add course counts to department stats
+  courses.forEach(course => {
+    const dept = course.degreeLevel || 'General';
+    if (departmentStats[dept]) {
+      departmentStats[dept].courses += 1;
+    }
+  });
+
+  const departmentStatsArray = Object.values(departmentStats);
+
+  // Recent activities from real data (recent courses and programs)
+  const recentActivities = [
+    ...courses.slice(0, 3).map((course, index) => ({
+      id: `course-${course.id}`,
+      type: "course",
+      action: "Course available",
+      item: `${course.code} - ${course.name}`,
+      time: `${index + 1} days ago`,
+      user: course.instructor || "System",
+    })),
+    ...programs.slice(0, 2).map((program, index) => ({
+      id: `program-${program.id}`,
+      type: "program",
+      action: "Program offered",
+      item: `${program.title} (${program.level})`,
+      time: `${index + 2} days ago`,
+      user: "Academic Office",
+    }))
+  ];
+
+  const quickActions = [
+    {
+      title: "Add New Course",
+      icon: "📚",
+      action: () => setShowCourseModal(true),
+      color: "bg-blue-500",
+    },
+    {
+      title: "Manage Programs",
+      icon: "🎓",
+      action: () => navigate("/degrees"),
+      color: "bg-indigo-500",
+    },
+    {
+      title: "Manage Schedules",
+      icon: "🗓️",
+      action: () => navigate("/scheduling/admin/class-schedule"),
+      color: "bg-cyan-500",
+    },
+    {
+      title: "Manage Rooms",
+      icon: "🏢",
+      action: () => navigate("/scheduling/admin/room-availability"),
+      color: "bg-yellow-500",
+    },
+    {
+      title: "Booking Approvals",
+      icon: "✅",
+      action: () => navigate("/scheduling/admin-approval"),
+      color: "bg-teal-500",
+    },
+    {
+      title: "Publish Notice",
+      icon: "📢",
+      action: () => navigate("/notices"),
+      color: "bg-green-500",
+    },
+    {
+      title: "Create Event",
+      icon: "📅",
+      action: () => navigate("/events"),
+      color: "bg-purple-500",
+    },
+    {
+      title: "Manage Users",
+      icon: "👥",
+      action: () => navigate("/admin/users"),
+      color: "bg-orange-500",
+    },
+    {
+      title: "View Reports",
+      icon: "📊",
+      action: () => navigate("/admin/reports"),
+      color: "bg-red-500",
+    },
+  ];
 
   const handleSignOut = () => {
     localStorage.removeItem("user");
     navigate("/auth/login");
   };
 
-  const handleQuickAction = (route: string) => {
-    navigate(route);
+  const handleCourseFormChange = (field: keyof CreateCourseRequest, value: string | number | string[]) => {
+    setCourseFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const handleApproval = (id: number, approved: boolean) => {
-    // Handle approval logic here
-    console.log(`Approval ${approved ? "approved" : "rejected"} for ID: ${id}`);
+  const handleArrayFieldChange = (field: 'prerequisites' | 'topics' | 'objectives' | 'learning_outcomes', value: string) => {
+    const items = value.split(',').map(item => item.trim()).filter(item => item.length > 0);
+    setCourseFormData(prev => ({
+      ...prev,
+      [field]: items
+    }));
   };
+
+  const handleCreateCourse = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!courseFormData.course_code || !courseFormData.course_title) {
+      setError('Course code and title are required');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError(null); // Clear any previous errors
+      
+      console.log('Creating course with data:', courseFormData);
+      const newCourse = await api.createCourse(courseFormData);
+      console.log('Course created successfully:', newCourse);
+      
+      // Add to local state to update UI immediately
+      setCourses(prev => [...prev, newCourse]);
+      
+      // Reset form
+      setCourseFormData({
+        course_code: '',
+        course_title: '',
+        course_description: '',
+        course_credits: 3,
+        degree_level: '',
+        semester: '',
+        instructor: '',
+        prerequisites: [],
+        topics: [],
+        objectives: [],
+        learning_outcomes: []
+      });
+      
+      setShowCourseModal(false);
+      
+      // Show success message temporarily
+      alert(`Course "${newCourse.name}" created successfully!`);
+      
+    } catch (err) {
+      console.error('Course creation error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create course. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EAB308] mx-auto mb-4"></div>
+          <p className="text-[#25345D]">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !showCourseModal) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FB] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-[#EAB308] text-[#25345D] px-4 py-2 rounded hover:bg-[#F5C940]"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F9FB] p-6">
@@ -200,8 +386,8 @@ export default function AdminDashboard() {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-sm text-gray-600">Last login</p>
-                <p className="text-[#25345D] font-semibold">Today, 9:30 AM</p>
+                <p className="text-sm text-gray-600">System Status</p>
+                <p className="text-[#25345D] font-semibold">Online</p>
               </div>
               <button
                 onClick={handleSignOut}
@@ -212,6 +398,21 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <div className="flex justify-between items-center">
+              <span>{error}</span>
+              <button 
+                onClick={() => setError(null)}
+                className="text-red-500 hover:text-red-700"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -247,7 +448,7 @@ export default function AdminDashboard() {
             {quickActions.map((action, index) => (
               <button
                 key={index}
-                onClick={() => handleQuickAction(action.route)}
+                onClick={action.action}
                 className="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-[#EAB308] hover:shadow-md transition-all"
               >
                 <span className="text-2xl mb-2">{action.icon}</span>
@@ -261,107 +462,111 @@ export default function AdminDashboard() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Pending Approvals */}
+          {/* Recent Courses & Programs */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-[#25345D] mb-4">
-              Pending Approvals
-            </h2>
-            <div className="space-y-4">
-              {pendingApprovals.map((approval) => (
-                <div
-                  key={approval.id}
-                  className="border border-gray-200 rounded-lg p-4"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-semibold text-[#25345D]">
-                        {approval.title}
-                      </h3>
-                      <p className="text-sm text-gray-600">{approval.type}</p>
-                    </div>
-                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      Pending
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 mb-3">
-                    <p>
-                      <strong>Requester:</strong> {approval.requester}
-                    </p>
-                    <p>
-                      <strong>Department:</strong> {approval.department}
-                    </p>
-                    <p>
-                      <strong>Date:</strong> {approval.date}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleApproval(approval.id, true)}
-                      className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 transition"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleApproval(approval.id, false)}
-                      className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition"
-                    >
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Recent Activities */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-bold text-[#25345D] mb-4">
-              Recent Activities
+              Recent Courses & Programs
             </h2>
             <div className="space-y-4">
               {recentActivities.map((activity) => (
                 <div
                   key={activity.id}
-                  className="border-l-4 border-[#EAB308] pl-4"
+                  className="border border-gray-200 rounded-lg p-4"
                 >
-                  <p className="text-sm font-medium text-[#25345D]">
-                    {activity.action}
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">{activity.item}</p>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-gray-500">
-                      {activity.user}
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-semibold text-[#25345D]">
+                        {activity.item}
+                      </h3>
+                      <p className="text-sm text-gray-600 capitalize">{activity.type}</p>
+                    </div>
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                      Active
                     </span>
-                    <span className="text-xs text-gray-500">
-                      {activity.time}
-                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600 mb-3">
+                    <p>
+                      <strong>Managed by:</strong> {activity.user}
+                    </p>
+                    <p>
+                      <strong>Added:</strong> {activity.time}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => navigate(`/${activity.type === 'course' ? 'courses' : 'degrees'}`)}
+                      className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition"
+                    >
+                      View Details
+                    </button>
                   </div>
                 </div>
               ))}
+              {recentActivities.length === 0 && (
+                <p className="text-gray-500 text-center py-8">No recent activities</p>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-bold text-[#25345D] mb-4">
+              Quick Stats
+            </h2>
+            <div className="space-y-4">
+              <div className="border-l-4 border-[#EAB308] pl-4">
+                <p className="text-sm font-medium text-[#25345D]">
+                  Courses by Level
+                </p>
+                <div className="text-xs text-gray-600 mt-1">
+                  <p>Undergraduate: {courses.filter(c => c.degreeLevel?.toLowerCase().includes('bachelor')).length}</p>
+                  <p>Graduate: {courses.filter(c => c.degreeLevel?.toLowerCase().includes('master') || c.degreeLevel?.toLowerCase().includes('phd')).length}</p>
+                </div>
+              </div>
+              
+              <div className="border-l-4 border-blue-500 pl-4">
+                <p className="text-sm font-medium text-[#25345D]">
+                  Programs by Level
+                </p>
+                <div className="text-xs text-gray-600 mt-1">
+                  <p>Bachelor: {programs.filter(p => p.level.toLowerCase().includes('bachelor')).length}</p>
+                  <p>Master: {programs.filter(p => p.level.toLowerCase().includes('master')).length}</p>
+                  <p>PhD: {programs.filter(p => p.level.toLowerCase().includes('phd')).length}</p>
+                </div>
+              </div>
+
+              <div className="border-l-4 border-green-500 pl-4">
+                <p className="text-sm font-medium text-[#25345D]">
+                  Total Credits
+                </p>
+                <p className="text-xs text-gray-600 mt-1">
+                  {courses.reduce((sum, course) => sum + course.credits, 0)} course credits available
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Department Statistics */}
+        {/* Department/Category Statistics */}
         <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
           <h2 className="text-xl font-bold text-[#25345D] mb-4">
-            Department Statistics
+            Academic Statistics
           </h2>
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr className="border-b border-gray-200">
                   <th className="text-left py-3 px-4 font-semibold text-[#25345D]">
-                    Department
+                    Category
                   </th>
                   <th className="text-center py-3 px-4 font-semibold text-[#25345D]">
-                    Students
-                  </th>
-                  <th className="text-center py-3 px-4 font-semibold text-[#25345D]">
-                    Faculty
+                    Programs
                   </th>
                   <th className="text-center py-3 px-4 font-semibold text-[#25345D]">
                     Courses
+                  </th>
+                  <th className="text-center py-3 px-4 font-semibold text-[#25345D]">
+                    Total Credits
                   </th>
                   <th className="text-center py-3 px-4 font-semibold text-[#25345D]">
                     Actions
@@ -369,7 +574,7 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {departmentStats.map((dept, index) => (
+                {departmentStatsArray.length > 0 ? departmentStatsArray.map((dept, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-100 hover:bg-gray-50"
@@ -377,78 +582,300 @@ export default function AdminDashboard() {
                     <td className="py-3 px-4 font-medium text-[#25345D]">
                       {dept.name}
                     </td>
-                    <td className="py-3 px-4 text-center">{dept.students}</td>
-                    <td className="py-3 px-4 text-center">{dept.faculty}</td>
+                    <td className="py-3 px-4 text-center">{dept.programs}</td>
                     <td className="py-3 px-4 text-center">{dept.courses}</td>
+                    <td className="py-3 px-4 text-center">{dept.credits}</td>
                     <td className="py-3 px-4 text-center">
-                      <button className="text-[#EAB308] hover:text-[#F5C940] text-sm font-medium">
-                        View Details
+                      <button 
+                        onClick={() => navigate('/degrees')}
+                        className="text-[#EAB308] hover:text-[#F5C940] text-sm font-medium"
+                      >
+                        View Programs
                       </button>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-gray-500">
+                      No academic data available
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* System Health */}
+        {/* System Status */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-[#25345D] mb-4">
-              System Health
+              Academic System Status
             </h2>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Server Status</span>
+                <span className="text-sm text-gray-600">Courses API</span>
                 <span className="text-sm font-medium text-green-600">
-                  Online
+                  Online ({courses.length} courses)
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Programs API</span>
+                <span className="text-sm font-medium text-green-600">
+                  Online ({programs.length} programs)
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Database</span>
                 <span className="text-sm font-medium text-green-600">
-                  Healthy
+                  Connected
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Storage Usage</span>
-                <span className="text-sm font-medium text-yellow-600">78%</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Active Users</span>
-                <span className="text-sm font-medium text-blue-600">1,234</span>
+                <span className="text-sm text-gray-600">Last Updated</span>
+                <span className="text-sm font-medium text-blue-600">
+                  {new Date().toLocaleString()}
+                </span>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-bold text-[#25345D] mb-4">
-              Upcoming Events
+              Quick Management
             </h2>
             <div className="space-y-3">
-              <div className="border-l-4 border-blue-500 pl-4">
+              <button
+                onClick={() => navigate('/courses')}
+                className="w-full text-left border-l-4 border-blue-500 pl-4 py-2 hover:bg-gray-50 transition"
+              >
                 <p className="text-sm font-medium text-[#25345D]">
-                  Faculty Meeting
+                  Manage Courses
                 </p>
-                <p className="text-xs text-gray-600">Tomorrow, 10:00 AM</p>
-              </div>
-              <div className="border-l-4 border-green-500 pl-4">
+                <p className="text-xs text-gray-600">{courses.length} total courses</p>
+              </button>
+              <button
+                onClick={() => navigate('/degrees')}
+                className="w-full text-left border-l-4 border-green-500 pl-4 py-2 hover:bg-gray-50 transition"
+              >
                 <p className="text-sm font-medium text-[#25345D]">
-                  Student Registration Deadline
+                  Manage Programs
                 </p>
-                <p className="text-xs text-gray-600">Jan 20, 2024</p>
-              </div>
-              <div className="border-l-4 border-purple-500 pl-4">
+                <p className="text-xs text-gray-600">{programs.length} total programs</p>
+              </button>
+              <button
+                onClick={() => navigate('/scheduling/admin/class-schedule')}
+                className="w-full text-left border-l-4 border-purple-500 pl-4 py-2 hover:bg-gray-50 transition"
+              >
                 <p className="text-sm font-medium text-[#25345D]">
-                  System Maintenance
+                  Manage Schedules
                 </p>
-                <p className="text-xs text-gray-600">Jan 25, 2024, 2:00 AM</p>
-              </div>
+                <p className="text-xs text-gray-600">Class scheduling system</p>
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Add Course Modal */}
+      {showCourseModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-[#25345D]">Add New Course</h2>
+                <button
+                  onClick={() => setShowCourseModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateCourse} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Course Code *
+                    </label>
+                    <input
+                      type="text"
+                      value={courseFormData.course_code}
+                      onChange={(e) => handleCourseFormChange('course_code', e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      placeholder="e.g., CSE101"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Credits
+                    </label>
+                    <input
+                      type="number"
+                      value={courseFormData.course_credits}
+                      onChange={(e) => handleCourseFormChange('course_credits', parseInt(e.target.value))}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      min="1"
+                      max="6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Course Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={courseFormData.course_title}
+                    onChange={(e) => handleCourseFormChange('course_title', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    placeholder="e.g., Introduction to Computer Science"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={courseFormData.course_description}
+                    onChange={(e) => handleCourseFormChange('course_description', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    rows={3}
+                    placeholder="Course description..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                     <div>
+                     <label className="block text-sm font-medium text-[#25345D] mb-2">
+                       Degree Level
+                     </label>
+                     <select
+                       value={courseFormData.degree_level}
+                       onChange={(e) => handleCourseFormChange('degree_level', e.target.value)}
+                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                     >
+                       <option value="">Select Level</option>
+                       <option value="undergraduate">Undergraduate</option>
+                       <option value="graduate">Graduate</option>
+                       <option value="doctorate">Doctorate</option>
+                       <option value="all">All Levels</option>
+                     </select>
+                   </div>
+
+                   <div>
+                     <label className="block text-sm font-medium text-[#25345D] mb-2">
+                       Semester
+                     </label>
+                     <select
+                       value={courseFormData.semester}
+                       onChange={(e) => handleCourseFormChange('semester', e.target.value)}
+                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                     >
+                       <option value="">Select Semester</option>
+                       <option value="1st">1st Semester</option>
+                       <option value="2nd">2nd Semester</option>
+                       <option value="3rd">3rd Semester</option>
+                       <option value="4th">4th Semester</option>
+                       <option value="5th">5th Semester</option>
+                       <option value="6th">6th Semester</option>
+                       <option value="7th">7th Semester</option>
+                       <option value="8th">8th Semester</option>
+                     </select>
+                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Instructor
+                  </label>
+                  <input
+                    type="text"
+                    value={courseFormData.instructor}
+                    onChange={(e) => handleCourseFormChange('instructor', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    placeholder="Instructor name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Prerequisites (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={courseFormData.prerequisites?.join(', ')}
+                    onChange={(e) => handleArrayFieldChange('prerequisites', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    placeholder="e.g., CSE100, MATH101"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Topics (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={courseFormData.topics?.join(', ')}
+                    onChange={(e) => handleArrayFieldChange('topics', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    placeholder="e.g., Programming, Data Structures"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Learning Objectives (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={courseFormData.objectives?.join(', ')}
+                    onChange={(e) => handleArrayFieldChange('objectives', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    placeholder="e.g., Understand basic concepts, Apply programming skills"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Learning Outcomes (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    value={courseFormData.learning_outcomes?.join(', ')}
+                    onChange={(e) => handleArrayFieldChange('learning_outcomes', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    placeholder="e.g., Write efficient code, Solve complex problems"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowCourseModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex-1 px-4 py-2 bg-[#EAB308] text-[#25345D] font-medium rounded-lg hover:bg-[#F5C940] transition disabled:opacity-50"
+                  >
+                    {submitting ? 'Creating...' : 'Create Course'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

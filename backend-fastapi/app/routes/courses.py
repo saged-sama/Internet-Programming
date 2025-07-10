@@ -8,6 +8,20 @@ from app.models.course import Course, CourseMaterial, CourseDegreeLevel, CourseS
 
 router = APIRouter(prefix="/courses", tags=["courses"])
 
+# Request models for frontend compatibility
+class CourseCreateRequest(BaseModel):
+    course_code: str
+    course_title: str
+    course_description: Optional[str] = None
+    course_credits: Optional[float] = None
+    degree_level: Optional[str] = None
+    semester: Optional[str] = None
+    instructor: Optional[str] = None
+    prerequisites: Optional[List[str]] = []
+    topics: Optional[List[str]] = []
+    objectives: Optional[List[str]] = []
+    learning_outcomes: Optional[List[str]] = []
+
 # Response models for frontend compatibility
 class CourseResponse(BaseModel):
     id: str
@@ -107,12 +121,42 @@ async def get_course(course_code: str, session: SessionDependency):
     return course_to_response(course)
 
 @router.post("/", response_model=CourseResponse)
-async def create_course(course: Course, session: SessionDependency):
+async def create_course(course_data: CourseCreateRequest, session: SessionDependency):
     """Create a new course"""
     # Check if course already exists
-    existing_course = session.exec(select(Course).where(Course.course_code == course.course_code)).first()
+    existing_course = session.exec(select(Course).where(Course.course_code == course_data.course_code)).first()
     if existing_course:
         raise HTTPException(status_code=400, detail="Course with this code already exists")
+    
+    # Convert string enum values to proper enum types
+    degree_level = None
+    if course_data.degree_level:
+        try:
+            degree_level = CourseDegreeLevel(course_data.degree_level)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid degree level: {course_data.degree_level}")
+    
+    semester = None
+    if course_data.semester:
+        try:
+            semester = CourseSemester(course_data.semester)
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid semester: {course_data.semester}")
+    
+    # Create Course object
+    course = Course(
+        course_code=course_data.course_code,
+        course_title=course_data.course_title,
+        course_description=course_data.course_description,
+        course_credits=course_data.course_credits,
+        degree_level=degree_level,
+        semester=semester,
+        instructor=course_data.instructor,
+        prerequisites=course_data.prerequisites or [],
+        topics=course_data.topics or [],
+        objectives=course_data.objectives or [],
+        learning_outcomes=course_data.learning_outcomes or []
+    )
     
     session.add(course)
     session.commit()
