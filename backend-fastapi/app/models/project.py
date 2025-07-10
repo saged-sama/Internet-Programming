@@ -1,17 +1,17 @@
-from typing import List, Optional
-from sqlmodel import Field, Relationship, SQLModel
+from typing import Optional
+from sqlmodel import Field, SQLModel
 
 class Project(SQLModel, table=True):
     id: str = Field(primary_key=True)
-    title: Optional[str]
-    description: Optional[str]
-    supervisor: Optional[str]
-    year: Optional[int]
-    topic: Optional[str]
-    status: Optional[str]
-    abstract: Optional[str]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    supervisor: Optional[str] = Field(default=None, foreign_key="user.id")
+    year: Optional[int] = None
+    topic: Optional[str] = None
+    status: Optional[str] = None
+    abstract: Optional[str] = None
 
 class ProjectTeamMember(SQLModel, table=True):
-    project_id: Optional[str] = Field(foreign_key="project.id"),
-    member: str = Field(foreign_key="user.id", max_length=100)
-    project: Optional[Project] = Relationship(back_populates="team_members")
+    id: Optional[int] = Field(default=None, primary_key=True)
+    project_id: Optional[str] = Field(default=None, foreign_key="project.id")
+    member: Optional[str] = Field(default=None, foreign_key="user.id")

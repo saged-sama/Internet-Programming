@@ -8,10 +8,15 @@ import type {
 } from "../../types/degree";
 import { DegreeCard } from "./components/DegreeCard";
 import { DegreeFilter } from "./components/DegreeFilter";
-import { degreePrograms as initialDegreePrograms } from "./data/degreePrograms";
 import { getCurrentUser } from "../../lib/auth";
 import { Button } from "../../components/ui/button";
 import themeClasses from "../../lib/theme-utils";
+import {
+  getDegreePrograms,
+  createDegreeProgram,
+  updateDegreeProgram,
+  deleteDegreeProgram,
+} from "../../lib/api";
 
 export default function DegreesPage() {
   const navigate = useNavigate();
@@ -48,43 +53,46 @@ export default function DegreesPage() {
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === "admin";
 
-  // Filter degrees data when filters change
-  useEffect(() => {
-    const filterDegrees = () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        let filtered = [...initialDegreePrograms];
-        if (filter.level) {
-          filtered = filtered.filter((degree) => degree.level === filter.level);
-        }
-        if (filter.searchQuery) {
-          const query = filter.searchQuery.toLowerCase();
-          filtered = filtered.filter(
-            (degree) =>
-              degree.title.toLowerCase().includes(query) ||
-              degree.description.toLowerCase().includes(query) ||
-              degree.concentrations?.some((c) =>
-                c.toLowerCase().includes(query)
-              ) ||
-              degree.careerOpportunities.some((c) =>
-                c.toLowerCase().includes(query)
-              )
-          );
-        }
-        const limit = filter.limit || filtered.length;
-        const offset = filter.offset || 0;
-        const paginatedData = filtered.slice(offset, offset + limit);
-        setDegrees(paginatedData);
-        setTotalCount(filtered.length);
-      } catch (err) {
-        setError("Failed to load degree programs. Please try again later.");
-        setDegrees([]);
-      } finally {
-        setIsLoading(false);
+  // Fetch degree programs from API
+  const fetchDegreePrograms = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await getDegreePrograms(filter);
+      
+      // Sort degrees when no filter is applied
+      let sortedDegrees = response.data;
+      const hasFilters = Object.keys(filter).some(key => filter[key as keyof DegreeFilterOptions] !== undefined && filter[key as keyof DegreeFilterOptions] !== "");
+      
+      if (!hasFilters) {
+        // Define degree level priority for sorting
+        const levelPriority = { 'undergraduate': 1, 'graduate': 2, 'doctorate': 3 };
+        
+        sortedDegrees = [...response.data].sort((a, b) => {
+          // First sort by degree level
+          const levelDiff = levelPriority[a.level] - levelPriority[b.level];
+          if (levelDiff !== 0) return levelDiff;
+          
+          // Then sort by title alphabetically
+          return a.title.localeCompare(b.title);
+        });
       }
-    };
-    filterDegrees();
+      
+      setDegrees(sortedDegrees);
+      setTotalCount(response.total);
+    } catch (err) {
+      console.error("Error fetching degree programs:", err);
+      setError("Failed to load degree programs. Please try again later.");
+      setDegrees([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch degrees when filters change
+  useEffect(() => {
+    fetchDegreePrograms();
   }, [filter]);
 
   const handleDegreeClick = (degree: DegreeProgram) => {
@@ -128,33 +136,59 @@ export default function DegreesPage() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteDegree = (id: string) => {
+  const handleDeleteDegree = async (id: string) => {
     if (
       window.confirm("Are you sure you want to delete this degree program?")
     ) {
-      setDegrees(degrees.filter((degree) => degree.id !== id));
+      try {
+        setIsLoading(true);
+        await deleteDegreeProgram(id);
+        await fetchDegreePrograms(); // Refresh the list
+      } catch (err) {
+        console.error("Error deleting degree program:", err);
+        setError("Failed to delete degree program. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingDegree) {
-      setDegrees(
-        degrees.map((degree) =>
-          degree.id === editingDegree.id
-            ? { ...degree, ...formData, id: editingDegree.id }
-            : degree
-        )
-      );
-    } else {
-      const newDegree: DegreeProgram = {
-        id: Date.now().toString(),
-        ...formData,
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const programData = {
+        id: editingDegree?.id || `${formData.level}-${Date.now()}`,
+        title: formData.title,
+        level: formData.level,
+        description: formData.description,
+        creditsRequired: formData.creditsRequired,
+        duration: formData.duration,
+        concentrations: formData.concentrations,
+        admissionRequirements: formData.admissionRequirements,
+        careerOpportunities: formData.careerOpportunities,
+        curriculum: formData.curriculum,
       };
-      setDegrees([newDegree, ...degrees]);
+
+      if (editingDegree) {
+        // Edit existing degree
+        await updateDegreeProgram(editingDegree.id, programData);
+      } else {
+        // Create new degree
+        await createDegreeProgram(programData);
+      }
+
+      setIsModalOpen(false);
+      setEditingDegree(null);
+      await fetchDegreePrograms(); // Refresh the list
+    } catch (err) {
+      console.error("Error saving degree program:", err);
+      setError(`Failed to ${editingDegree ? 'update' : 'create'} degree program. Please try again.`);
+    } finally {
+      setIsLoading(false);
     }
-    setIsModalOpen(false);
-    setEditingDegree(null);
   };
 
   return (

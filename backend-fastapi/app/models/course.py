@@ -1,15 +1,41 @@
 from datetime import date
-from typing import List, Optional
+from typing import Optional, List
+from sqlmodel import Field, SQLModel, JSON, Column
+from enum import Enum
 
-from sqlalchemy import JSON
-from sqlmodel import Column, Field, SQLModel
+class CourseType(str, Enum):
+    Core = "Core"
+    Elective = "Elective"
+    Lab = "Lab"
+
+class CourseDegreeLevel(str, Enum):
+    undergraduate = "undergraduate"
+    graduate = "graduate"
+    doctorate = "doctorate"
+    all = "all"
+
+class CourseSemester(str, Enum):
+    first = "1st"
+    second = "2nd"
+    third = "3rd"
+    fourth = "4th"
+    fifth = "5th"
+    sixth = "6th"
+    seventh = "7th"
+    eighth = "8th"
 
 class Course(SQLModel, table=True):
     course_code: str = Field(primary_key=True, max_length=10)
     course_title: str
     course_description: Optional[str] = None
     course_credits: Optional[float] = None
-    prerequisites: Optional[List[str]] = Field(default=None, sa_column=Column(JSON, nullable=True))
+    degree_level: Optional[CourseDegreeLevel] = None
+    semester: Optional[CourseSemester] = None
+    instructor: Optional[str] = Field(default=None, foreign_key="user.id")
+    prerequisites: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+    topics: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+    objectives: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+    learning_outcomes: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
 
 class CourseMaterial(SQLModel, table=True):
     id: str = Field(primary_key=True)

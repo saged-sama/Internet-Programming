@@ -13,7 +13,7 @@ class LabEquipment(SQLModel, table=True):
 class EquipmentBooking(SQLModel, table=True):
     id: str = Field(primary_key=True)
     equipment_id: Optional[str] = Field(foreign_key="labequipment.id")
-    user_id: Optional[int] = Field(foreign_key="user.id")
+    user_id: Optional[str] = Field(foreign_key="user.id")
     start_time: Optional[datetime]
     end_time: Optional[datetime]
     purpose: Optional[str]

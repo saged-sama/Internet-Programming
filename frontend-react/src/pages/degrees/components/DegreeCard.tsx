@@ -12,8 +12,8 @@ interface DegreeCardProps {
  */
 export const DegreeCard: React.FC<DegreeCardProps> = ({ degree, onClick }) => {
   return (
-    <div className="bg-card rounded-lg shadow-sm overflow-hidden border border-border hover:shadow-md transition-shadow duration-300" onClick={() => onClick(degree)}>
-      <div className="p-4">
+    <div className="bg-card rounded-lg shadow-sm overflow-hidden border border-border hover:shadow-md transition-shadow duration-300 h-[26rem]" onClick={() => onClick(degree)}>
+      <div className="p-4 h-full flex flex-col">
         <h3 className="mb-2">{degree.title}</h3>
         
         <div className="flex flex-wrap gap-2 mb-3">
@@ -28,11 +28,11 @@ export const DegreeCard: React.FC<DegreeCardProps> = ({ degree, onClick }) => {
           </span>
         </div>
         
-        <p className="text-muted-foreground mb-4 line-clamp-3">
+        <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
           {degree.description}
         </p>
         
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-auto">
           <Link 
             to={`/courses/${degree.id}`} 
             className="text-primary hover:text-primary/80 text-sm"

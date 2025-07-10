@@ -84,19 +84,19 @@ export function DegreeFilter({ filter, onFilterChange }: DegreeFilterProps) {
           <label htmlFor="search" className="block mb-2 text-muted-foreground">
             Search Programs
           </label>
-          <div className="flex">
+          <div className="flex flex-col sm:flex-row gap-2">
             <input
               id="search"
               type="text"
               placeholder="Search by keyword..."
               value={searchInput}
               onChange={handleSearchInputChange}
-              className="p-2 rounded-md border border-input bg-background text-foreground flex-grow"
+              className="p-2 rounded-md border border-input bg-background text-foreground flex-grow min-w-0"
               aria-label="Search for degree programs"
             />
             <button 
               type="submit"
-              className="ml-2 px-3 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90"
+              className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 sm:flex-shrink-0"
               aria-label="Search"
             >
               Search

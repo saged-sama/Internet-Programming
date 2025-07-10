@@ -5,185 +5,17 @@ import type {
   Course,
   CourseDegreeLevel,
   CourseSemester,
+  CourseFilterOptions,
 } from "../../types/course";
 import { getCurrentUser } from "../../lib/auth";
 import { Button } from "../../components/ui/button";
 import themeClasses from "../../lib/theme-utils";
-
-// Static course data
-const initialCourses: Course[] = [
-  {
-    id: "1",
-    code: "CSE101",
-    name: "Introduction to Computer Science",
-    description:
-      "An introductory course to computer science concepts and principles.",
-    credits: 3,
-    instructor: "Dr. Smith",
-    degreeLevel: "undergraduate",
-    semester: "1st",
-    prerequisites: [],
-    topics: [
-      "Computing basics",
-      "Problem-solving approaches",
-      "Introduction to programming concepts",
-      "Basic data structures",
-      "Algorithm development",
-    ],
-    objectives: [
-      "Understand fundamental computing concepts",
-      "Develop logical thinking skills",
-      "Learn the basics of programming",
-    ],
-    outcomes: [
-      "Ability to solve basic computational problems",
-      "Understanding of fundamental programming principles",
-      "Foundation for further study in computer science",
-    ],
-  },
-  {
-    id: "2",
-    code: "CSE201",
-    name: "Data Structures",
-    description: "Study of common data structures and their algorithms.",
-    credits: 4,
-    instructor: "Dr. Johnson",
-    degreeLevel: "undergraduate",
-    semester: "2nd",
-    prerequisites: ["CSE101"],
-    topics: [
-      "Arrays and linked lists",
-      "Stacks and queues",
-      "Trees and graphs",
-      "Hashing",
-      "Algorithm analysis",
-    ],
-    objectives: [
-      "Understand various data structures",
-      "Learn to implement efficient algorithms",
-      "Analyze algorithm complexity",
-    ],
-    outcomes: [
-      "Ability to select appropriate data structures for problems",
-      "Skills to implement and use common data structures",
-      "Understanding of algorithm efficiency",
-    ],
-  },
-  {
-    id: "3",
-    code: "CSE301",
-    name: "Database Systems",
-    description: "Introduction to database management systems and SQL.",
-    credits: 4,
-    instructor: "Dr. Williams",
-    degreeLevel: "undergraduate",
-    semester: "3rd",
-    prerequisites: ["CSE201"],
-    topics: [
-      "Database design",
-      "SQL programming",
-      "Normalization",
-      "Transaction management",
-      "Database security",
-    ],
-    objectives: [
-      "Understand database design principles",
-      "Learn SQL for data manipulation",
-      "Study database administration concepts",
-    ],
-    outcomes: [
-      "Ability to design efficient databases",
-      "Skills in writing complex SQL queries",
-      "Knowledge of database security principles",
-    ],
-  },
-  {
-    id: "4",
-    code: "CSE401",
-    name: "Operating Systems",
-    description: "Fundamentals of operating system design and implementation.",
-    credits: 4,
-    instructor: "Dr. Brown",
-    degreeLevel: "undergraduate",
-    semester: "4th",
-    prerequisites: ["CSE201"],
-    topics: [
-      "Process management",
-      "Memory management",
-      "File systems",
-      "I/O systems",
-      "Virtualization",
-    ],
-    objectives: [
-      "Understand OS architecture",
-      "Learn resource management techniques",
-      "Study concurrency and synchronization",
-    ],
-    outcomes: [
-      "Understanding of OS internals",
-      "Knowledge of resource allocation algorithms",
-      "Skills in system programming",
-    ],
-  },
-  {
-    id: "5",
-    code: "CSE501",
-    name: "Machine Learning",
-    description:
-      "Fundamentals of machine learning algorithms and applications.",
-    credits: 3,
-    instructor: "Dr. Davis",
-    degreeLevel: "graduate",
-    semester: "1st",
-    prerequisites: ["Statistics", "Linear Algebra"],
-    topics: [
-      "Supervised learning",
-      "Unsupervised learning",
-      "Neural networks",
-      "Reinforcement learning",
-      "Model evaluation",
-    ],
-    objectives: [
-      "Understand ML principles",
-      "Learn to implement ML algorithms",
-      "Apply ML to real-world problems",
-    ],
-    outcomes: [
-      "Ability to select appropriate ML algorithms",
-      "Skills in implementing and evaluating ML models",
-      "Understanding of ML limitations and ethics",
-    ],
-  },
-  {
-    id: "6",
-    code: "CSE601",
-    name: "Advanced Algorithms",
-    description:
-      "In-depth study of complex algorithmic techniques and analysis.",
-    credits: 3,
-    instructor: "Dr. Wilson",
-    degreeLevel: "graduate",
-    semester: "2nd",
-    prerequisites: ["CSE201", "Discrete Mathematics"],
-    topics: [
-      "Dynamic programming",
-      "Graph algorithms",
-      "Approximation algorithms",
-      "Randomized algorithms",
-      "Computational complexity",
-    ],
-    objectives: [
-      "Understand advanced algorithm design techniques",
-      "Learn to analyze complex algorithms",
-      "Study NP-completeness and approximation",
-    ],
-    outcomes: [
-      "Ability to design algorithms for complex problems",
-      "Skills in algorithm analysis and proof",
-      "Understanding of computational complexity theory",
-    ],
-  },
-];
+import { 
+  getCourses, 
+  createCourse, 
+  updateCourse, 
+  deleteCourse 
+} from "../../lib/api";
 
 // Degree program data
 const degreePrograms = [
@@ -199,15 +31,15 @@ const degreePrograms = [
 
 export default function CoursesPage() {
   const { degreeId } = useParams();
-  const [courses, setCourses] = useState<Course[]>(initialCourses);
-  const [filteredCourses, setFilteredCourses] = useState<Course[]>(courses);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [selectedSemester, setSelectedSemester] = useState<string>("");
   const [selectedDegreeLevel, setSelectedDegreeLevel] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [degreeTitle, setDegreeTitle] = useState<string | null>(null);
-  const [totalCount, setTotalCount] = useState(courses.length);
+  const [totalCount, setTotalCount] = useState(0);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -240,6 +72,32 @@ export default function CoursesPage() {
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === "admin";
 
+  // Fetch courses from API
+  const fetchCourses = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const filters: CourseFilterOptions = {};
+      
+      if (searchQuery) filters.searchQuery = searchQuery;
+      if (selectedDegreeLevel) filters.degreeLevel = selectedDegreeLevel as CourseDegreeLevel;
+      if (selectedSemester) filters.semester = selectedSemester as CourseSemester;
+      
+      const response = await getCourses(filters);
+      setCourses(response.data);
+      setFilteredCourses(response.data);
+      setTotalCount(response.total);
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      setError("Failed to load courses. Please try again.");
+      setCourses([]);
+      setFilteredCourses([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Set degree title when degree ID changes
   useEffect(() => {
     if (degreeId) {
@@ -259,63 +117,10 @@ export default function CoursesPage() {
     }
   }, [degreeId]);
 
-  // Filter courses when filters change
+  // Fetch courses when filters change
   useEffect(() => {
-    setIsLoading(true);
-
-    try {
-      // Start with all courses
-      let filtered = [...courses];
-
-      // Filter by degree level
-      if (selectedDegreeLevel) {
-        filtered = filtered.filter(
-          (course) => course.degreeLevel === selectedDegreeLevel
-        );
-      } else if (degreeId) {
-        // If no degree level selected but we have a degree ID, apply that filter
-        if (degreeId === "bsc-cse") {
-          filtered = filtered.filter(
-            (course) => course.degreeLevel === "undergraduate"
-          );
-        } else if (["msc-cse", "pmics", "mphil-cse"].includes(degreeId)) {
-          filtered = filtered.filter(
-            (course) => course.degreeLevel === "graduate"
-          );
-        } else if (degreeId === "phd-cse") {
-          filtered = filtered.filter(
-            (course) => course.degreeLevel === "doctorate"
-          );
-        }
-      }
-
-      // Filter by semester
-      if (selectedSemester) {
-        filtered = filtered.filter(
-          (course) => course.semester === selectedSemester
-        );
-      }
-
-      // Filter by search query
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        filtered = filtered.filter(
-          (course) =>
-            course.name.toLowerCase().includes(query) ||
-            course.code.toLowerCase().includes(query) ||
-            course.description.toLowerCase().includes(query)
-        );
-      }
-
-      setFilteredCourses(filtered);
-      setTotalCount(filtered.length);
-    } catch (err) {
-      console.error("Error filtering courses:", err);
-      setError("Failed to filter courses. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedDegreeLevel, selectedSemester, searchQuery, degreeId, courses]);
+    fetchCourses();
+  }, [selectedDegreeLevel, selectedSemester, searchQuery, degreeId]);
 
   const handleSemesterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSemester(e.target.value);
@@ -373,8 +178,8 @@ export default function CoursesPage() {
       description: course.description,
       credits: course.credits,
       instructor: course.instructor || "",
-      degreeLevel: course.degreeLevel,
-      semester: course.semester,
+      degreeLevel: course.degreeLevel as CourseDegreeLevel,
+      semester: course.semester as CourseSemester,
       prerequisites: course.prerequisites || [],
       topics: course.topics || [],
       objectives: course.objectives || [],
@@ -383,33 +188,58 @@ export default function CoursesPage() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteCourse = (id: string) => {
+  const handleDeleteCourse = async (courseCode: string) => {
     if (window.confirm("Are you sure you want to delete this course?")) {
-      setCourses(courses.filter((course) => course.id !== id));
+      try {
+        setIsLoading(true);
+        await deleteCourse(courseCode);
+        await fetchCourses(); // Refresh the list
+      } catch (err) {
+        console.error("Error deleting course:", err);
+        setError("Failed to delete course. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-    if (editingCourse) {
-      // Edit existing course
-      setCourses(
-        courses.map((course) =>
-          course.id === editingCourse.id ? { ...course, ...formData } : course
-        )
-      );
-    } else {
-      // Add new course
-      const newCourse: Course = {
-        id: Date.now().toString(),
-        ...formData,
+    try {
+      const courseData = {
+        course_code: formData.code,
+        course_title: formData.name,
+        course_description: formData.description,
+        course_credits: formData.credits,
+        degree_level: formData.degreeLevel,
+        semester: formData.semester,
+        instructor: formData.instructor,
+        prerequisites: formData.prerequisites,
+        topics: formData.topics,
+        objectives: formData.objectives,
+        learning_outcomes: formData.outcomes,
       };
-      setCourses([newCourse, ...courses]);
-    }
 
-    setIsModalOpen(false);
-    setEditingCourse(null);
+      if (editingCourse) {
+        // Edit existing course
+        await updateCourse(editingCourse.code, courseData);
+      } else {
+        // Create new course
+        await createCourse(courseData);
+      }
+
+      setIsModalOpen(false);
+      setEditingCourse(null);
+      await fetchCourses(); // Refresh the list
+    } catch (err) {
+      console.error("Error saving course:", err);
+      setError(`Failed to ${editingCourse ? 'update' : 'create'} course. Please try again.`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -579,9 +409,9 @@ export default function CoursesPage() {
                       <div key={course.id} className="relative group">
                         <div
                           onClick={() => handleCourseClick(course.id)}
-                          className="bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden cursor-pointer"
+                          className="bg-card rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden cursor-pointer h-80 flex flex-col"
                         >
-                          <div className="p-4">
+                          <div className="p-4 flex flex-col h-full">
                             <div className="flex justify-between items-start mb-2">
                               <h3 className="text-card-foreground">
                                 {course.name}
@@ -607,29 +437,31 @@ export default function CoursesPage() {
                               </span>
                             </div>
 
-                            <p className="text-muted-foreground mb-4 line-clamp-3">
-                              {course.description}
-                            </p>
+                            <div className="flex-1 flex flex-col">
+                              <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
+                                {course.description}
+                              </p>
 
-                            {course.prerequisites.length > 0 && (
-                              <div className="mb-3 text-sm text-muted-foreground">
-                                <span className="font-medium">
-                                  Prerequisites:
-                                </span>{" "}
-                                {course.prerequisites.join(", ")}
+                              {course.prerequisites.length > 0 && (
+                                <div className="mb-3 text-sm text-muted-foreground">
+                                  <span className="font-medium">
+                                    Prerequisites:
+                                  </span>{" "}
+                                  {course.prerequisites.join(", ")}
+                                </div>
+                              )}
+
+                              <div className="flex justify-between items-center mt-auto">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleCourseClick(course.id);
+                                  }}
+                                  className="text-primary hover:text-primary/80 text-sm"
+                                >
+                                  View Details →
+                                </button>
                               </div>
-                            )}
-
-                            <div className="flex justify-between items-center">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleCourseClick(course.id);
-                                }}
-                                className="text-primary hover:text-primary/80 text-sm"
-                              >
-                                View Details →
-                              </button>
                             </div>
                           </div>
                         </div>
@@ -658,7 +490,7 @@ export default function CoursesPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleDeleteCourse(course.id)}
+                              onClick={() => handleDeleteCourse(course.code)}
                               className="bg-white hover:bg-red-50 text-red-600 hover:text-red-700"
                             >
                               <svg

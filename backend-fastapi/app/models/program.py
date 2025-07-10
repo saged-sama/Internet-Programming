@@ -1,15 +1,28 @@
 from datetime import date
-from typing import List
-from sqlmodel import Field, SQLModel
+from typing import Optional, List, Dict
+from sqlmodel import Field, SQLModel, JSON, Column
+from enum import Enum
+
+class DegreeLevel(str, Enum):
+    undergraduate = "undergraduate"
+    graduate = "graduate"
+    doctorate = "doctorate"
+
+class Curriculum(SQLModel):
+    coreCourses: List[str] = []
+    electiveCourses: Optional[List[str]] = []
+    totalCredits: Optional[int] = None
 
 class Program(SQLModel, table=True):
     id: str = Field(primary_key=True)
-    title: str = Field(max_length=100)
-    year: int
-    semester: int = Field(min=1, max=8, sa_column_kwargs={"nullable": True})
-    description: str = Field(max_length=500)
-    start_date: date
-    end_date: date
-    degree_type: str
-    department: str
-    courses: List[str] = Field(default=[], sa_column_kwargs={"nullable": True}, foreign_key="course.course_code")
+    title: str = Field(max_length=200)
+    level: DegreeLevel
+    description: str = Field(max_length=1000)
+    creditsRequired: int
+    duration: str  # e.g., "4 years", "1.5-2 years"
+    department: Optional[str] = None
+    concentrations: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+    admissionRequirements: List[str] = Field(default=[], sa_column=Column(JSON))
+    careerOpportunities: List[str] = Field(default=[], sa_column=Column(JSON))
+    curriculum: Optional[Dict] = Field(default={}, sa_column=Column(JSON))  # Will store Curriculum structure
+    updatedAt: Optional[date] = None

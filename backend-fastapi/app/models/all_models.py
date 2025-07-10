@@ -1,3 +1,19 @@
+# Import all models to ensure they are registered with SQLModel
+from .user import User, FacultyProfile, StudentProfile, StaffProfile, UserEducation, UserPublication, UserCreateRequest, UserLoginRequest, UserRoles, StudentTypeEnum
+from .program import Program
+from .course import Course, CourseType, CourseMaterial
+from .assignment import Assignment, AssignmentSubmission
+from .class_schedule import ClassSchedule
+from .equipment import LabEquipment, EquipmentBooking
+from .event import Event, EventCategoryEnum
+from .exam_schedule import ExamTimeTable, ExamTypeEnum
+from .fee import Fee, FeePayment, FeeTypeEnum, FeeStatusEnum
+from .grades import Grade
+from .meeting import Meeting
+from .project import Project, ProjectTeamMember
+from .research import ResearchPaper, ResearchPaperAuthor
+from .room import Room, RoomAvailabilitySlot, RoomBooking
+
 from enum import Enum
 from typing import Optional
 from datetime import date
