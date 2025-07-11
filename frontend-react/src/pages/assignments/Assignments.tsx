@@ -3,7 +3,12 @@ import AssignmentList from "@/components/assignments/AssignmentList";
 import AssignmentForm from "@/components/assignments/AssignmentForm";
 import AssignmentDetail from "@/components/assignments/AssignmentDetail";
 import type { Assignment } from "@/types/scheduling";
-import assignmentsData from "@/assets/assignments.json";
+import {
+  fetchAssignments,
+  createAssignment,
+  updateAssignment,
+  deleteAssignment,
+} from "../../lib/schedulingApi";
 import { getCurrentUser } from "../../lib/auth";
 
 export default function AssignmentsPage() {
@@ -22,9 +27,29 @@ export default function AssignmentsPage() {
   const isStudent = currentUser?.role === "student";
 
   useEffect(() => {
-    // Load assignments from JSON data
-    const loadedAssignments = assignmentsData as Assignment[];
-    setAssignments(loadedAssignments);
+    fetchAssignments()
+      .then((data) => {
+        // Map snake_case to camelCase for each assignment, including all relevant fields
+        const mapped = data.map((a: any) => ({
+          ...a,
+          courseCode: a.course_code || "",
+          courseTitle: a.course_title || "",
+          batch: a.batch,
+          semester: a.semester,
+          title: a.title,
+          description: a.description,
+          deadline: a.deadline,
+          createdBy: a.created_by || "",
+          submissionCount: a.submission_count ?? 0,
+          status:
+            a.status ||
+            (a.deadline && new Date(a.deadline) < new Date()
+              ? "Closed"
+              : "Open"),
+        }));
+        setAssignments(mapped);
+      })
+      .catch(() => showSuccess("Failed to load assignments"));
   }, []);
 
   const handleViewDetails = (assignment: Assignment) => {
@@ -45,15 +70,17 @@ export default function AssignmentsPage() {
     setEditingAssignment(assignment);
   };
 
-  const handleDeleteAssignment = (assignment: Assignment) => {
+  const handleDeleteAssignment = async (assignment: Assignment) => {
     if (
       window.confirm(`Are you sure you want to delete "${assignment.title}"?`)
     ) {
-      const updatedAssignments = assignments.filter(
-        (a) => a.id !== assignment.id
-      );
-      setAssignments(updatedAssignments);
-      showSuccess("Assignment deleted successfully!");
+      try {
+        await deleteAssignment(assignment.id);
+        setAssignments(await fetchAssignments());
+        showSuccess("Assignment deleted successfully!");
+      } catch {
+        showSuccess("Error deleting assignment");
+      }
     }
   };
 
@@ -62,29 +89,33 @@ export default function AssignmentsPage() {
     setEditingAssignment(null);
   };
 
-  const handleSubmitAssignment = (
+  const handleSubmitAssignment = async (
     assignmentData: Omit<Assignment, "id" | "submissionCount" | "status">
   ) => {
-    if (editingAssignment) {
-      // Update existing assignment
-      const updatedAssignments = assignments.map((a) =>
-        a.id === editingAssignment.id ? { ...a, ...assignmentData } : a
-      );
-      setAssignments(updatedAssignments);
-      setEditingAssignment(null);
-      showSuccess("Assignment updated successfully!");
-    } else {
-      // Create new assignment
-      const newAssignment: Assignment = {
-        id: assignments.length + 1,
-        ...assignmentData,
-        submissionCount: 0,
-        status: "Open",
-      };
-
-      setAssignments([...assignments, newAssignment]);
+    // Map camelCase to snake_case for API
+    const apiData = {
+      title: assignmentData.title,
+      course_code: assignmentData.courseCode,
+      course_title: assignmentData.courseTitle,
+      batch: assignmentData.batch,
+      semester: assignmentData.semester,
+      deadline: new Date(assignmentData.deadline).toISOString(),
+      description: assignmentData.description,
+      created_by: assignmentData.createdBy,
+    };
+    try {
+      if (editingAssignment) {
+        await updateAssignment(editingAssignment.id, apiData);
+        showSuccess("Assignment updated successfully!");
+      } else {
+        await createAssignment(apiData);
+        showSuccess("Assignment created successfully!");
+      }
+      setAssignments(await fetchAssignments());
       setShowCreateForm(false);
-      showSuccess("Assignment created successfully!");
+      setEditingAssignment(null);
+    } catch {
+      showSuccess("Error saving assignment");
     }
   };
 

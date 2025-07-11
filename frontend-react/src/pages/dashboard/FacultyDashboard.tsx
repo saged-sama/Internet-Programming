@@ -90,12 +90,51 @@ const recentSubmissions = [
   },
 ];
 
+const recentExams = [
+  {
+    id: 1,
+    courseCode: "CSE 2101",
+    courseTitle: "Data Structures and Algorithms",
+    examType: "Midterm",
+    date: "2024-01-15",
+    time: "10:00 - 12:00",
+    room: "301",
+    status: "Scheduled",
+  },
+  {
+    id: 2,
+    courseCode: "CSE 2203",
+    courseTitle: "Computer Organization",
+    examType: "Final",
+    date: "2024-01-20",
+    time: "14:00 - 17:00",
+    room: "302",
+    status: "Scheduled",
+  },
+  {
+    id: 3,
+    courseCode: "CSE 3107",
+    courseTitle: "Operating Systems",
+    examType: "Quiz",
+    date: "2024-01-18",
+    time: "09:00 - 10:00",
+    room: "303",
+    status: "Scheduled",
+  },
+];
+
 const quickActions = [
   {
     title: "Assignment",
     icon: "📝",
     route: "/assignments",
     color: "bg-blue-500",
+  },
+  {
+    title: "Exam Management",
+    icon: "📋",
+    route: "/exams/management",
+    color: "bg-indigo-500",
   },
   {
     title: "Upload Marks",
@@ -331,11 +370,71 @@ export default function FacultyDashboard() {
           </div>
         </div>
 
+        {/* Recent Exams Section */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-[#25345D]">
+              Recent Exams
+            </h2>
+            <button
+              onClick={() => navigate("/exams/management")}
+              className="text-sm text-[#EAB308] hover:text-[#F5C940] font-medium"
+            >
+              Manage All Exams →
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {recentExams.map((exam) => (
+              <div
+                key={exam.id}
+                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-semibold text-[#25345D]">
+                      {exam.courseCode}
+                    </h3>
+                    <p className="text-sm text-gray-600">{exam.courseTitle}</p>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    exam.examType === "Midterm" ? "bg-blue-100 text-blue-800" :
+                    exam.examType === "Final" ? "bg-red-100 text-red-800" :
+                    "bg-green-100 text-green-800"
+                  }`}>
+                    {exam.examType}
+                  </span>
+                </div>
+                <div className="space-y-1 text-sm text-gray-600">
+                  <div>📅 {new Date(exam.date).toLocaleDateString()}</div>
+                  <div>⏰ {exam.time}</div>
+                  <div>🏠 Room {exam.room}</div>
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button className="text-xs text-[#EAB308] hover:text-[#F5C940] font-medium">
+                    Edit
+                  </button>
+                  <button className="text-xs text-[#EAB308] hover:text-[#F5C940] font-medium">
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Upcoming Deadlines */}
         <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-          <h2 className="text-xl font-bold text-[#25345D] mb-4">
-            Upcoming Deadlines
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-[#25345D]">
+              Upcoming Deadlines
+            </h2>
+            <button
+              onClick={() => navigate("/exams/management")}
+              className="text-sm text-[#EAB308] hover:text-[#F5C940] font-medium"
+            >
+              Manage Exams →
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="border-l-4 border-red-500 pl-4">
               <p className="text-sm font-medium text-[#25345D]">

@@ -14,7 +14,7 @@ export function filterMeetings(
 ): Meeting[] {
   return meetings.filter(meeting => {
     const matchesType = selectedType === 'All' || meeting.type === selectedType;
-    const matchesDate = !selectedDate || meeting.date === selectedDate;
+    const matchesDate = !selectedDate || meeting.meeting_date === selectedDate;
     const matchesSearch = meeting.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       meeting.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       meeting.organizer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -24,10 +24,10 @@ export function filterMeetings(
 
 export function groupMeetingsByDate(meetings: Meeting[]): Record<string, Meeting[]> {
   return meetings.reduce((acc: Record<string, Meeting[]>, meeting: Meeting) => {
-    if (!acc[meeting.date]) {
-      acc[meeting.date] = [];
+    if (!acc[meeting.meeting_date]) {
+      acc[meeting.meeting_date] = [];
     }
-    acc[meeting.date].push(meeting);
+    acc[meeting.meeting_date].push(meeting);
     return acc;
   }, {} as Record<string, Meeting[]>);
 }

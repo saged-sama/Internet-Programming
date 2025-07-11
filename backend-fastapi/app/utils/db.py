@@ -3,6 +3,23 @@ from typing import Annotated
 from fastapi import Depends
 from app.utils.config import settings
 
+# Import all models to ensure they are registered with SQLModel before table creation
+from app.models.user import User, FacultyProfile, StudentProfile, StaffProfile, UserEducation, UserPublication
+from app.models.program import Program
+from app.models.course import Course, CourseMaterial
+from app.models.assignment import Assignment, AssignmentSubmission
+from app.models.class_schedule import ClassSchedule
+from app.models.equipment import LabEquipment, EquipmentBooking
+from app.models.event import Event, EventCategoryEnum
+from app.models.exam_schedule import ExamTimeTable
+from app.models.fee import Fee, FeePayment
+from app.models.grades import Grade
+from app.models.meeting import Meeting
+from app.models.project import Project, ProjectTeamMember
+from app.models.research import ResearchPaper, ResearchPaperAuthor
+from app.models.room import Room, RoomAvailabilitySlot, RoomBooking
+from app.models.all_models import AcademicResource, Announcement, Notice, ContactDepartment, ContactInfo, Award
+
 db_url = settings.database_url
 connect_args = {"check_same_thread": False}
 engine = create_engine(db_url, echo=True)

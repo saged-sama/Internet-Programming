@@ -6,6 +6,7 @@ import type {
 } from '@/types/scheduling';
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/scheduling';
+const API_BASE = "http://localhost:8000";
 
 // Helper function to get auth token
 const getAuthToken = () => {
@@ -21,16 +22,35 @@ const apiRequest = async (url: string, options: RequestInit = {}) => {
     ...options.headers,
   };
 
-  const response = await fetch(`${API_BASE_URL}${url}`, {
-    ...options,
-    headers,
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      ...options,
+      headers,
+    });
 
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
+    if (!response.ok) {
+      // Try to get error details from response body
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // Keep the default error message if response is not JSON
+      }
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error('❌ Failed to connect to server. Please check if the backend is running.');
+    }
+    throw error;
   }
-
-  return response.json();
 };
 
 // Room Availability API
@@ -77,7 +97,7 @@ export const roomAvailabilityApi = {
         day: string;
         slots: Array<{ startTime: string; endTime: string }>;
       }>;
-    }): Promise<{ message: string }> => {
+    }): Promise<{ message: string; room_id: number }> => {
       return apiRequest(`/admin/rooms/${roomId}`, {
         method: 'PUT',
         body: JSON.stringify(roomData),
@@ -146,11 +166,13 @@ export const classScheduleApi = {
     batch?: string;
     semester?: string;
     room?: string;
+    courseCode?: string;
   }): Promise<ClassSchedule[]> => {
     const params = new URLSearchParams();
     if (filters?.batch) params.append('batch', filters.batch);
     if (filters?.semester) params.append('semester', filters.semester);
     if (filters?.room) params.append('room', filters.room);
+    if (filters?.courseCode) params.append('course_code', filters.courseCode);
     
     const url = `/schedules${params.toString() ? `?${params.toString()}` : ''}`;
     return apiRequest(url);
@@ -159,6 +181,26 @@ export const classScheduleApi = {
   // Get all rooms used in schedules (for filtering)
   getRooms: async (): Promise<string[]> => {
     return apiRequest('/schedules/rooms');
+  },
+
+  // Get all courses available for scheduling
+  getCourses: async (): Promise<Array<{ course_code: string; course_title: string; credits: number }>> => {
+    return apiRequest('/schedules/courses');
+  },
+
+  // Get all batches used in schedules (for filtering)
+  getBatches: async (): Promise<string[]> => {
+    return apiRequest('/schedules/batches');
+  },
+
+  // Get all semesters used in schedules (for filtering)
+  getSemesters: async (): Promise<string[]> => {
+    return apiRequest('/schedules/semesters');
+  },
+
+  // Get all instructors for scheduling
+  getInstructors: async (): Promise<Array<{ id: string; name: string; email: string }>> => {
+    return apiRequest('/schedules/instructors');
   },
 
   // Admin CRUD operations
@@ -208,6 +250,113 @@ export const classScheduleApi = {
     getById: async (scheduleId: number): Promise<ClassSchedule> => {
       return apiRequest(`/admin/schedules/${scheduleId}`);
     },
+  },
+};
+
+export async function fetchAssignments() {
+  const res = await fetch(`${API_BASE}/staff-api/assignments`);
+  if (!res.ok) throw new Error("Failed to fetch assignments");
+  return res.json();
+}
+
+export async function createAssignment(data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/assignments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to create assignment");
+  return res.json();
+}
+
+export async function updateAssignment(id: number, data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/assignments/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update assignment");
+  return res.json();
+}
+
+export async function deleteAssignment(id: number) {
+  const res = await fetch(`${API_BASE}/staff-api/assignments/${id}`, {
+    method: "DELETE"
+  });
+  if (!res.ok) throw new Error("Failed to delete assignment");
+  return res.json();
+}
+
+export async function createExam(data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/exams`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to create exam");
+  return res.json();
+}
+
+export async function updateExam(id: string | number, data: any) {
+  const res = await fetch(`${API_BASE}/staff-api/exams/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update exam");
+  return res.json();
+}
+
+export async function deleteExam(id: string | number) {
+  const res = await fetch(`${API_BASE}/staff-api/exams/${id}`, {
+    method: "DELETE"
+  });
+  if (!res.ok) throw new Error("Failed to delete exam");
+  return res.json();
+}
+
+export async function fetchExams() {
+  const res = await fetch(`${API_BASE}/staff-api/exams`);
+  if (!res.ok) throw new Error("Failed to fetch exams");
+  const data = await res.json();
+  // Map snake_case to camelCase for frontend compatibility
+  return data.map((exam: any) => ({
+    id: exam.id,
+    courseCode: exam.course_code,
+    courseTitle: exam.course_title ?? "",
+    batch: exam.batch ?? "",
+    semester: exam.semester,
+    examType: exam.exam_type,
+    date: exam.date ?? (exam.exam_schedule ? exam.exam_schedule.split('T')[0] : ""),
+    startTime: exam.start_time ?? (exam.exam_schedule ? exam.exam_schedule.split('T')[1]?.slice(0,5) : ""),
+    endTime: exam.end_time ?? (exam.duration ? exam.duration.slice(0,5) : ""),
+    room: exam.room,
+    invigilator: exam.invigilator ?? "",
+  }));
+}
+
+// Courses API (from courses.py)
+export const coursesApi = {
+  // Get all courses for dropdowns
+  getAll: async (): Promise<Array<{ 
+    id: string; 
+    code: string; 
+    name: string; 
+    description: string; 
+    credits: number 
+  }>> => {
+    const response = await fetch('http://127.0.0.1:8000/api/courses/', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch courses');
+    }
+    
+    const data = await response.json();
+    return data.data; // courses.py returns { data: [...], total: number }
   },
 };
 

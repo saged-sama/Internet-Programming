@@ -22,6 +22,8 @@ export default function RoomAvailabilityAdmin() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingRoom, setEditingRoom] = useState<RoomAvailability | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<RoomFormData>({
     room: '',
@@ -130,13 +132,19 @@ export default function RoomAvailabilityAdmin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (isSubmitting) return; // Prevent double submission
+    
     try {
+      setIsSubmitting(true);
+      let response;
       if (editingRoom) {
         // Update existing room
-        await schedulingApi.roomAvailability.admin.update(editingRoom.id, formData);
+        response = await schedulingApi.roomAvailability.admin.update(editingRoom.id, formData);
+        alert(`✅ ${response.message}`);
       } else {
         // Create new room
-        await schedulingApi.roomAvailability.admin.create(formData);
+        response = await schedulingApi.roomAvailability.admin.create(formData);
+        alert(`✅ ${response.message}`);
       }
       
       setShowCreateForm(false);
@@ -145,18 +153,26 @@ export default function RoomAvailabilityAdmin() {
       await loadRooms();
     } catch (err) {
       console.error('Error saving room:', err);
-      alert('Failed to save room. Please try again.');
+      alert('❌ Failed to save room. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async (room: RoomAvailability) => {
-    if (window.confirm(`Are you sure you want to delete room ${room.room}?`)) {
+    if (isDeleting === room.id) return; // Prevent double deletion
+    
+    if (window.confirm(`Are you sure you want to delete room ${room.room}?\n\nThis will also delete:\n- All class schedules in this room\n- All booking requests for this room\n- All availability slots for this room`)) {
       try {
-        await schedulingApi.roomAvailability.admin.delete(room.id);
+        setIsDeleting(room.id);
+        const response = await schedulingApi.roomAvailability.admin.delete(room.id);
+        alert(`✅ ${response.message}`);
         await loadRooms();
       } catch (err) {
         console.error('Error deleting room:', err);
-        alert('Failed to delete room. Please try again.');
+        alert('❌ Failed to delete room. Please try again.');
+      } finally {
+        setIsDeleting(null);
       }
     }
   };
@@ -330,8 +346,9 @@ export default function RoomAvailabilityAdmin() {
                       size="sm"
                       variant="destructive"
                       className="text-xs"
+                      disabled={isDeleting === room.id}
                     >
-                      Delete
+                      {isDeleting === room.id ? 'Deleting...' : 'Delete'}
                     </Button>
                   </div>
                 </div>
@@ -536,11 +553,18 @@ export default function RoomAvailabilityAdmin() {
               </div>
 
               <div className="flex justify-end gap-2 pt-6 mt-6 border-t border-border">
-                <Button type="button" onClick={handleCancel} variant="outline">
+                <Button type="button" onClick={handleCancel} variant="outline" disabled={isSubmitting}>
                   Cancel
                 </Button>
-                <Button type="submit" className="bg-primary text-primary-foreground">
-                  {editingRoom ? 'Update Room' : 'Create Room'}
+                <Button type="submit" className="bg-primary text-primary-foreground" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {editingRoom ? 'Updating...' : 'Creating...'}
+                    </>
+                  ) : (
+                    editingRoom ? 'Update Room' : 'Create Room'
+                  )}
                 </Button>
               </div>
             </form>

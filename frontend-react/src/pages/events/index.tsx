@@ -1,125 +1,194 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { getCurrentUser } from "../../lib/auth";
 import themeClasses from "../../lib/theme-utils";
-
-import eventsData from "../../assets/eventsData.json";
 import EventFilters from "../../components/events/EventFilters";
-import EventsGrid from "../../components/events/EventsGrid";
 import EmptyEventsState from "../../components/events/EmptyEventsState";
+import { type Event, type EventFilters as EventFilterParams, getEvents, createEvent, updateEvent, deleteEvent } from "../../api/events";
 
-interface Event {
-  id: number;
+// Using the Event interface from the API
+interface EventFormData {
   title: string;
-  date: string;
-  time: string;
+  event_date: string;
+  start_time: string;
+  end_time: string;
   location: string;
   category: string;
   description: string;
   image: string;
-  registrationRequired: boolean;
-  registrationDeadline?: string;
+  registration_required: boolean;
+  registration_deadline: string;
 }
 
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [events, setEvents] = useState<Event[]>(eventsData.events as Event[]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [formData, setFormData] = useState({
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const categories = ['All', 'Academic', 'Cultural', 'Sports', 'Workshop', 'Conference'];
+  const [formData, setFormData] = useState<EventFormData>({
     title: "",
-    date: "",
-    time: "",
+    event_date: "",
+    start_time: "",
+    end_time: "",
     location: "",
     category: "",
     description: "",
     image: "",
-    registrationRequired: false,
-    registrationDeadline: "",
+    registration_required: false,
+    registration_deadline: "",
   });
 
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === "admin";
 
-  // Import data from JSON file
-  const categories = eventsData.categories;
+  // Debounce search query changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchEvents();
+    }, 300); // 300ms debounce delay
+    
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+  
+  // Fetch events when category changes (no debounce needed)
+  useEffect(() => {
+    fetchEvents();
+  }, [selectedCategory]);
 
-  const filteredEvents = events.filter((event) => {
-    const matchesCategory =
-      !selectedCategory ||
-      selectedCategory === "All" ||
-      event.category === selectedCategory;
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.location.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const fetchEvents = useCallback(async () => {
+    try {
+      setLoading(true);
+      const filters: EventFilterParams = {
+        skip: 0,
+        limit: 100
+      };
+
+      if (searchQuery) {
+        filters.search_query = searchQuery;
+      }
+
+      if (selectedCategory && selectedCategory !== 'All') {
+        filters.category = selectedCategory;
+      }
+
+      const response = await getEvents(filters);
+      setEvents(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching events:', err);
+      setError('Failed to load events. Please try again later.');
+      setLoading(false);
+    }
+  }, [searchQuery, selectedCategory]);
+
+  // No need to filter events locally as the API handles filtering
 
   const handleAddEvent = () => {
     setEditingEvent(null);
     setFormData({
       title: "",
-      date: "",
-      time: "",
+      event_date: "",
+      start_time: "",
+      end_time: "",
       location: "",
-      category: categories[0] || "",
+      category: categories[1] || "", // Skip 'All' and use the first real category
       description: "",
       image: "",
-      registrationRequired: false,
-      registrationDeadline: "",
+      registration_required: false,
+      registration_deadline: "",
     });
     setIsModalOpen(true);
   };
 
   const handleEditEvent = (event: Event) => {
     setEditingEvent(event);
+    
+    // Format times by removing seconds if present
+    const formatTime = (timeStr: string | null) => {
+      if (!timeStr) return "";
+      // If time has seconds (HH:MM:SS), remove the seconds part
+      return timeStr.split(':').slice(0, 2).join(':');
+    };
+    
     setFormData({
       title: event.title,
-      date: event.date,
-      time: event.time,
-      location: event.location,
+      event_date: event.event_date,
+      start_time: formatTime(event.start_time),
+      end_time: formatTime(event.end_time),
+      location: event.location || "",
       category: event.category,
-      description: event.description,
-      image: event.image,
-      registrationRequired: event.registrationRequired,
-      registrationDeadline: event.registrationDeadline || "",
+      description: event.description || "",
+      image: event.image || "",
+      registration_required: event.registration_required,
+      // Ensure registration_deadline is in YYYY-MM-DD format for the date input
+      registration_deadline: event.registration_deadline || "",
     });
     setIsModalOpen(true);
   };
 
-  const handleDeleteEvent = (id: number) => {
+  const handleDeleteEvent = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
-      setEvents(events.filter((event) => event.id !== id));
+      try {
+        await deleteEvent(id);
+        // Refresh events after deletion
+        fetchEvents();
+      } catch (err) {
+        console.error('Error deleting event:', err);
+        alert('Failed to delete event. Please try again.');
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (editingEvent) {
-      // Edit existing event
-      setEvents(
-        events.map((event) =>
-          event.id === editingEvent.id ? { ...event, ...formData } : event
-        )
-      );
-    } else {
-      // Add new event
-      const newEvent: Event = {
-        id: Date.now(), // Simple ID generation
+    try {
+      // Format the data to match API requirements
+      const formattedData = {
         ...formData,
-        registrationDeadline: formData.registrationRequired
-          ? formData.registrationDeadline
-          : undefined,
+        // Format start_time to match API expectations (HH:MM:SS format without timezone)
+        start_time: formData.start_time ? `${formData.start_time}:00` : '00:00:00',
+        // Format end_time to match API expectations (HH:MM:SS format without timezone)
+        end_time: formData.end_time ? `${formData.end_time}:00` : '00:00:00',
+        // Handle registration_deadline (already in YYYY-MM-DD format from date input)
+        registration_deadline: formData.registration_required 
+          ? (formData.registration_deadline || formData.event_date) // Use event date as fallback
+          : null // If registration not required, set to null
       };
-      setEvents([newEvent, ...events]);
-    }
 
-    setIsModalOpen(false);
-    setEditingEvent(null);
+      // Log the data being sent to help with debugging
+      console.log('Sending event data:', formattedData);
+
+      if (editingEvent) {
+        // Edit existing event
+        await updateEvent(editingEvent.id, formattedData);
+        console.log('Event updated successfully');
+      } else {
+        // Add new event
+        await createEvent(formattedData);
+        console.log('Event created successfully');
+      }
+
+      // Refresh events after submission
+      fetchEvents();
+      setIsModalOpen(false);
+      setEditingEvent(null);
+    } catch (err: any) {
+      console.error('Error saving event:', err);
+      
+      // Provide more detailed error information if available
+      if (err.response) {
+        console.error('Error response:', err.response.data);
+        alert(`Failed to save event: ${err.response.data.detail || 'Please check your form data and try again.'}`);
+      } else {
+        alert('Failed to save event. Please try again.');
+      }
+    }
   };
 
   return (
@@ -137,10 +206,10 @@ export default function EventsPage() {
             <div className="mt-6">
               <Button
                 onClick={handleAddEvent}
-                className={`${themeClasses.primaryButton} flex items-center gap-2`}
+                className={themeClasses.primaryButton}
               >
                 <svg
-                  className="w-4 h-4"
+                  className="w-5 h-5 mr-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -165,12 +234,24 @@ export default function EventsPage() {
           setSelectedCategory={setSelectedCategory}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
+          onSearch={fetchEvents}
         />
 
-        {/* Events Grid or Empty State */}
-        {filteredEvents.length > 0 ? (
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+            <p className="font-medium">{error}</p>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : events.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredEvents.map((event) => (
+            {events.map((event) => (
               <div key={event.id} className="relative">
                 <div
                   className={`bg-card rounded-lg shadow-md overflow-hidden h-full flex flex-col border ${themeClasses.borderPrimary} hover:shadow-lg transition-shadow ${themeClasses.hoverBorderAccentYellow}`}
@@ -187,7 +268,7 @@ export default function EventsPage() {
                       >
                         {event.category}
                       </span>
-                      {event.registrationRequired && (
+                      {event.registration_required && (
                         <span className="inline-flex items-center rounded-full bg-destructive/20 px-2.5 py-0.5 font-medium text-destructive">
                           Registration Required
                         </span>
@@ -211,7 +292,7 @@ export default function EventsPage() {
                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                         />
                       </svg>
-                      <span>{event.date}</span>
+                      <span>{event.event_date}</span>
                     </div>
                     <div className="flex items-center text-muted-foreground mb-1">
                       <svg
@@ -228,7 +309,7 @@ export default function EventsPage() {
                           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
-                      <span>{event.time}</span>
+                      <span>{event.start_time}</span>
                     </div>
                     <div className="flex items-center text-muted-foreground mb-4">
                       <svg
@@ -256,10 +337,10 @@ export default function EventsPage() {
                     <p className="text-muted-foreground mb-4 line-clamp-2">
                       {event.description}
                     </p>
-                    {event.registrationRequired &&
-                      event.registrationDeadline && (
+                    {event.registration_required &&
+                      event.registration_deadline && (
                         <p className="text-muted mb-4">
-                          Registration deadline: {event.registrationDeadline}
+                          Registration deadline: {event.registration_deadline}
                         </p>
                       )}
                     <div className="flex space-x-2">
@@ -270,7 +351,7 @@ export default function EventsPage() {
                       >
                         <Link to={`/events/${event.id}`}>View Details</Link>
                       </Button>
-                      {event.registrationRequired && (
+                      {event.registration_required && (
                         <Button className={themeClasses.primaryButton} asChild>
                           <Link to={`/events/${event.id}/register`}>
                             Register
@@ -391,21 +472,33 @@ export default function EventsPage() {
                   <label className="block text-sm font-medium mb-1">Date</label>
                   <input
                     type="date"
-                    value={formData.date}
+                    value={formData.event_date}
                     onChange={(e) =>
-                      setFormData({ ...formData, date: e.target.value })
+                      setFormData({ ...formData, event_date: e.target.value })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Time</label>
+                  <label className="block text-sm font-medium mb-1">Start Time</label>
                   <input
                     type="time"
-                    value={formData.time}
+                    value={formData.start_time}
                     onChange={(e) =>
-                      setFormData({ ...formData, time: e.target.value })
+                      setFormData({ ...formData, start_time: e.target.value })
+                    }
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">End Time</label>
+                  <input
+                    type="time"
+                    value={formData.end_time}
+                    onChange={(e) =>
+                      setFormData({ ...formData, end_time: e.target.value })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                     required
@@ -459,11 +552,11 @@ export default function EventsPage() {
                 <input
                   type="checkbox"
                   id="registrationRequired"
-                  checked={formData.registrationRequired}
+                  checked={formData.registration_required}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      registrationRequired: e.target.checked,
+                      registration_required: e.target.checked,
                     })
                   }
                   className="mr-2"
@@ -472,21 +565,22 @@ export default function EventsPage() {
                   Registration Required
                 </label>
               </div>
-              {formData.registrationRequired && (
+              {formData.registration_required && (
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Registration Deadline
+                    Registration Deadline <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="datetime-local"
-                    value={formData.registrationDeadline}
+                    type="date"
+                    value={formData.registration_deadline}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        registrationDeadline: e.target.value,
+                        registration_deadline: e.target.value,
                       })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    required={formData.registration_required}
                   />
                 </div>
               )}
