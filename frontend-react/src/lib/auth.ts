@@ -6,13 +6,25 @@ const USERS = [
   { email: 'faculty@gmail.com', password: '123456', role: 'faculty' },
 ];
 
-export function login(email: string, password: string) {
-  const user = USERS.find(u => u.email === email && u.password === password);
-  if (user) {
-    localStorage.setItem('user', JSON.stringify({ email: user.email, role: user.role }));
-    return { email: user.email, role: user.role };
+export async function login(formData: FormData) {
+  let user: string | null = null;;
+  try{
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
+      method: 'POST',
+      body: formData,
+    })
+    if(!response.ok) {
+      throw new Error('Login failed');
+    }
+    const data = await response.json();
+    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    user = data.user;
   }
-  return null;
+  catch (error) {
+    console.error('Login error:', error);
+  }
+  return user;
 }
 
 export function logout() {
@@ -25,7 +37,9 @@ export function getCurrentUser() {
 }
 
 export function isLoggedIn() {
-  return !!getCurrentUser();
+  const access_token = localStorage.getItem('access_token');
+  if(!access_token) return false;
+  return true;
 }
 
 export function getDashboardRoute() {

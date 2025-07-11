@@ -5,14 +5,14 @@ import themeClasses, { themeValues } from "../../lib/theme-utils";
 import { login, getDashboardRoute } from "../../lib/auth";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setusername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const user = login(email, password);
+    const user = await login(new FormData(e.target as HTMLFormElement));
     if (user) {
       navigate(getDashboardRoute());
     } else {
@@ -62,22 +62,22 @@ export default function LoginPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="block text-sm font-medium text-gray-700"
               >
-                Institutional Email
+                Institutional Mail
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="username"
+                  name="username"
+                  type="username"
+                  autoComplete="username"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setusername(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#ECB31D] focus:border-[#ECB31D] sm:text-sm"
-                  placeholder="username@cse.du.ac.bd"
+                  placeholder="mail@cse.du.ac.bd"
                 />
               </div>
             </div>
@@ -93,6 +93,7 @@ export default function LoginPage() {
                 <input
                   id="password"
                   name="password"
+                  placeholder="Password"
                   type="password"
                   autoComplete="current-password"
                   required

@@ -6,14 +6,13 @@ import themeClasses, { themeValues } from '../../lib/theme-utils';
 export default function SignupPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    firstname: '',
+    lastname: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    confirm_password: '',
     role: 'student', // Default role
-    studentId: '',
-    department: 'Computer Science and Engineering',
+    id: '',
     agreeToTerms: false
   });
   
@@ -42,13 +41,13 @@ export default function SignupPage() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
+    if (!formData.firstname.trim()) newErrors.firstname = 'First name is required';
+    if (!formData.lastname.trim()) newErrors.lastname = 'Last name is required';
     
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
-    } else if (!formData.email.endsWith('@cse.du.ac.bd') && !formData.email.endsWith('@du.ac.bd')) {
-      newErrors.email = 'Please use your institutional email (@cse.du.ac.bd or @du.ac.bd)';
+    } else if (!formData.email.endsWith('@cse.du.ac.bd') && !formData.email.endsWith('@du.ac.bd') && !formData.email.endsWith('@cs.du.ac.bd')) {
+      newErrors.email = 'Please use your institutional email (@cs.du.ac.bd, @cse.du.ac.bd or @du.ac.bd)';
     }
     
     if (!formData.password) {
@@ -57,12 +56,12 @@ export default function SignupPage() {
       newErrors.password = 'Password must be at least 8 characters';
     }
     
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+    if (formData.password !== formData.confirm_password) {
+      newErrors.confirm_password = 'Passwords do not match';
     }
     
-    if (formData.role === 'student' && !formData.studentId) {
-      newErrors.studentId = 'Student ID is required';
+    if (formData.role === 'student' && !formData.id) {
+      newErrors.id = 'Student ID is required';
     }
     
     if (!formData.agreeToTerms) {
@@ -72,7 +71,7 @@ export default function SignupPage() {
     return newErrors;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     const validationErrors = validate();
@@ -84,23 +83,26 @@ export default function SignupPage() {
     setIsLoading(true);
     
     try {
-      // Mock registration - would be replaced with actual API call
-      setTimeout(() => {
-        // For demo purposes, just store the registration data
-        localStorage.setItem('registrationPending', JSON.stringify({
-          ...formData,
-          status: 'pending',
-          registeredAt: new Date().toISOString()
-        }));
-        
-        setIsLoading(false);
-        navigate('/auth/registration-success');
-      }, 1500);
+      const form = (new FormData(e.target as HTMLFormElement));
+      form.delete("agreeToTerms");
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
+        method: 'POST',
+        body: form,
+      })
+
+      if(!response.ok){
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Registration successful:', data);
+      navigate("/auth/registration-success");
     } catch (err) {
-      setIsLoading(false);
       setErrors({ form: 'Registration failed. Please try again later.' });
       console.error('Registration error:', err);
     }
+    setIsLoading(false);
+
   };
 
   return (
@@ -135,46 +137,48 @@ export default function SignupPage() {
               </div>
             )}
             
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={(e) => handleSubmit(e)}>
               <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
                     First name
                   </label>
                   <div className="mt-1">
                     <input
                       type="text"
-                      name="firstName"
-                      id="firstName"
-                      value={formData.firstName}
+                      name="firstname"
+                      placeholder='First Name'
+                      id="firstname"
+                      value={formData.firstname}
                       onChange={handleChange}
                       className={`appearance-none block w-full px-3 py-2 border ${
-                        errors.firstName ? 'border-red-300' : 'border-gray-300'
+                        errors.firstname ? 'border-red-300' : 'border-gray-300'
                       } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#ECB31D] focus:border-[#ECB31D] sm:text-sm`}
                     />
-                    {errors.firstName && (
-                      <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                    {errors.firstname && (
+                      <p className="mt-1 text-sm text-red-600">{errors.firstname}</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
                     Last name
                   </label>
                   <div className="mt-1">
                     <input
                       type="text"
-                      name="lastName"
-                      id="lastName"
-                      value={formData.lastName}
+                      name="lastname"
+                      placeholder='Last Name'
+                      id="lastname"
+                      value={formData.lastname}
                       onChange={handleChange}
                       className={`appearance-none block w-full px-3 py-2 border ${
-                        errors.lastName ? 'border-red-300' : 'border-gray-300'
+                        errors.lastname ? 'border-red-300' : 'border-gray-300'
                       } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#ECB31D] focus:border-[#ECB31D] sm:text-sm`}
                     />
-                    {errors.lastName && (
-                      <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                    {errors.lastname && (
+                      <p className="mt-1 text-sm text-red-600">{errors.lastname}</p>
                     )}
                   </div>
                 </div>
@@ -224,23 +228,23 @@ export default function SignupPage() {
 
               {formData.role === 'student' && (
                 <div>
-                  <label htmlFor="studentId" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="id" className="block text-sm font-medium text-gray-700">
                     Student ID
                   </label>
                   <div className="mt-1">
                     <input
                       type="text"
-                      name="studentId"
-                      id="studentId"
-                      value={formData.studentId}
+                      name="id"
+                      id="id"
+                      value={formData.id}
                       onChange={handleChange}
                       className={`appearance-none block w-full px-3 py-2 border ${
-                        errors.studentId ? 'border-red-300' : 'border-gray-300'
+                        errors.id ? 'border-red-300' : 'border-gray-300'
                       } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#ECB31D] focus:border-[#ECB31D] sm:text-sm`}
                       placeholder="e.g., 2021-1-60-001"
                     />
-                    {errors.studentId && (
-                      <p className="mt-1 text-sm text-red-600">{errors.studentId}</p>
+                    {errors.id && (
+                      <p className="mt-1 text-sm text-red-600">{errors.id}</p>
                     )}
                   </div>
                 </div>
@@ -269,23 +273,23 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700">
                   Confirm Password
                 </label>
                 <div className="mt-1">
                   <input
-                    id="confirmPassword"
-                    name="confirmPassword"
+                    id="confirm_password"
+                    name="confirm_password"
                     type="password"
                     autoComplete="new-password"
-                    value={formData.confirmPassword}
+                    value={formData.confirm_password}
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
-                      errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                      errors.confirm_password ? 'border-red-300' : 'border-gray-300'
                     } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#ECB31D] focus:border-[#ECB31D] sm:text-sm`}
                   />
-                  {errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                  {errors.confirm_password && (
+                    <p className="mt-1 text-sm text-red-600">{errors.confirm_password}</p>
                   )}
                 </div>
               </div>
