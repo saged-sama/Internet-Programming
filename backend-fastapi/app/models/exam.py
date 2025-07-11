@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, time
 from enum import Enum
 from typing import Optional
@@ -12,7 +13,7 @@ class ExamTypeEnum(str, Enum):
     Practical = "Practical"
 
 class ExamTimeTable(SQLModel, table=True):
-    id: Optional[str] = Field(default=None, primary_key=True)
+    id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     course_code: Optional[str] = Field(foreign_key="course.course_code")
     semester: Optional[str] = Field(foreign_key="program.id")
     exam_type: Optional[ExamTypeEnum]
@@ -24,7 +25,7 @@ class ExamTimeTable(SQLModel, table=True):
     invigilator: Optional[str]
 
 class ExamResult(SQLModel, table=True):
-    id: Optional[str] = Field(default=None, primary_key=True)
+    id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     exam_id: Optional[str] = Field(foreign_key="examtimetable.id")
     student_id: Optional[str] = Field(foreign_key="user.id")
     marks_obtained: Optional[float]
