@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/lib/auth';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface User {
     name?: string;
@@ -10,11 +10,13 @@ interface User {
 }
 
 const CurrentUser: React.FC = () => {
+    const navigate = useNavigate();
     const user: User = getCurrentUser();
 
     const handleLogout = () => {
-        // Add logout logic here
-        console.log('Logout clicked');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        navigate("/auth/login");
     };
 
     return (
