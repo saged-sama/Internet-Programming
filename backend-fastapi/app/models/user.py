@@ -30,7 +30,6 @@ class User(SQLModel, table=True):
         default=UserVerificationStatus.Pending,
         sa_column_kwargs={"server_default": UserVerificationStatus.Pending}
     )
-    title: Optional[str]
     email: str
     phone: Optional[str]
     image: Optional[str]

@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { isLoggedIn, getDashboardRoute } from "../../lib/auth";
+import CurrentUser from "./CurrentUser";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -137,21 +138,25 @@ export default function Navbar() {
           </div>
 
           {/* Auth Buttons */}
-          <div className="flex items-center space-x-3 z-10">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-[#ECB31D] bg-transparent text-[#ECB31D] hover:bg-[#ECB31D] hover:text-[#13274D] px-4 py-2 rounded-lg text-sm"
-            >
-              <Link to="/auth/login">Sign In</Link>
-            </Button>
-            <Button
-              size="sm"
-              className="bg-[#ECB31D] hover:bg-[#F5C940] text-[#13274D] px-4 py-2 rounded-lg font-semibold text-sm"
-            >
-              <Link to="/auth/signup">Sign Up</Link>
-            </Button>
-          </div>
+          {isLoggedIn() ? (
+            <CurrentUser />
+          ): (
+            <div className="flex items-center space-x-3 z-10">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-[#ECB31D] bg-transparent text-[#ECB31D] hover:bg-[#ECB31D] hover:text-[#13274D] px-4 py-2 rounded-lg text-sm"
+              >
+                <Link to="/auth/login">Sign In</Link>
+              </Button>
+              <Button
+                size="sm"
+                className="bg-[#ECB31D] hover:bg-[#F5C940] text-[#13274D] px-4 py-2 rounded-lg font-semibold text-sm"
+              >
+                <Link to="/auth/signup">Sign Up</Link>
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Bottom Row */}

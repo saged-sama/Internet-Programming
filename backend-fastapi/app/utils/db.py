@@ -11,6 +11,7 @@ from app.models.assignment import Assignment, AssignmentSubmission
 from app.models.class_schedule import ClassSchedule
 from app.models.equipment import LabEquipment, EquipmentBooking
 from app.models.event import Event, EventCategoryEnum
+from app.models.exam import ExamTimeTable
 from app.models.fee import Fee, FeePayment
 from app.models.grades import Grade
 from app.models.meeting import Meeting
