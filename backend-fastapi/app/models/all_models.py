@@ -6,6 +6,7 @@ from .assignment import Assignment, AssignmentSubmission
 from .class_schedule import ClassSchedule
 from .equipment import LabEquipment, EquipmentBooking
 from .event import Event, EventCategoryEnum
+from .exam import ExamTimeTable, ExamTypeEnum
 from .fee import Fee, FeePayment, FeeTypeEnum, FeeStatusEnum
 from .grades import Grade
 from .meeting import Meeting

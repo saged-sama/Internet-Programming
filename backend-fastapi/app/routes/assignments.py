@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
+from sqlmodel import Session, select
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from app.utils.db import get_session
 from app.utils.auth import get_current_user
@@ -90,4 +90,12 @@ async def delete_assignment(
         raise HTTPException(status_code=403, detail="Not authorized")
     session.delete(assignment)
     session.commit()
-    return {"message": "Assignment deleted successfully"} 
+    return {"message": "Assignment deleted successfully"}
+
+@router.get("", response_model=List[Assignment])
+async def list_assignments(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    assignments = session.exec(select(Assignment)).all()
+    return assignments 

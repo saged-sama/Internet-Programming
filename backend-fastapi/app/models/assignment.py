@@ -2,10 +2,11 @@
 from datetime import datetime
 from typing import Optional
 from sqlmodel import Field, SQLModel
+import uuid
 
 
 class Assignment(SQLModel, table=True):
-    id: Optional[str] = Field(default=None, primary_key=True)
+    id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     course_code: Optional[str] = Field(foreign_key="course.course_code")
     course_title: Optional[str] = None
     batch: Optional[str]
@@ -20,7 +21,7 @@ class Assignment(SQLModel, table=True):
     created_by: Optional[str] = Field(foreign_key="user.id")
 
 class AssignmentSubmission(SQLModel, table=True):
-    id: Optional[str] = Field(default=None, primary_key=True)
+    id: Optional[str] = Field(default_factory=lambda: str(uuid.uuid4()), primary_key=True)
     assignment_id: Optional[str] = Field(foreign_key="assignment.id")
     student_id: Optional[str] = Field(foreign_key="user.id")
     submission_time: Optional[datetime]
