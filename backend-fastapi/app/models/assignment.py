@@ -13,6 +13,7 @@ class Assignment(SQLModel, table=True):
     description: Optional[str]
     deadline: Optional[datetime]
     total_marks: Optional[int]
+    weight: Optional[float]
     status: Optional[str]
     submission_count: Optional[int]
     created_by: Optional[str] = Field(foreign_key="user.id")

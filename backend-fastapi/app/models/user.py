@@ -16,19 +16,28 @@ class StudentTypeEnum(str, Enum):
     Transfer = "Transfer"
     Exchange = "Exchange"
 
+class UserVerificationStatus(str, Enum):
+    Pending = "Pending"
+    Verified = "Verified"
+    Rejected = "Rejected"
+
 class User(SQLModel, table=True):
-    id: Optional[str] = Field(default=None, primary_key=True)
+    id: str = Field(primary_key=True)
     name: str
-    role: Optional[UserRoles] = Field(default=UserRoles.student, sa_column_kwargs={"server_default": UserRoles.student})
-    department: Optional[str]
+    role: UserRoles = Field(default=UserRoles.student, sa_column_kwargs={"server_default": UserRoles.student})
+    department: Optional[str] = Field(default="Department of Computer Science and Engineering", sa_column_kwargs={"server_default": "Department of Computer Science and Engineering"})
+    verification: Optional[UserVerificationStatus] = Field(
+        default=UserVerificationStatus.Pending,
+        sa_column_kwargs={"server_default": UserVerificationStatus.Pending}
+    )
     title: Optional[str]
-    email: Optional[str]
+    email: str
     phone: Optional[str]
     image: Optional[str]
     bio: Optional[str]
     address: Optional[str]
     date_of_birth: Optional[date]
-    hashed_password: Optional[str] = Field(default=None, sa_column_kwargs={"server_default": None})
+    hashed_password: str
 
 class FacultyProfile(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
@@ -75,14 +84,14 @@ class UserPublication(SQLModel, table=True):
     publication: Optional[str]
 
 class UserCreateRequest(BaseModel):
-    id: Optional[str] = None
+    id: str
     firstname: str
     lastname: str
     email: str
-    role: Optional[UserRoles] = UserRoles.student
+    role: UserRoles = UserRoles.student
     password: str
     confirm_password: str
 
 class UserLoginRequest(BaseModel):
-    email: str
+    username: str = None
     password: str

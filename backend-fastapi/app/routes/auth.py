@@ -6,7 +6,7 @@ from sqlmodel import select
 from app.utils.auth import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token
 from app.utils.crypt import get_password_hash
 from app.utils.db import SessionDependency
-from app.models.user import User, UserCreateRequest, UserLoginRequest
+from app.models.user import User, UserCreateRequest, UserLoginRequest, UserVerificationStatus
 import random
 
 router = APIRouter()
@@ -31,7 +31,8 @@ async def signup(user_create_request: Annotated[UserCreateRequest, Form()], sess
         name=user_create_request.firstname + " " + user_create_request.lastname,
         email=user_create_request.email,
         role=user_create_request.role,
-        id=user_create_request.id
+        id=user_create_request.id,
+        verification=UserVerificationStatus.Verified
     )
     # print(f"Creating new user: {new_user}")
     session.add(new_user)
@@ -42,7 +43,7 @@ async def signup(user_create_request: Annotated[UserCreateRequest, Form()], sess
 @router.post("/login")
 async def login(login_request: Annotated[UserLoginRequest, Form()], session: SessionDependency):
     
-    user = authenticate_user(session, login_request.email, login_request.password)
+    user = authenticate_user(session, login_request.username, login_request.password)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
