@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 from app.utils.db import get_session
 from app.utils.auth import get_current_user
 from app.models.user import User, UserRoles
-from app.models.exam_schedule import ExamTimeTable, ExamTypeEnum
+from app.models.exam import ExamTimeTable, ExamTypeEnum
 
 router = APIRouter(prefix="/api/exams", tags=["exams"])
 
