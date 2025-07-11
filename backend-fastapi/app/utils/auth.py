@@ -22,7 +22,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: str | None = None
 
-oath2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oath2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def get_user(session: SessionDependency, username: str):
     if not username:
