@@ -98,7 +98,7 @@ export const requireStudent = (): User => {
 
 export const login = async (formData: FormData): Promise<User | null> => {
   try {
-    const username = formData.get('username') as string;
+    const email = formData.get('username') as string; // Form field is 'username' but backend expects 'email'
     const password = formData.get('password') as string;
 
     const response = await fetch('http://localhost:8000/api/auth/login', {
@@ -107,7 +107,7 @@ export const login = async (formData: FormData): Promise<User | null> => {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
-        username,
+        email,
         password,
       }),
     });
