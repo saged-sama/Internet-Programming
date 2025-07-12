@@ -62,6 +62,14 @@ class FinancialApi {
   }
 
   // Admin endpoints
+  async getAllFees() {
+    return this.request('/admin/fees');
+  }
+
+  async getPaymentStatistics() {
+    return this.request('/admin/payment-statistics');
+  }
+
   async createFee(data: {
     title: string;
     description?: string;
@@ -78,10 +86,6 @@ class FinancialApi {
       method: 'POST',
       body: JSON.stringify(data),
     });
-  }
-
-  async getAllFees() {
-    return this.request('/admin/fees');
   }
 
   async updateFee(feeId: string, data: Partial<{

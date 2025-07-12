@@ -204,26 +204,18 @@ export default function AdminDashboard() {
     {
       title: "Total Courses",
       value: courses.length.toString(),
-      change: "+5%",
-      changeType: "positive" as const,
     },
     {
       title: "Total Programs",
       value: programs.length.toString(),
-      change: "+3%",
-      changeType: "positive" as const,
     },
     {
       title: "Active Fees",
       value: fees.length.toString(),
-      change: "+8%",
-      changeType: "positive" as const,
     },
     {
       title: "Total Fee Amount",
       value: `$${fees.reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}`,
-      change: "+12%",
-      changeType: "positive" as const,
     },
   ];
 
@@ -539,15 +531,6 @@ const quickActions = [
                   <p className="text-3xl font-bold text-[#25345D] mt-2">
                     {stat.value}
                   </p>
-                </div>
-                <div
-                  className={`text-sm font-semibold ${
-                    stat.changeType === "positive"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {stat.change}
                 </div>
               </div>
             </div>

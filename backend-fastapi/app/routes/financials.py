@@ -436,6 +436,69 @@ async def get_payment_history(
     # In production, you might want to create the profile or handle differently
     return payment_history
 
+@router.get("/admin/payment-statistics")
+async def get_payment_statistics(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user_or_mock)
+):
+    """Get payment statistics for admin dashboard"""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can view payment statistics"
+        )
+    
+    # Get all student fees with their payment status
+    student_fees_query = select(StudentFee, Fee, FeePayment).join(
+        Fee, StudentFee.fee_id == Fee.id, isouter=False
+    ).join(
+        FeePayment, StudentFee.id == FeePayment.student_fee_id, isouter=True
+    )
+    
+    results = session.exec(student_fees_query).all()
+    
+    total_due = 0
+    total_paid = 0
+    paid_fees_count = 0
+    pending_fees_count = 0
+    overdue_fees_count = 0
+    payment_history = []
+    
+    for student_fee, fee, payment in results:
+        # Determine actual fee status based on payment and deadline
+        if payment and student_fee.status == FeeStatusEnum.paid:
+            paid_fees_count += 1
+            total_paid += payment.amount_paid
+            
+            # Add to payment history
+            payment_history.append({
+                "id": payment.id,
+                "fee_title": fee.title,
+                "amount_paid": payment.amount_paid,
+                "payment_date": payment.payment_date,
+                "payment_method": payment.payment_method,
+                "transaction_id": payment.transaction_id,
+                "status": payment.status
+            })
+        else:
+            # Unpaid fee
+            total_due += student_fee.amount_due
+            
+            # Check if overdue
+            if fee.deadline < date.today():
+                overdue_fees_count += 1
+            else:
+                pending_fees_count += 1
+    
+    return {
+        "total_due": total_due,
+        "total_paid": total_paid,
+        "paid_fees_count": paid_fees_count,
+        "pending_fees_count": pending_fees_count,
+        "overdue_fees_count": overdue_fees_count,
+        "payment_history": payment_history
+    }
+
 # Admin endpoints
 @router.post("/admin/fees", response_model=Fee)
 async def create_fee(
