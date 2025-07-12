@@ -25,8 +25,9 @@ connect_args = {"check_same_thread": False}
 engine = create_engine(db_url, echo=True)
 
 def create_db_and_tables():
-    print(f"Connecting to the database...{db_url}")
-    SQLModel.metadata.create_all(engine)
+    # print(f"Connecting to the database...{db_url}")
+    # SQLModel.metadata.create_all(engine)
+    pass
 
 def get_session():
     with Session(engine) as session:
