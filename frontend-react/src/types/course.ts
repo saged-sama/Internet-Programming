@@ -52,3 +52,34 @@ export interface CourseApiResponse {
   page?: number;
   limit?: number;
 } 
+
+/**
+ * The different types of course materials
+ */
+export type CourseMaterialType = 'lecture' | 'assignment' | 'lab' | 'reading' | 'video' | 'other';
+
+/**
+ * Represents a course material/resource
+ */
+export interface CourseMaterial {
+  id: string;
+  courseCode?: string;
+  title?: string;
+  type?: CourseMaterialType;
+  description?: string;
+  uploadDate?: string;
+  fileUrl?: string;
+  fileType?: string;
+  fileSize?: string;
+  uploadedBy?: string;
+}
+
+/**
+ * API response format for course materials endpoints
+ */
+export interface CourseMaterialApiResponse {
+  data: CourseMaterial[];
+  total: number;
+  page?: number;
+  limit?: number;
+}
