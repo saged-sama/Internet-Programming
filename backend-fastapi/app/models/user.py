@@ -8,7 +8,6 @@ from sqlmodel import Field, SQLModel
 class UserRoles(str, Enum):
     student = "student"
     faculty = "faculty"
-    staff = "staff"
     admin = "admin"
 
 class StudentTypeEnum(str, Enum):
@@ -92,5 +91,57 @@ class UserCreateRequest(BaseModel):
     confirm_password: str
 
 class UserLoginRequest(BaseModel):
-    username: str = None
+    email: str
     password: str
+    
+    
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    role: Optional[UserRoles]
+    department: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+    image: Optional[str]
+    bio: Optional[str]
+    address: Optional[str]
+    date_of_birth: Optional[date]
+    
+    model_config = {
+        "from_attributes": True
+    }
+    
+
+class FacultyResponse(BaseModel):
+    id: str
+    user_id: str
+    specialization: Optional[str]
+    research_interests: Optional[str]
+    publications: Optional[str]
+    courses_taught: Optional[str]
+    office_hours: Optional[str]
+    office_location: Optional[str]
+    user: UserResponse
+    
+    model_config = {
+        "from_attributes": True
+    }
+    
+
+class FacultyProfileCreateRequest(BaseModel):
+    user_id: str
+    specialization: Optional[str] = None
+    research_interests: Optional[str] = None
+    publications: Optional[str] = None
+    courses_taught: Optional[str] = None
+    office_hours: Optional[str] = None
+    office_location: Optional[str] = None
+
+
+class FacultyProfileUpdateRequest(BaseModel):
+    specialization: Optional[str] = None
+    research_interests: Optional[str] = None
+    publications: Optional[str] = None
+    courses_taught: Optional[str] = None
+    office_hours: Optional[str] = None
+    office_location: Optional[str] = None

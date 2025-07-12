@@ -6,13 +6,15 @@ from app.utils.db import create_db_and_tables
 from .routes import (
     auth,
     courses,
+    faculty,
     programs,
     assignments,
     scheduling,
     rooms,
     exams,
     events,
-    meetings
+    meetings,
+    users
 )
 
 @asynccontextmanager
@@ -43,4 +45,5 @@ app.include_router(exams.router)
 app.include_router(assignments.router)
 app.include_router(events.router)
 app.include_router(meetings.router)
-
+app.include_router(faculty.router)
+app.include_router(users.router)
