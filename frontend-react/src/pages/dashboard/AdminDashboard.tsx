@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { financialApi } from "../../lib/financialApi";
 
 // Types for API responses
 interface Course {
@@ -32,6 +33,22 @@ interface Program {
   departmentId?: string;
 }
 
+interface Fee {
+  id: string;
+  title: string;
+  description?: string;
+  type: string;
+  amount: number;
+  deadline: string;
+  semester?: string;
+  academic_year?: string;
+  is_installment_available: boolean;
+  installment_count?: number;
+  installment_amount?: number;
+  created_at: string;
+  updated_at: string;
+}
+
 interface ApiResponse<T> {
   data: T[];
   total: number;
@@ -51,6 +68,19 @@ interface CreateCourseRequest {
   topics?: string[];
   objectives?: string[];
   learning_outcomes?: string[];
+}
+
+interface CreateFeeRequest {
+  title: string;
+  description?: string;
+  type: string;
+  amount: number;
+  deadline: string;
+  semester?: string;
+  academic_year?: string;
+  is_installment_available?: boolean;
+  installment_count?: number;
+  installment_amount?: number;
 }
 
 // API functions
@@ -96,6 +126,14 @@ const api = {
     const result = await response.json();
     console.log('Course creation response:', result);
     return result;
+  },
+
+  async getFees(): Promise<Fee[]> {
+    return financialApi.getAllFees();
+  },
+
+  async createFee(feeData: CreateFeeRequest): Promise<Fee> {
+    return financialApi.createFee(feeData);
   }
 };
 
@@ -103,9 +141,11 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [fees, setFees] = useState<Fee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCourseModal, setShowCourseModal] = useState(false);
+  const [showFeeModal, setShowFeeModal] = useState(false);
   const [courseFormData, setCourseFormData] = useState<CreateCourseRequest>({
     course_code: '',
     course_title: '',
@@ -119,6 +159,18 @@ export default function AdminDashboard() {
     objectives: [],
     learning_outcomes: []
   });
+  const [feeFormData, setFeeFormData] = useState<CreateFeeRequest>({
+    title: '',
+    description: '',
+    type: 'tuition_fee',
+    amount: 0,
+    deadline: '',
+    semester: '',
+    academic_year: '',
+    is_installment_available: false,
+    installment_count: undefined,
+    installment_amount: undefined
+  });
   const [submitting, setSubmitting] = useState(false);
 
   // Fetch data on component mount
@@ -126,13 +178,15 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [coursesResponse, programsResponse] = await Promise.all([
+        const [coursesResponse, programsResponse, feesResponse] = await Promise.all([
           api.getCourses(),
-          api.getPrograms()
+          api.getPrograms(),
+          api.getFees()
         ]);
         
         setCourses(coursesResponse.data);
         setPrograms(programsResponse.data);
+        setFees(feesResponse);
         setError(null);
       } catch (err) {
         setError('Failed to load dashboard data');
@@ -160,15 +214,15 @@ export default function AdminDashboard() {
       changeType: "positive" as const,
     },
     {
-      title: "Undergraduate Programs",
-      value: programs.filter(p => p.level.toLowerCase().includes('bachelor')).length.toString(),
-      change: "+2%",
+      title: "Active Fees",
+      value: fees.length.toString(),
+      change: "+8%",
       changeType: "positive" as const,
     },
     {
-      title: "Graduate Programs",
-      value: programs.filter(p => p.level.toLowerCase().includes('master') || p.level.toLowerCase().includes('phd')).length.toString(),
-      change: "+1%",
+      title: "Total Fee Amount",
+      value: `$${fees.reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}`,
+      change: "+12%",
       changeType: "positive" as const,
     },
   ];
@@ -199,9 +253,9 @@ export default function AdminDashboard() {
 
   const departmentStatsArray = Object.values(departmentStats);
 
-  // Recent activities from real data (recent courses and programs)
+  // Recent activities from real data (recent courses, programs, and fees)
   const recentActivities = [
-    ...courses.slice(0, 3).map((course, index) => ({
+    ...courses.slice(0, 2).map((course, index) => ({
       id: `course-${course.id}`,
       type: "course",
       action: "Course available",
@@ -216,6 +270,14 @@ export default function AdminDashboard() {
       item: `${program.title} (${program.level})`,
       time: `${index + 2} days ago`,
       user: "Academic Office",
+    })),
+    ...fees.slice(0, 2).map((fee, index) => ({
+      id: `fee-${fee.id}`,
+      type: "fee",
+      action: "Fee created",
+      item: `${fee.title} - $${fee.amount}`,
+      time: `${index + 3} days ago`,
+      user: "Financial Office",
     }))
   ];
 
@@ -225,6 +287,12 @@ export default function AdminDashboard() {
       icon: "📚",
       action: () => setShowCourseModal(true),
       color: "bg-blue-500",
+    },
+    {
+      title: "Create Fee",
+      icon: "💰",
+      action: () => setShowFeeModal(true),
+      color: "bg-emerald-500",
     },
     {
       title: "Manage Programs",
@@ -245,6 +313,12 @@ export default function AdminDashboard() {
       color: "bg-yellow-500",
     },
     {
+      title: "Financial Management",
+      icon: "💳",
+      action: () => navigate("/financials"),
+      color: "bg-green-500",
+    },
+    {
       title: "Booking Approvals",
       icon: "✅",
       action: () => navigate("/scheduling/admin-approval"),
@@ -254,19 +328,13 @@ export default function AdminDashboard() {
       title: "Publish Notice",
       icon: "📢",
       action: () => navigate("/notices"),
-      color: "bg-green-500",
+      color: "bg-pink-500",
     },
     {
       title: "Create Event",
       icon: "📅",
       action: () => navigate("/events"),
       color: "bg-purple-500",
-    },
-    {
-      title: "Manage Users",
-      icon: "👥",
-      action: () => navigate("/admin/users"),
-      color: "bg-orange-500",
     },
     {
       title: "View Reports",
@@ -283,6 +351,13 @@ export default function AdminDashboard() {
 
   const handleCourseFormChange = (field: keyof CreateCourseRequest, value: string | number | string[]) => {
     setCourseFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleFeeFormChange = (field: keyof CreateFeeRequest, value: string | number | boolean) => {
+    setFeeFormData(prev => ({
       ...prev,
       [field]: value
     }));
@@ -338,6 +413,52 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error('Course creation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to create course. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCreateFee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!feeFormData.title || !feeFormData.amount || !feeFormData.deadline) {
+      setError('Fee title, amount, and deadline are required');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError(null);
+      
+      console.log('Creating fee with data:', feeFormData);
+      const newFee = await api.createFee(feeFormData);
+      console.log('Fee created successfully:', newFee);
+      
+      // Add to local state to update UI immediately
+      setFees(prev => [...prev, newFee]);
+      
+      // Reset form
+      setFeeFormData({
+        title: '',
+        description: '',
+        type: 'tuition_fee',
+        amount: 0,
+        deadline: '',
+        semester: '',
+        academic_year: '',
+        is_installment_available: false,
+        installment_count: undefined,
+        installment_amount: undefined
+      });
+      
+      setShowFeeModal(false);
+      
+      // Show success message
+      alert(`Fee "${newFee.title}" created successfully!`);
+      
+    } catch (err) {
+      console.error('Fee creation error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create fee. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -494,7 +615,11 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => navigate(`/${activity.type === 'course' ? 'courses' : 'degrees'}`)}
+                      onClick={() => {
+                        if (activity.type === 'course') navigate('/courses');
+                        else if (activity.type === 'program') navigate('/degrees');
+                        else if (activity.type === 'fee') navigate('/financials');
+                      }}
                       className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition"
                     >
                       View Details
@@ -535,13 +660,26 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              <div className="border-l-4 border-emerald-500 pl-4">
+                <p className="text-sm font-medium text-[#25345D]">
+                  Fee Categories
+                </p>
+                <div className="text-xs text-gray-600 mt-1">
+                  <p>Tuition: {fees.filter(f => f.type === 'tuition_fee').length}</p>
+                  <p>Development: {fees.filter(f => f.type === 'development').length}</p>
+                  <p>Admission: {fees.filter(f => f.type === 'admission').length}</p>
+                  <p>Other: {fees.filter(f => f.type === 'other').length}</p>
+                </div>
+              </div>
+
               <div className="border-l-4 border-green-500 pl-4">
                 <p className="text-sm font-medium text-[#25345D]">
-                  Total Credits
+                  Financial Overview
                 </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  {courses.reduce((sum, course) => sum + course.credits, 0)} course credits available
-                </p>
+                <div className="text-xs text-gray-600 mt-1">
+                  <p>Total Fees: {fees.length}</p>
+                  <p>Average Amount: ${fees.length > 0 ? (fees.reduce((sum, fee) => sum + fee.amount, 0) / fees.length).toLocaleString() : '0'}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -656,12 +794,21 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => navigate('/degrees')}
-                className="w-full text-left border-l-4 border-green-500 pl-4 py-2 hover:bg-gray-50 transition"
+                className="w-full text-left border-l-4 border-indigo-500 pl-4 py-2 hover:bg-gray-50 transition"
               >
                 <p className="text-sm font-medium text-[#25345D]">
                   Manage Programs
                 </p>
                 <p className="text-xs text-gray-600">{programs.length} total programs</p>
+              </button>
+              <button
+                onClick={() => navigate('/financials')}
+                className="w-full text-left border-l-4 border-emerald-500 pl-4 py-2 hover:bg-gray-50 transition"
+              >
+                <p className="text-sm font-medium text-[#25345D]">
+                  Financial Management
+                </p>
+                <p className="text-xs text-gray-600">{fees.length} active fees • $${fees.reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()} total</p>
               </button>
               <button
                 onClick={() => navigate('/scheduling/admin/class-schedule')}
@@ -869,6 +1016,209 @@ export default function AdminDashboard() {
                     className="flex-1 px-4 py-2 bg-[#EAB308] text-[#25345D] font-medium rounded-lg hover:bg-[#F5C940] transition disabled:opacity-50"
                   >
                     {submitting ? 'Creating...' : 'Create Course'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Fee Modal */}
+      {showFeeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-[#25345D]">Create New Fee</h2>
+                <button
+                  onClick={() => setShowFeeModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateFee} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Fee Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={feeFormData.title}
+                      onChange={(e) => handleFeeFormChange('title', e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      placeholder="e.g., Semester Tuition Fee"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Amount ($) *
+                    </label>
+                    <input
+                      type="number"
+                      value={feeFormData.amount}
+                      onChange={(e) => handleFeeFormChange('amount', parseFloat(e.target.value))}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#25345D] mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={feeFormData.description}
+                    onChange={(e) => handleFeeFormChange('description', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    rows={3}
+                    placeholder="Fee description..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Fee Type *
+                    </label>
+                    <select
+                      value={feeFormData.type}
+                      onChange={(e) => handleFeeFormChange('type', e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      required
+                    >
+                      <option value="tuition_fee">Tuition Fee</option>
+                      <option value="development">Development Fee</option>
+                      <option value="admission">Admission Fee</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Deadline *
+                    </label>
+                    <input
+                      type="date"
+                      value={feeFormData.deadline}
+                      onChange={(e) => handleFeeFormChange('deadline', e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Semester
+                    </label>
+                    <select
+                      value={feeFormData.semester}
+                      onChange={(e) => handleFeeFormChange('semester', e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                    >
+                      <option value="">Select Semester</option>
+                      <option value="1st">1st Semester</option>
+                      <option value="2nd">2nd Semester</option>
+                      <option value="3rd">3rd Semester</option>
+                      <option value="4th">4th Semester</option>
+                      <option value="5th">5th Semester</option>
+                      <option value="6th">6th Semester</option>
+                      <option value="7th">7th Semester</option>
+                      <option value="8th">8th Semester</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-[#25345D] mb-2">
+                      Academic Year
+                    </label>
+                    <input
+                      type="text"
+                      value={feeFormData.academic_year}
+                      onChange={(e) => handleFeeFormChange('academic_year', e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                      placeholder="e.g., 2024-2025"
+                    />
+                  </div>
+                </div>
+
+                <div className="border-t pt-4">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <input
+                      type="checkbox"
+                      id="installment"
+                      checked={feeFormData.is_installment_available}
+                      onChange={(e) => handleFeeFormChange('is_installment_available', e.target.checked)}
+                      className="rounded border-gray-300 focus:ring-[#EAB308]"
+                    />
+                    <label htmlFor="installment" className="text-sm font-medium text-[#25345D]">
+                      Allow installment payments
+                    </label>
+                  </div>
+
+                  {feeFormData.is_installment_available && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-[#25345D] mb-2">
+                          Number of Installments
+                        </label>
+                        <input
+                          type="number"
+                          value={feeFormData.installment_count || ''}
+                          onChange={(e) => handleFeeFormChange('installment_count', parseInt(e.target.value))}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                          min="2"
+                          max="12"
+                          placeholder="e.g., 3"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-[#25345D] mb-2">
+                          Installment Amount
+                        </label>
+                        <input
+                          type="number"
+                          value={feeFormData.installment_amount || ''}
+                          onChange={(e) => handleFeeFormChange('installment_amount', parseFloat(e.target.value))}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#EAB308] focus:border-transparent"
+                          min="0"
+                          step="0.01"
+                          placeholder="Leave empty for auto-calculate"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          If empty, will be calculated as total amount ÷ installments
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowFeeModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex-1 px-4 py-2 bg-[#EAB308] text-[#25345D] font-medium rounded-lg hover:bg-[#F5C940] transition disabled:opacity-50"
+                  >
+                    {submitting ? 'Creating...' : 'Create Fee'}
                   </button>
                 </div>
               </form>

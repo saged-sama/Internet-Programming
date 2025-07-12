@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 
@@ -46,6 +46,16 @@ class FacultyProfile(SQLModel, table=True):
     courses_taught: Optional[str]
     office_hours: Optional[str]
     office_location: Optional[str]
+    chairman: bool = Field(default=False)
+
+
+# class StudentProfile(SQLModel, table=True):
+#     id: Optional[str] = Field(default=None, primary_key=True)
+#     user_id: Optional[str] = Field(foreign_key="user.id")
+#     department: Optional[str]
+#     responsibilities: Optional[str]
+#     office_location: Optional[str]
+#     joining_date: Optional[date]
 
 class StudentProfile(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
@@ -121,6 +131,7 @@ class FacultyResponse(BaseModel):
     courses_taught: Optional[str]
     office_hours: Optional[str]
     office_location: Optional[str]
+    chairman: bool
     user: UserResponse
     
     model_config = {
@@ -136,6 +147,7 @@ class FacultyProfileCreateRequest(BaseModel):
     courses_taught: Optional[str] = None
     office_hours: Optional[str] = None
     office_location: Optional[str] = None
+    chairman: bool = False
 
 
 class FacultyProfileUpdateRequest(BaseModel):
@@ -145,3 +157,5 @@ class FacultyProfileUpdateRequest(BaseModel):
     courses_taught: Optional[str] = None
     office_hours: Optional[str] = None
     office_location: Optional[str] = None
+    chairman: bool = False
+    
