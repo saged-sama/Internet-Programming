@@ -17,7 +17,7 @@ export interface CourseMaterial {
 
 // Get all materials for a specific course
 export const getCourseMaterials = async (courseCode: string): Promise<CourseMaterial[]> => {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseCode}/materials`);
+    const response = await fetch(`${API_BASE_URL}/api/courses/${courseCode}/materials`);
     if (!response.ok) {
         throw new Error('Failed to fetch course materials');
     }
@@ -26,7 +26,7 @@ export const getCourseMaterials = async (courseCode: string): Promise<CourseMate
 
 // Add material to a course
 export const addCourseMaterial = async (courseCode: string, material: Omit<CourseMaterial, 'id' | 'course_code'>): Promise<CourseMaterial> => {
-    const response = await fetch(`${API_BASE_URL}/courses/${courseCode}/materials`, {
+    const response = await fetch(`${API_BASE_URL}/api/courses/${courseCode}/materials`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ export const addCourseMaterial = async (courseCode: string, material: Omit<Cours
 
 // Get a specific course material
 export const getCourseMaterial = async (materialId: string): Promise<CourseMaterial> => {
-    const response = await fetch(`${API_BASE_URL}/courses/materials/${materialId}`);
+    const response = await fetch(`${API_BASE_URL}/api/courses/materials/${materialId}`);
     if (!response.ok) {
         throw new Error('Failed to fetch course material');
     }
@@ -50,7 +50,7 @@ export const getCourseMaterial = async (materialId: string): Promise<CourseMater
 
 // Update course material
 export const updateCourseMaterial = async (materialId: string, material: Partial<CourseMaterial>): Promise<CourseMaterial> => {
-    const response = await fetch(`${API_BASE_URL}/courses/materials/${materialId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/courses/materials/${materialId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export const updateCourseMaterial = async (materialId: string, material: Partial
 
 // Delete course material
 export const deleteCourseMaterial = async (materialId: string): Promise<{ message: string }> => {
-    const response = await fetch(`${API_BASE_URL}/courses/materials/${materialId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/courses/materials/${materialId}`, {
         method: 'DELETE',
     });
     if (!response.ok) {

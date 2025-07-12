@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.utils.db import create_db_and_tables
 from .routes import (
+    files,
     auth,
     courses,
     faculty,
@@ -51,3 +52,4 @@ app.include_router(financials.router, prefix="/api/financials")
 app.include_router(faculty.router)
 app.include_router(users.router)
 app.include_router(students.router)
+app.include_router(files.router)
