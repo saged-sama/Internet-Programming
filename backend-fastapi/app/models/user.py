@@ -91,7 +91,7 @@ class UserCreateRequest(BaseModel):
     confirm_password: str
 
 class UserLoginRequest(BaseModel):
-    email: str
+    username: str
     password: str
     
     

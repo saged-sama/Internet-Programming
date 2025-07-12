@@ -48,7 +48,7 @@ async def signup(user_create_request: Annotated[UserCreateRequest, Form()], sess
 async def login(login_request: Annotated[UserLoginRequest, Form()], session: SessionDependency):
     try:
         # Check for hardcoded admin credentials first
-        if login_request.email == "admin@gmail.com" and login_request.password == "123456":
+        if login_request.username == "admin@gmail.com" and login_request.password == "123456":
             # Create a fake admin user object for hardcoded credentials
             class HardcodedAdminUser:
                 def __init__(self):
@@ -67,7 +67,7 @@ async def login(login_request: Annotated[UserLoginRequest, Form()], session: Ses
             return response
         
         # Continue with normal authentication for other users
-        user = authenticate_user(session, login_request.email, login_request.password)
+        user = authenticate_user(session, login_request.username, login_request.password)
         if not user:
             raise HTTPException(status_code=401, detail="Invalid email or password")
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
