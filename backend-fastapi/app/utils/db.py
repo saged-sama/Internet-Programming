@@ -12,7 +12,7 @@ from app.models.class_schedule import ClassSchedule
 from app.models.equipment import LabEquipment, EquipmentBooking
 from app.models.event import Event, EventCategoryEnum
 from app.models.exam import ExamTimeTable
-from app.models.fee import Fee, FeePayment
+from app.models.fee import Fee, FeePayment, StudentFee, StripePaymentIntent
 from app.models.grades import Grade
 from app.models.meeting import Meeting
 from app.models.project import Project, ProjectTeamMember
@@ -25,9 +25,8 @@ connect_args = {"check_same_thread": False}
 engine = create_engine(db_url, echo=True)
 
 def create_db_and_tables():
-    # print(f"Connecting to the database...{db_url}")
-    # SQLModel.metadata.create_all(engine)
-    pass
+    print(f"Connecting to the database...{db_url}")
+    SQLModel.metadata.create_all(engine)
 
 def get_session():
     with Session(engine) as session:

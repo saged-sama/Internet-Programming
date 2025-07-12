@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import type { FeeStructure as FeeStructureType } from "../../types/financials";
 import { financialApi } from "../../lib/financialApi";
+import { getCurrentUser, isStudent } from "../../lib/auth";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -24,6 +25,11 @@ export function PaymentModal({ isOpen, onClose, fee, onPaymentSuccess }: Payment
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Check authentication
+  const user = getCurrentUser();
+  const isLoggedIn = user !== null;
+  const isStudentUser = isStudent();
 
   const handlePayment = async () => {
     if (!fee) return;
@@ -36,7 +42,7 @@ export function PaymentModal({ isOpen, onClose, fee, onPaymentSuccess }: Payment
       const intentData = await financialApi.createPaymentIntent({
         student_fee_id: fee.id,
         amount: fee.amount,
-        currency: "usd",
+        currency: "bdt",
       });
 
       // Simulate Stripe payment processing
@@ -89,8 +95,8 @@ export function PaymentModal({ isOpen, onClose, fee, onPaymentSuccess }: Payment
 
   const calculateProcessingFee = () => {
     if (!fee) return 0;
-    // 2.9% + $0.30 for Stripe processing
-    return Math.round((fee.amount * 0.029 + 0.30) * 100) / 100;
+    // 2.9% + ৳25 for Stripe processing (converted to BDT)
+    return Math.round((fee.amount * 0.029 + 25) * 100) / 100;
   };
 
   const calculateTotal = () => {
@@ -123,9 +129,14 @@ export function PaymentModal({ isOpen, onClose, fee, onPaymentSuccess }: Payment
 
   if (!fee) return null;
 
+  // Don't show modal if user is not logged in or not a student
+  if (!isLoggedIn || !isStudentUser) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-lg sm:max-w-xl lg:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Payment for {fee.title}</DialogTitle>
           <DialogDescription>
@@ -133,42 +144,44 @@ export function PaymentModal({ isOpen, onClose, fee, onPaymentSuccess }: Payment
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Fee Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Payment Summary</CardTitle>
+          <Card className="bg-gray-50 border-gray-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg text-gray-800">Payment Summary</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Fee Amount:</span>
-                  <span className="font-medium">${fee.amount.toLocaleString()}</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Fee Amount:</span>
+                  <span className="font-medium text-gray-800">৳{fee.amount.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>Processing Fee:</span>
-                  <span className="font-medium">${calculateProcessingFee().toLocaleString()}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Processing Fee:</span>
+                  <span className="font-medium text-gray-800">৳{calculateProcessingFee().toLocaleString()}</span>
                 </div>
-                <hr />
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total Amount:</span>
-                  <span className="text-primary">${calculateTotal().toLocaleString()}</span>
+                <hr className="border-gray-300" />
+                <div className="flex justify-between items-center text-lg font-bold bg-white p-3 rounded-lg">
+                  <span className="text-gray-800">Total Amount:</span>
+                  <span className="text-blue-600">৳{calculateTotal().toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Payment Method */}
-          <Card>
-            <CardHeader>
+          <Card className="border-2 border-blue-100">
+            <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <span className="text-2xl">💳</span>
+                <div className="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+                  <span className="text-blue-600">💳</span>
+                </div>
                 Credit/Debit Card
-                <Badge variant="secondary">Powered by Stripe</Badge>
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800">Powered by Stripe</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-gray-600">
                 Your payment is secured by Stripe. We don't store your card details.
               </p>
             </CardContent>
@@ -180,58 +193,62 @@ export function PaymentModal({ isOpen, onClose, fee, onPaymentSuccess }: Payment
               <h3 className="text-lg font-semibold">Card Details</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Cardholder Name</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-700">Cardholder Name</label>
                   <Input
                     type="text"
                     placeholder="John Doe"
                     value={paymentDetails.cardholderName}
                     onChange={(e) => setPaymentDetails({...paymentDetails, cardholderName: e.target.value})}
+                    className="h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Card Number</label>
+                  <label className="block text-sm font-medium mb-2 text-gray-700">Card Number</label>
                   <Input
                     type="text"
                     placeholder="1234 5678 9012 3456"
                     value={paymentDetails.cardNumber}
                     onChange={(e) => setPaymentDetails({...paymentDetails, cardNumber: formatCardNumber(e.target.value)})}
                     maxLength={19}
+                    className="h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500 font-mono"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Expiry Date</label>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">Expiry Date</label>
                     <Input
                       type="text"
                       placeholder="MM/YY"
                       value={paymentDetails.expiryDate}
                       onChange={(e) => setPaymentDetails({...paymentDetails, expiryDate: formatExpiryDate(e.target.value)})}
                       maxLength={5}
+                      className="h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">CVV</label>
+                    <label className="block text-sm font-medium mb-2 text-gray-700">CVV</label>
                     <Input
                       type="text"
                       placeholder="123"
                       value={paymentDetails.cvv}
                       onChange={(e) => setPaymentDetails({...paymentDetails, cvv: e.target.value.replace(/\D/g, '').substring(0, 4)})}
                       maxLength={4}
+                      className="h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500 font-mono"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 mt-6">
-                <Button variant="outline" onClick={handleClose}>
+              <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
+                <Button variant="outline" onClick={handleClose} className="w-full sm:w-auto">
                   Cancel
                 </Button>
                 <Button 
                   onClick={handlePayment} 
-                  className="bg-primary"
+                  className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
                   disabled={isProcessing || !paymentDetails.cardNumber || !paymentDetails.expiryDate || !paymentDetails.cvv || !paymentDetails.cardholderName}
                 >
-                  Pay ${calculateTotal().toLocaleString()}
+                  Pay ৳{calculateTotal().toLocaleString()}
                 </Button>
               </div>
             </div>

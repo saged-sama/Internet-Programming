@@ -62,20 +62,20 @@ export default function ClassScheduleFilter({
         </div>
 
         {!isStudent && (
-          <div>
-            <label htmlFor="semester-filter" className="block mb-2 text-muted-foreground">
-              Semester
-            </label>
-            <select
-              id="semester-filter"
-              className="w-full p-2 border rounded-md bg-background"
-              value={selectedSemester}
-              onChange={(e) => setSelectedSemester(e.target.value)}
-            >
-              <option value="">All Semesters</option>
-              {semesterOptions.map((semester) => (
-                <option key={semester} value={semester}>
-                  Semester {semester}
+        <div>
+          <label htmlFor="semester-filter" className="block mb-2 text-muted-foreground">
+            Semester
+          </label>
+          <select
+            id="semester-filter"
+            className="w-full p-2 border rounded-md bg-background"
+            value={selectedSemester}
+            onChange={(e) => setSelectedSemester(e.target.value)}
+          >
+            <option value="">All Semesters</option>
+            {semesterOptions.map((semester) => (
+              <option key={semester} value={semester}>
+                Semester {semester}
                 </option>
               ))}
             </select>

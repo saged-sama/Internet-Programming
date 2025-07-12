@@ -40,7 +40,10 @@ class FinancialApi {
   }) {
     return this.request('/payments/create-intent', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        currency: 'bdt'
+      }),
     });
   }
 

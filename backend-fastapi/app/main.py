@@ -15,6 +15,7 @@ from .routes import (
     events,
     meetings,
     financials,
+    students,
     users
 )
 
@@ -46,6 +47,7 @@ app.include_router(exams.router)
 app.include_router(assignments.router)
 app.include_router(events.router)
 app.include_router(meetings.router)
-app.include_router(financials.router)
+app.include_router(financials.router, prefix="/api/financials")
 app.include_router(faculty.router)
 app.include_router(users.router)
+app.include_router(students.router)

@@ -30,6 +30,7 @@ import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import FacultyDashboard from "./pages/dashboard/FacultyDashboard";
 import DashboardIndex from "./pages/dashboard";
 import FinancialsPage from "./pages/financials";
+import FeeCreatePage from "./pages/financials/FeeCreatePage";
 import { getCurrentUser } from "./lib/auth";
 import Layout from "./components/layout/Layout";
 import React from "react";
@@ -64,6 +65,14 @@ function App() {
           element={
             <ProtectedRoute>
               <FinancialsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/fees/create" 
+          element={
+            <ProtectedRoute>
+              <FeeCreatePage />
             </ProtectedRoute>
           } 
         />

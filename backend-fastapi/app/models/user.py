@@ -65,7 +65,6 @@ class StudentProfile(SQLModel, table=True):
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
-    current_program: Optional[str] = Field(foreign_key="program.id")
     student_type: Optional[str]
     cgpa: Optional[float]
     extracurricular_activities: Optional[str]
@@ -159,3 +158,41 @@ class FacultyProfileUpdateRequest(BaseModel):
     office_location: Optional[str] = None
     chairman: bool = False
     
+
+class StudentResponse(BaseModel):
+    id: str
+    user_id: str
+    student_id: Optional[str]
+    major: Optional[str]
+    admission_date: Optional[date]
+    graduation_date: Optional[date]
+    year_of_study: Optional[int]
+    student_type: Optional[str]
+    cgpa: Optional[float]
+    extracurricular_activities: Optional[str]
+    user: UserResponse
+
+    model_config = { "from_attributes": True }
+
+
+class StudentProfileCreateRequest(BaseModel):
+    user_id: str
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    admission_date: Optional[date] = None
+    graduation_date: Optional[date] = None
+    year_of_study: Optional[int] = None
+    student_type: Optional[str] = None
+    cgpa: Optional[float] = None
+    extracurricular_activities: Optional[str] = None
+
+
+class StudentProfileUpdateRequest(BaseModel):
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    admission_date: Optional[date] = None
+    graduation_date: Optional[date] = None
+    year_of_study: Optional[int] = None
+    student_type: Optional[str] = None
+    cgpa: Optional[float] = None
+    extracurricular_activities: Optional[str] = None
