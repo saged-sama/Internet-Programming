@@ -55,7 +55,6 @@ class StudentProfile(SQLModel, table=True):
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
-    current_program: Optional[str] = Field(foreign_key="program.id")
     student_type: Optional[str]
     cgpa: Optional[float]
     extracurricular_activities: Optional[str]

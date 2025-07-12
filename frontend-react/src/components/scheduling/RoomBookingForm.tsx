@@ -52,12 +52,12 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
 
   const handleDateChange = (date: Date | undefined) => {
     try {
-      setSelectedDate(date);
-      if (date) {
-        const formattedDate = date.toISOString().split('T')[0];
-        setFormData((prev) => ({
-          ...prev,
-          date: formattedDate,
+    setSelectedDate(date);
+    if (date) {
+      const formattedDate = date.toISOString().split('T')[0];
+      setFormData((prev) => ({
+        ...prev,
+        date: formattedDate,
         }));
       } else {
         // Clear the date when no date is selected
@@ -256,7 +256,7 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
                 <p className="text-sm font-medium text-primary">
                   {formData.startTime} - {formData.endTime}
                 </p>
-              </div>
+            </div>
             )}
           </div>
         </div>

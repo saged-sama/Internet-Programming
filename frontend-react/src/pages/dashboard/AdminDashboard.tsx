@@ -279,21 +279,15 @@ export default function AdminDashboard() {
       time: `${index + 3} days ago`,
       user: "Financial Office",
     }))
-  ];
+];
 
-  const quickActions = [
-    {
-      title: "Add New Course",
-      icon: "📚",
+const quickActions = [
+  {
+    title: "Add New Course",
+    icon: "📚",
       action: () => setShowCourseModal(true),
-      color: "bg-blue-500",
-    },
-    {
-      title: "Create Fee",
-      icon: "💰",
-      action: () => setShowFeeModal(true),
-      color: "bg-emerald-500",
-    },
+    color: "bg-blue-500",
+  },
     {
       title: "Manage Programs",
       icon: "🎓",
@@ -316,8 +310,8 @@ export default function AdminDashboard() {
       title: "Financial Management",
       icon: "💳",
       action: () => navigate("/financials"),
-      color: "bg-green-500",
-    },
+    color: "bg-green-500",
+  },
     {
       title: "Booking Approvals",
       icon: "✅",
@@ -330,18 +324,18 @@ export default function AdminDashboard() {
       action: () => navigate("/notices"),
       color: "bg-pink-500",
     },
-    {
-      title: "Create Event",
-      icon: "📅",
+  {
+    title: "Create Event",
+    icon: "📅",
       action: () => navigate("/events"),
-      color: "bg-purple-500",
-    },
-    {
-      title: "View Reports",
-      icon: "📊",
+    color: "bg-purple-500",
+  },
+  {
+    title: "View Reports",
+    icon: "📊",
       action: () => navigate("/admin/reports"),
-      color: "bg-red-500",
-    },
+    color: "bg-red-500",
+  },
   ];
 
   const handleSignOut = () => {
@@ -661,7 +655,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="border-l-4 border-emerald-500 pl-4">
-                <p className="text-sm font-medium text-[#25345D]">
+                  <p className="text-sm font-medium text-[#25345D]">
                   Fee Categories
                 </p>
                 <div className="text-xs text-gray-600 mt-1">
@@ -670,7 +664,7 @@ export default function AdminDashboard() {
                   <p>Admission: {fees.filter(f => f.type === 'admission').length}</p>
                   <p>Other: {fees.filter(f => f.type === 'other').length}</p>
                 </div>
-              </div>
+                  </div>
 
               <div className="border-l-4 border-green-500 pl-4">
                 <p className="text-sm font-medium text-[#25345D]">

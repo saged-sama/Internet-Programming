@@ -32,7 +32,7 @@ export default function AdminApprovalPage() {
   const handleApprove = async (id: number) => {
     try {
       await schedulingApi.roomBooking.approve(id);
-      setActionTaken({ type: 'approve', id });
+    setActionTaken({ type: 'approve', id });
       // Reload bookings to get updated data
       loadBookings();
     } catch (err) {
@@ -44,7 +44,7 @@ export default function AdminApprovalPage() {
   const handleReject = async (id: number, reason: string) => {
     try {
       await schedulingApi.roomBooking.reject(id, reason);
-      setActionTaken({ type: 'reject', id });
+    setActionTaken({ type: 'reject', id });
       // Reload bookings to get updated data
       loadBookings();
     } catch (err) {

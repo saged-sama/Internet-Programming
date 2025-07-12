@@ -185,7 +185,7 @@ export default function FinancialPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              ${calculateTotalDue().toLocaleString()}
+              ৳{calculateTotalDue().toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {fees.filter(f => f.status === 'pending' || f.status === 'overdue').length} unpaid fees
@@ -199,7 +199,7 @@ export default function FinancialPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              ${calculateTotalPaid().toLocaleString()}
+              ৳{calculateTotalPaid().toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               {getPaidFees().length} paid fees
@@ -244,7 +244,7 @@ export default function FinancialPage() {
             <div>
               <h3 className="font-semibold text-red-800">Overdue Fees</h3>
               <p className="text-sm text-red-700 mt-1">
-                You have {getOverdueFees().length} overdue fees totaling ${getOverdueFees().reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}. 
+                You have {getOverdueFees().length} overdue fees totaling ৳{getOverdueFees().reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}. 
                 Please make payment as soon as possible to avoid late fees.
               </p>
             </div>
@@ -254,10 +254,9 @@ export default function FinancialPage() {
 
       {/* Main Content */}
       <Tabs defaultValue="fees" className="w-full">
-        <TabsList className={`grid w-full ${isStudent() ? 'grid-cols-2' : 'grid-cols-3'}`}>
+        <TabsList className={`grid w-full grid-cols-2`}>
           <TabsTrigger value="fees">{isAdmin() ? 'All Fees' : 'My Fees'}</TabsTrigger>
           {isStudent() && <TabsTrigger value="history">Payment History</TabsTrigger>}
-          {isAdmin() && <TabsTrigger value="management">Fee Management</TabsTrigger>}
           {isAdmin() && <TabsTrigger value="reports">Financial Reports</TabsTrigger>}
         </TabsList>
 
@@ -298,7 +297,7 @@ export default function FinancialPage() {
                         <tr key={payment.id} className="border-b hover:bg-muted/50">
                           <td className="p-3 font-medium">{payment.fee_title}</td>
                           <td className="p-3 text-green-600 font-medium">
-                            ${payment.amount_paid.toLocaleString()}
+                            ৳{payment.amount_paid.toLocaleString()}
                           </td>
                           <td className="p-3 text-sm text-muted-foreground">
                             {formatDate(payment.payment_date)}
@@ -327,58 +326,38 @@ export default function FinancialPage() {
 
         {/* Admin tabs content would go here */}
         {isAdmin() && (
-          <>
-            <TabsContent value="management" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Fee Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    Manage system-wide fees and assignments
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button onClick={() => navigate('/fees/create')} className="w-full">
-                      Create New Fee
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      Assign Fees to Students
-                    </Button>
+          <TabsContent value="reports" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Financial Reports</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold mb-2">Total Revenue</h3>
+                    <p className="text-2xl font-bold text-green-600">
+                      ৳{fees.reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="reports" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Financial Reports</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="font-semibold mb-2">Total Revenue</h3>
-                      <p className="text-2xl font-bold text-green-600">
-                        ${fees.reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="font-semibold mb-2">Active Fees</h3>
-                      <p className="text-2xl font-bold text-blue-600">{fees.length}</p>
-                    </div>
-                    <div className="p-4 border rounded-lg">
-                      <h3 className="font-semibold mb-2">Fee Categories</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Tuition: {fees.filter(f => f.category === 'tuition_fee').length}<br/>
-                        Development: {fees.filter(f => f.category === 'development').length}<br/>
-                        Other: {fees.filter(f => f.category === 'other').length}
-                      </p>
-                    </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold mb-2">Active Fees</h3>
+                    <p className="text-2xl font-bold text-blue-600">{fees.length}</p>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold mb-2">Fee Categories</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Lab: {fees.filter(f => f.category === 'lab').length}<br/>
+                      Library: {fees.filter(f => f.category === 'library').length}<br/>
+                      Development: {fees.filter(f => f.category === 'development').length}<br/>
+                      Admission: {fees.filter(f => f.category === 'admission').length}<br/>
+                      Sports: {fees.filter(f => f.category === 'sports').length}<br/>
+                      Other: {fees.filter(f => f.category === 'other').length}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         )}
       </Tabs>
     </div>
