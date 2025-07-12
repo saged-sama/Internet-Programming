@@ -2,7 +2,7 @@ export type PersonRole = 'Faculty' | 'Staff' | 'Student';
 export type Department = 'Computer Science' | 'Engineering' | 'Business' | 'Arts' | 'Science' | 'Medicine';
 
 export interface Person {
-  id: number;
+  id: string;
   name: string;
   role: PersonRole;
   department: Department;
@@ -16,4 +16,5 @@ export interface Person {
   bio?: string;
   education?: string[];
   publications?: string[];
+  isChairman?: boolean; // custom flag for faculty
 }

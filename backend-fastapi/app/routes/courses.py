@@ -1,8 +1,10 @@
-from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Query
+from typing import Annotated, List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import select
 from pydantic import BaseModel
 
+from app.models.user import User
+from app.utils.auth import get_current_active_user, get_current_user
 from app.utils.db import SessionDependency
 from app.models.course import Course, CourseMaterial, CourseDegreeLevel, CourseSemester
 
@@ -16,7 +18,6 @@ class CourseCreateRequest(BaseModel):
     course_credits: Optional[float] = None
     degree_level: Optional[str] = None
     semester: Optional[str] = None
-    instructor: Optional[str] = None
     prerequisites: Optional[List[str]] = []
     topics: Optional[List[str]] = []
     objectives: Optional[List[str]] = []
@@ -121,7 +122,9 @@ async def get_course(course_code: str, session: SessionDependency):
     return course_to_response(course)
 
 @router.post("/", response_model=CourseResponse)
-async def create_course(course_data: CourseCreateRequest, session: SessionDependency):
+async def create_course(course_data: CourseCreateRequest, session: SessionDependency, current_user: Annotated[User, Depends(get_current_user)]):
+    if not current_user or current_user.role == "student":
+        raise HTTPException(status_code=403, detail="Only instructors can create courses")
     """Create a new course"""
     # Check if course already exists
     existing_course = session.exec(select(Course).where(Course.course_code == course_data.course_code)).first()
@@ -151,7 +154,7 @@ async def create_course(course_data: CourseCreateRequest, session: SessionDepend
         course_credits=course_data.course_credits,
         degree_level=degree_level,
         semester=semester,
-        instructor=course_data.instructor,
+        instructor=current_user.id,
         prerequisites=course_data.prerequisites or [],
         topics=course_data.topics or [],
         objectives=course_data.objectives or [],

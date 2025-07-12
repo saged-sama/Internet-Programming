@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 
@@ -46,6 +46,16 @@ class FacultyProfile(SQLModel, table=True):
     courses_taught: Optional[str]
     office_hours: Optional[str]
     office_location: Optional[str]
+    chairman: bool = Field(default=False)
+
+
+# class StudentProfile(SQLModel, table=True):
+#     id: Optional[str] = Field(default=None, primary_key=True)
+#     user_id: Optional[str] = Field(foreign_key="user.id")
+#     department: Optional[str]
+#     responsibilities: Optional[str]
+#     office_location: Optional[str]
+#     joining_date: Optional[date]
 
 class StudentProfile(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
@@ -90,7 +100,7 @@ class UserCreateRequest(BaseModel):
     confirm_password: str
 
 class UserLoginRequest(BaseModel):
-    email: str
+    username: str
     password: str
     
     
@@ -120,6 +130,7 @@ class FacultyResponse(BaseModel):
     courses_taught: Optional[str]
     office_hours: Optional[str]
     office_location: Optional[str]
+    chairman: bool
     user: UserResponse
     
     model_config = {
@@ -135,6 +146,7 @@ class FacultyProfileCreateRequest(BaseModel):
     courses_taught: Optional[str] = None
     office_hours: Optional[str] = None
     office_location: Optional[str] = None
+    chairman: bool = False
 
 
 class FacultyProfileUpdateRequest(BaseModel):
@@ -144,3 +156,43 @@ class FacultyProfileUpdateRequest(BaseModel):
     courses_taught: Optional[str] = None
     office_hours: Optional[str] = None
     office_location: Optional[str] = None
+    chairman: bool = False
+    
+
+class StudentResponse(BaseModel):
+    id: str
+    user_id: str
+    student_id: Optional[str]
+    major: Optional[str]
+    admission_date: Optional[date]
+    graduation_date: Optional[date]
+    year_of_study: Optional[int]
+    student_type: Optional[str]
+    cgpa: Optional[float]
+    extracurricular_activities: Optional[str]
+    user: UserResponse
+
+    model_config = { "from_attributes": True }
+
+
+class StudentProfileCreateRequest(BaseModel):
+    user_id: str
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    admission_date: Optional[date] = None
+    graduation_date: Optional[date] = None
+    year_of_study: Optional[int] = None
+    student_type: Optional[str] = None
+    cgpa: Optional[float] = None
+    extracurricular_activities: Optional[str] = None
+
+
+class StudentProfileUpdateRequest(BaseModel):
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    admission_date: Optional[date] = None
+    graduation_date: Optional[date] = None
+    year_of_study: Optional[int] = None
+    student_type: Optional[str] = None
+    cgpa: Optional[float] = None
+    extracurricular_activities: Optional[str] = None
