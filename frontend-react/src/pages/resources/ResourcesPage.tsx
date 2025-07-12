@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { EnhancedFeeStructure } from "../../components/financials/EnhancedFeeStructure";
 import { LabEquipmentBooking } from "../../components/lab/LabEquipmentBooking";
-import { CourseMaterials } from "../../components/courses/CourseMaterials";
 import {
   Tabs,
   TabsContent,
@@ -16,6 +15,7 @@ import type {
 } from "../../types/financials";
 import financialsData from "../../assets/financials.json";
 import { getCurrentUser } from "../../lib/auth";
+import CourseMaterialPage from "@/components/courses/CourseMaterialPage";
 
 export function ResourcesPage() {
   const [fees, setFees] = useState<FeeStructureType[]>([]);
@@ -282,7 +282,7 @@ export function ResourcesPage() {
           </TabsContent>
 
           <TabsContent value="materials">
-            <CourseMaterials materials={materials} />
+            <CourseMaterialPage/>
           </TabsContent>
         </Tabs>
       </main>
