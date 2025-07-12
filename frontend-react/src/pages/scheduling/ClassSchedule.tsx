@@ -27,8 +27,8 @@ export default function ClassSchedulePage() {
     // TODO: In future, get this from user profile or API
     // For now, hardcode based on user role or return a default
     if (currentUser?.role === 'student') {
-      // Hardcoded current semester for students
-      return '5'; // Assuming 5th semester
+      // Hardcoded current semester for students - changed from 5 to 3 to match existing data
+      return '3'; // Assuming 3rd semester
     }
     return ''; // Show all for non-students
   };

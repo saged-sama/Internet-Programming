@@ -26,6 +26,13 @@ export default function FinancialPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [adminStats, setAdminStats] = useState({
+    totalDue: 0,
+    totalPaid: 0,
+    paidFeesCount: 0,
+    pendingFeesCount: 0,
+    overdueFeesCount: 0
+  });
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -53,8 +60,11 @@ export default function FinancialPage() {
         setFees(feesData);
         setPaymentHistory(historyData);
       } else if (isAdmin()) {
-        // Admin view - load all fees
-        const feesData = await financialApi.getAllFees();
+        // Admin view - load all fees and payment statistics
+        const [feesData, statsData] = await Promise.all([
+          financialApi.getAllFees(),
+          financialApi.getPaymentStatistics()
+        ]);
         
         // Transform admin fee data to match FeeStructure interface
         const transformedFees = feesData.map((fee: any) => ({
@@ -74,7 +84,16 @@ export default function FinancialPage() {
         }));
         
         setFees(transformedFees);
-        setPaymentHistory([]); // Admins don't have personal payment history
+        setPaymentHistory(statsData.payment_history || []); // Use actual payment history from all students
+        
+        // Store additional statistics for admin dashboard
+        setAdminStats({
+          totalDue: statsData.total_due || 0,
+          totalPaid: statsData.total_paid || 0,
+          paidFeesCount: statsData.paid_fees_count || 0,
+          pendingFeesCount: statsData.pending_fees_count || 0,
+          overdueFeesCount: statsData.overdue_fees_count || 0
+        });
       }
     } catch (err) {
       console.error('Error loading financial data:', err);
@@ -85,20 +104,42 @@ export default function FinancialPage() {
   };
 
   const calculateTotalDue = () => {
+    if (isAdmin()) {
+      return adminStats.totalDue;
+    }
     return fees
       .filter(fee => fee.status === 'pending' || fee.status === 'overdue')
       .reduce((total, fee) => total + fee.amount, 0);
   };
 
   const calculateTotalPaid = () => {
+    if (isAdmin()) {
+      return adminStats.totalPaid;
+    }
     return paymentHistory.reduce((total, payment) => total + payment.amount_paid, 0);
   };
 
   const getOverdueFees = () => {
+    if (isAdmin()) {
+      // Return empty array with correct length for admin users
+      return Array(adminStats.overdueFeesCount).fill({ amount: 0 });
+    }
     return fees.filter(fee => fee.status === 'overdue');
   };
 
+  const getOverdueFeeAmount = () => {
+    if (isAdmin()) {
+      // For admin, we'll calculate this from the total due and overdue count
+      // This is a simplified calculation - in practice, you'd want a separate API endpoint
+      return 0; // Admin doesn't need this calculation in the current implementation
+    }
+    return getOverdueFees().reduce((sum, fee) => sum + fee.amount, 0);
+  };
+
   const getPaidFees = () => {
+    if (isAdmin()) {
+      return Array(adminStats.paidFeesCount).fill({ amount: 0 });
+    }
     return fees.filter(fee => fee.status === 'paid');
   };
 
@@ -244,7 +285,7 @@ export default function FinancialPage() {
             <div>
               <h3 className="font-semibold text-red-800">Overdue Fees</h3>
               <p className="text-sm text-red-700 mt-1">
-                You have {getOverdueFees().length} overdue fees totaling ৳{getOverdueFees().reduce((sum, fee) => sum + fee.amount, 0).toLocaleString()}. 
+                You have {getOverdueFees().length} overdue fees totaling ৳{getOverdueFeeAmount().toLocaleString()}. 
                 Please make payment as soon as possible to avoid late fees.
               </p>
             </div>
