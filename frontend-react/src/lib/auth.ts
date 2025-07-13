@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  image: string | null;
   role: 'student' | 'admin' | 'faculty' | 'staff';
   access_token?: string;
   token?: string;
@@ -98,18 +99,12 @@ export const requireStudent = (): User => {
 
 export const login = async (formData: FormData): Promise<User | null> => {
   try {
-    const email = formData.get('username') as string; // Form field is 'username' but backend expects 'email'
-    const password = formData.get('password') as string;
+    // const email = formData.get('username') as string; // Form field is 'username' but backend expects 'email'
+    // const password = formData.get('password') as string;
 
     const response = await fetch('http://localhost:8000/api/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        email,
-        password,
-      }),
+      body: formData
     });
 
     if (!response.ok) {
@@ -124,6 +119,7 @@ export const login = async (formData: FormData): Promise<User | null> => {
       email: data.user.email,
       name: data.user.name,
       role: data.user.role,
+      image: data.user.image || null,
       access_token: data.access_token,
     };
 
