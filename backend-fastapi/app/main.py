@@ -15,10 +15,10 @@ from .routes import (
     exams,
     events,
     meetings,
-    lab_equipments as equipments
-    # financials,
-    # students,
-    # users
+    lab_equipments as equipments,
+    financials,
+    students,
+    users
 )
 
 @asynccontextmanager
