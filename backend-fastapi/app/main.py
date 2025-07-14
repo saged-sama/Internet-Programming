@@ -4,8 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.utils.db import create_db_and_tables
 from .routes import (
+    files,
     auth,
     courses,
+    faculty,
     programs,
     assignments,
     scheduling,
@@ -14,6 +16,9 @@ from .routes import (
     events,
     meetings,
     lab_equipments as equipments
+    # financials,
+    # students,
+    # users
 )
 
 @asynccontextmanager
@@ -46,3 +51,8 @@ app.include_router(events.router)
 app.include_router(meetings.router)
 app.include_router(equipments.router)
 
+app.include_router(financials.router, prefix="/api/financials")
+app.include_router(faculty.router)
+app.include_router(users.router)
+app.include_router(students.router)
+app.include_router(files.router)

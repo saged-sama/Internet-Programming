@@ -44,15 +44,15 @@ export default function RoomAvailabilityPage() {
   const handleBookingSubmit = async (formData: BookingFormData) => {
     try {
       await schedulingApi.roomBooking.create(formData);
-      
-      // Show success message and hide form
-      setBookingSuccess(true);
-      setShowBookingForm(false);
-      
-      // Scroll to success message
-      setTimeout(() => {
-        document.getElementById('booking-result')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+    
+    // Show success message and hide form
+    setBookingSuccess(true);
+    setShowBookingForm(false);
+    
+    // Scroll to success message
+    setTimeout(() => {
+      document.getElementById('booking-result')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
     } catch (err) {
       console.error('Error submitting booking:', err);
       alert('Failed to submit booking request. Please try again.');
@@ -114,11 +114,11 @@ export default function RoomAvailabilityPage() {
             <p className="text-muted-foreground/70 text-sm mt-2">Please check back later or contact administration.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 mb-8">
-            {rooms.map((room) => (
-              <RoomAvailabilityCard key={room.id} room={room} onBookRoom={handleBookRoom} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 gap-6 mb-8">
+          {rooms.map((room) => (
+            <RoomAvailabilityCard key={room.id} room={room} onBookRoom={handleBookRoom} />
+          ))}
+        </div>
         )}
 
         {showBookingForm && (

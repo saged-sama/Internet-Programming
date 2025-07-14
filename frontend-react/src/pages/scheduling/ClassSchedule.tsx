@@ -27,8 +27,8 @@ export default function ClassSchedulePage() {
     // TODO: In future, get this from user profile or API
     // For now, hardcode based on user role or return a default
     if (currentUser?.role === 'student') {
-      // Hardcoded current semester for students
-      return '5'; // Assuming 5th semester
+      // Hardcoded current semester for students - changed from 5 to 3 to match existing data
+      return '3'; // Assuming 3rd semester
     }
     return ''; // Show all for non-students
   };
@@ -86,25 +86,25 @@ export default function ClassSchedulePage() {
     } catch (err) {
       console.error('Error filtering schedules:', err);
       // Fallback to client-side filtering
-      let filtered = [...schedules];
+    let filtered = [...schedules];
 
-      if (filters.batch) {
-        filtered = filtered.filter((schedule) => schedule.batch === filters.batch);
-      }
+    if (filters.batch) {
+      filtered = filtered.filter((schedule) => schedule.batch === filters.batch);
+    }
 
-      if (filters.semester) {
-        filtered = filtered.filter((schedule) => schedule.semester === filters.semester);
-      }
+    if (filters.semester) {
+      filtered = filtered.filter((schedule) => schedule.semester === filters.semester);
+    }
 
-      if (filters.room) {
-        filtered = filtered.filter((schedule) => schedule.room === filters.room);
-      }
+    if (filters.room) {
+      filtered = filtered.filter((schedule) => schedule.room === filters.room);
+    }
 
       if (filters.courseCode) {
         filtered = filtered.filter((schedule) => schedule.courseCode === filters.courseCode);
       }
 
-      setFilteredSchedules(filtered);
+    setFilteredSchedules(filtered);
     }
   }, [schedules]);
 
@@ -196,7 +196,7 @@ export default function ClassSchedulePage() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3">
-                <h1 className="text-primary mb-1">Class Schedule</h1>
+              <h1 className="text-primary mb-1">Class Schedule</h1>
                 {currentUser?.role === 'student' && studentCurrentSemester && (
                   <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium border border-primary/20">
                     Semester {studentCurrentSemester}
@@ -298,7 +298,7 @@ export default function ClassSchedulePage() {
                     if (preservedSemester) {
                       handleFilterChange({ batch: '', semester: preservedSemester, room: '', courseCode: '' });
                     } else {
-                      setFilteredSchedules(schedules);
+                    setFilteredSchedules(schedules);
                     }
                   }}
                   className="text-muted-foreground hover:text-primary underline transition-colors"

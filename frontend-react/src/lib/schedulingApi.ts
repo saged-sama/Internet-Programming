@@ -5,7 +5,8 @@ import type {
   ClassSchedule 
 } from '@/types/scheduling';
 
-const API_BASE_URL = 'http://localhost:8000';
+// const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://localhost:8000/api';
 const API_BASE = "http://localhost:8000";
 
 // Helper function to get auth token
@@ -57,19 +58,19 @@ const apiRequest = async (url: string, options: RequestInit = {}) => {
 export const roomAvailabilityApi = {
   // Get all room availability
   getAll: async (): Promise<RoomAvailability[]> => {
-    return apiRequest('/rooms/availability');
+    return apiRequest('/scheduling/rooms/availability');
   },
 
   // Create sample room data (for development)
   createSampleData: async (): Promise<{ message: string }> => {
-    return apiRequest('/sample-data/rooms', { method: 'POST' });
+    return apiRequest('/scheduling/sample-data/rooms', { method: 'POST' });
   },
 
   // Admin CRUD operations
   admin: {
     // Get all rooms for admin management
     getAll: async (): Promise<RoomAvailability[]> => {
-      return apiRequest('/admin/rooms');
+      return apiRequest('/scheduling/admin/rooms');
     },
 
     // Create a new room
@@ -82,7 +83,7 @@ export const roomAvailabilityApi = {
         slots: Array<{ startTime: string; endTime: string }>;
       }>;
     }): Promise<{ message: string; room_id: number }> => {
-      return apiRequest('/admin/rooms', {
+      return apiRequest('/scheduling/admin/rooms', {
         method: 'POST',
         body: JSON.stringify(roomData),
       });
@@ -98,7 +99,7 @@ export const roomAvailabilityApi = {
         slots: Array<{ startTime: string; endTime: string }>;
       }>;
     }): Promise<{ message: string; room_id: number }> => {
-      return apiRequest(`/admin/rooms/${roomId}`, {
+      return apiRequest(`/scheduling/admin/rooms/${roomId}`, {
         method: 'PUT',
         body: JSON.stringify(roomData),
       });
@@ -106,14 +107,14 @@ export const roomAvailabilityApi = {
 
     // Delete a room
     delete: async (roomId: number): Promise<{ message: string }> => {
-      return apiRequest(`/admin/rooms/${roomId}`, {
+      return apiRequest(`/scheduling/admin/rooms/${roomId}`, {
         method: 'DELETE',
       });
     },
 
     // Get a specific room by ID
     getById: async (roomId: number): Promise<RoomAvailability> => {
-      return apiRequest(`/admin/rooms/${roomId}`);
+      return apiRequest(`/scheduling/admin/rooms/${roomId}`);
     },
   },
 };
@@ -122,7 +123,7 @@ export const roomAvailabilityApi = {
 export const roomBookingApi = {
   // Create a new booking
   create: async (bookingData: BookingFormData): Promise<{ message: string; booking_id: number }> => {
-    return apiRequest('/bookings', {
+    return apiRequest('/scheduling/bookings', {
       method: 'POST',
       body: JSON.stringify(bookingData),
     });
@@ -130,18 +131,18 @@ export const roomBookingApi = {
 
   // Get all bookings (optionally filtered by status)
   getAll: async (status?: string): Promise<RoomBooking[]> => {
-    const url = status ? `/bookings?status=${status}` : '/bookings';
+    const url = status ? `/scheduling/bookings?status=${status}` : '/scheduling/bookings';
     return apiRequest(url);
   },
 
   // Get pending bookings
   getPending: async (): Promise<RoomBooking[]> => {
-    return apiRequest('/bookings?status=Pending');
+    return apiRequest('/scheduling/bookings?status=Pending');
   },
 
   // Approve a booking
   approve: async (bookingId: number): Promise<{ message: string }> => {
-    return apiRequest(`/bookings/${bookingId}/approve`, {
+    return apiRequest(`/scheduling/bookings/${bookingId}/approve`, {
       method: 'PUT',
       body: JSON.stringify({ action: 'approve' }),
     });
@@ -149,7 +150,7 @@ export const roomBookingApi = {
 
   // Reject a booking
   reject: async (bookingId: number, rejectionReason: string): Promise<{ message: string }> => {
-    return apiRequest(`/bookings/${bookingId}/approve`, {
+    return apiRequest(`/scheduling/bookings/${bookingId}/approve`, {
       method: 'PUT',
       body: JSON.stringify({ 
         action: 'reject',
@@ -174,33 +175,33 @@ export const classScheduleApi = {
     if (filters?.room) params.append('room', filters.room);
     if (filters?.courseCode) params.append('course_code', filters.courseCode);
     
-    const url = `/schedules${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `/scheduling/schedules${params.toString() ? `?${params.toString()}` : ''}`;
     return apiRequest(url);
   },
 
   // Get all rooms used in schedules (for filtering)
   getRooms: async (): Promise<string[]> => {
-    return apiRequest('/schedules/rooms');
+    return apiRequest('/scheduling/schedules/rooms');
   },
 
   // Get all courses available for scheduling
   getCourses: async (): Promise<Array<{ course_code: string; course_title: string; credits: number }>> => {
-    return apiRequest('/schedules/courses');
+    return apiRequest('/scheduling/schedules/courses');
   },
 
   // Get all batches used in schedules (for filtering)
   getBatches: async (): Promise<string[]> => {
-    return apiRequest('/schedules/batches');
+    return apiRequest('/scheduling/schedules/batches');
   },
 
   // Get all semesters used in schedules (for filtering)
   getSemesters: async (): Promise<string[]> => {
-    return apiRequest('/schedules/semesters');
+    return apiRequest('/scheduling/schedules/semesters');
   },
 
   // Get all instructors for scheduling
   getInstructors: async (): Promise<Array<{ id: string; name: string; email: string }>> => {
-    return apiRequest('/schedules/instructors');
+    return apiRequest('/scheduling/schedules/instructors');
   },
 
   // Admin CRUD operations
@@ -216,7 +217,7 @@ export const classScheduleApi = {
       end_time: string;
       instructor: string;
     }): Promise<{ message: string; schedule_id: number }> => {
-      return apiRequest('/admin/schedules', {
+      return apiRequest('/scheduling/admin/schedules', {
         method: 'POST',
         body: JSON.stringify(scheduleData),
       });
@@ -233,7 +234,7 @@ export const classScheduleApi = {
       end_time?: string;
       instructor?: string;
     }): Promise<{ message: string }> => {
-      return apiRequest(`/admin/schedules/${scheduleId}`, {
+      return apiRequest(`/scheduling/admin/schedules/${scheduleId}`, {
         method: 'PUT',
         body: JSON.stringify(scheduleData),
       });
@@ -241,14 +242,14 @@ export const classScheduleApi = {
 
     // Delete a schedule
     delete: async (scheduleId: number): Promise<{ message: string }> => {
-      return apiRequest(`/admin/schedules/${scheduleId}`, {
+      return apiRequest(`/scheduling/admin/schedules/${scheduleId}`, {
         method: 'DELETE',
       });
     },
 
     // Get a specific schedule by ID
     getById: async (scheduleId: number): Promise<ClassSchedule> => {
-      return apiRequest(`/admin/schedules/${scheduleId}`);
+      return apiRequest(`/scheduling/admin/schedules/${scheduleId}`);
     },
   },
 };
@@ -278,13 +279,10 @@ export async function deleteAssignment(id: string) {
 }
 
 export async function createExam(data: any) {
-  const res = await fetch(`${API_BASE}/staff-api/exams`, {
+  return apiRequest('/api/exams/staff-api/create', {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to create exam");
-  return res.json();
 }
 
 export async function updateExam(id: string | number, data: any) {
@@ -306,23 +304,7 @@ export async function deleteExam(id: string | number) {
 }
 
 export async function fetchExams() {
-  const res = await fetch(`${API_BASE}/staff-api/exams`);
-  if (!res.ok) throw new Error("Failed to fetch exams");
-  const data = await res.json();
-  // Map snake_case to camelCase for frontend compatibility
-  return data.map((exam: any) => ({
-    id: exam.id,
-    courseCode: exam.course_code,
-    courseTitle: exam.course_title ?? "",
-    batch: exam.batch ?? "",
-    semester: exam.semester,
-    examType: exam.exam_type,
-    date: exam.date ?? (exam.exam_schedule ? exam.exam_schedule.split('T')[0] : ""),
-    startTime: exam.start_time ?? (exam.exam_schedule ? exam.exam_schedule.split('T')[1]?.slice(0,5) : ""),
-    endTime: exam.end_time ?? (exam.duration ? exam.duration.slice(0,5) : ""),
-    room: exam.room,
-    invigilator: exam.invigilator ?? "",
-  }));
+  return apiRequest('/api/exams/staff-api/list');
 }
 
 // Courses API (from courses.py)

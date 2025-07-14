@@ -1,5 +1,8 @@
 from datetime import date
 from typing import Optional, List
+from uuid import UUID, uuid4
+from fastapi import UploadFile
+from pydantic import BaseModel
 from sqlmodel import Field, SQLModel, JSON, Column
 from enum import Enum
 
@@ -43,8 +46,15 @@ class CourseMaterial(SQLModel, table=True):
     title: Optional[str]
     type: Optional[str]
     description: Optional[str]
-    upload_date: Optional[date]
+    upload_date: Optional[date] = Field(default_factory=date.today)
     file_url: Optional[str]
     file_type: Optional[str]
     file_size: Optional[str]
     uploaded_by: Optional[str] = Field(foreign_key="user.id")
+
+class CourseMaterialCreateRequest(BaseModel):
+    course_code: str
+    title: str
+    type: str
+    description: Optional[str] = None
+    file: Optional[UploadFile]

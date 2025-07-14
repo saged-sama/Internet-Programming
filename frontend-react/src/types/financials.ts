@@ -7,7 +7,7 @@ export interface FeeStructure {
   status: 'pending' | 'paid' | 'overdue';
   transactionId?: string;
   paymentDate?: string;
-  category?: 'development' | 'admission' | 'tuition' | 'other';
+  category?: 'development' | 'admission' | 'lab' | 'library' | 'sports' | 'other';
   semester?: string;
   academicYear?: string;
   installmentOptions?: {

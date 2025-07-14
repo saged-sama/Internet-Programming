@@ -29,6 +29,8 @@ import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import FacultyDashboard from "./pages/dashboard/FacultyDashboard";
 import DashboardIndex from "./pages/dashboard";
+import FinancialsPage from "./pages/financials";
+import FeeCreatePage from "./pages/financials/FeeCreatePage";
 import { getCurrentUser } from "./lib/auth";
 import Layout from "./components/layout/Layout";
 import React from "react";
@@ -55,8 +57,27 @@ function App() {
         <Route path="/courses/:degreeId" element={<CoursesPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/research" element={<ResearchPage />} />
-      <Route path="/awards" element={<AwardsPage />} />
-      {/* Authentication Routes */}
+        <Route path="/awards" element={<AwardsPage />} />
+        
+        {/* Financial Routes */}
+        <Route 
+          path="/financials" 
+          element={
+            <ProtectedRoute>
+              <FinancialsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/fees/create" 
+          element={
+            <ProtectedRoute>
+              <FeeCreatePage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Authentication Routes */}
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
         <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
@@ -64,6 +85,7 @@ function App() {
           path="/auth/registration-success"
           element={<RegistrationSuccessPage />}
         />
+        
         {/* Scheduling Routes */}
         <Route
           path="/scheduling/class-schedule"
@@ -93,6 +115,7 @@ function App() {
           path="/scheduling/admin-approval"
           element={<AdminApprovalPage />}
         />
+        
         {/* Exam and Assignment Routes */}
         <Route path="/exams/timetables" element={<ExamTimetablesPage />} />
         <Route 
@@ -105,6 +128,8 @@ function App() {
         />
         <Route path="/assignments" element={<AssignmentsPage />} />
         <Route path="/auth/student-login" element={<StudentLoginPage />} />
+        
+        {/* Dashboard Routes */}
         <Route
           path="/dashboard"
           element={

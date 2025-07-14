@@ -16,6 +16,7 @@ import {
   updateCourse, 
   deleteCourse 
 } from "../../lib/api";
+import { classScheduleApi } from "../../lib/schedulingApi";
 
 // Degree program data
 const degreePrograms = [
@@ -43,6 +44,8 @@ export default function CoursesPage() {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [instructors, setInstructors] = useState<Array<{ id: string; name: string; email: string }>>([]);
+  const [loadingInstructors, setLoadingInstructors] = useState(false);
   const [formData, setFormData] = useState<{
     code: string;
     name: string;
@@ -122,6 +125,35 @@ export default function CoursesPage() {
     fetchCourses();
   }, [selectedDegreeLevel, selectedSemester, searchQuery, degreeId]);
 
+  // Fetch instructors for dropdown
+  const fetchInstructors = async () => {
+    try {
+      setLoadingInstructors(true);
+      console.log("Fetching instructors...");
+      const instructorsList = await classScheduleApi.getInstructors();
+      console.log("Instructors fetched:", instructorsList);
+      setInstructors(instructorsList);
+    } catch (err) {
+      console.error("Error fetching instructors:", err);
+      setError("Failed to load instructors. Please try again.");
+    } finally {
+      setLoadingInstructors(false);
+    }
+  };
+
+  // Map instructor name to ID when editing and instructors are loaded
+  useEffect(() => {
+    if (editingCourse && instructors.length > 0 && formData.instructor) {
+      // If instructor field contains a name, find the corresponding ID
+      const instructorObj = instructors.find(
+        (inst) => inst.name === formData.instructor || inst.id === formData.instructor
+      );
+      if (instructorObj && formData.instructor !== instructorObj.id) {
+        setFormData(prev => ({ ...prev, instructor: instructorObj.id }));
+      }
+    }
+  }, [instructors, editingCourse, formData.instructor]);
+
   const handleSemesterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSemester(e.target.value);
   };
@@ -168,6 +200,7 @@ export default function CoursesPage() {
       outcomes: [],
     });
     setIsModalOpen(true);
+    fetchInstructors(); // Fetch instructors when opening modal
   };
 
   const handleEditCourse = (course: Course) => {
@@ -186,6 +219,7 @@ export default function CoursesPage() {
       outcomes: course.outcomes || [],
     });
     setIsModalOpen(true);
+    fetchInstructors(); // Fetch instructors when opening modal
   };
 
   const handleDeleteCourse = async (courseCode: string) => {
@@ -539,6 +573,7 @@ export default function CoursesPage() {
                       setFormData({ ...formData, code: e.target.value })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., CSE101"
                     required
                   />
                 </div>
@@ -553,6 +588,7 @@ export default function CoursesPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., Introduction to Computer Science"
                     required
                   />
                 </div>
@@ -570,6 +606,9 @@ export default function CoursesPage() {
                       })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., 3"
+                    min="1"
+                    max="6"
                     required
                   />
                 </div>
@@ -577,14 +616,32 @@ export default function CoursesPage() {
                   <label className="block text-sm font-medium mb-1">
                     Instructor
                   </label>
-                  <input
-                    type="text"
-                    value={formData.instructor}
-                    onChange={(e) =>
-                      setFormData({ ...formData, instructor: e.target.value })
-                    }
-                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  />
+                  {loadingInstructors ? (
+                    <div className="w-full p-2 border rounded bg-gray-50 text-gray-500">
+                      Loading instructors...
+                    </div>
+                  ) : (
+                    <select
+                      value={formData.instructor}
+                      onChange={(e) =>
+                        setFormData({ ...formData, instructor: e.target.value })
+                      }
+                      className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Select instructor</option>
+                      {instructors.length > 0 ? (
+                        instructors.map((instructor) => (
+                          <option key={instructor.id} value={instructor.id}>
+                            {instructor.name} ({instructor.email})
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          No instructors available
+                        </option>
+                      )}
+                    </select>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -641,6 +698,7 @@ export default function CoursesPage() {
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                   rows={3}
+                  placeholder="Provide a detailed description of the course content, methodology, and learning approach..."
                   required
                 />
               </div>
@@ -661,6 +719,7 @@ export default function CoursesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Mathematics 101, Physics 101, Computer Fundamentals"
                 />
               </div>
               <div>
@@ -680,6 +739,7 @@ export default function CoursesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Variables, Control Structures, Functions, Object-Oriented Programming"
                 />
               </div>
               <div>
@@ -699,6 +759,7 @@ export default function CoursesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Understand programming concepts, Apply problem-solving skills, Develop coding proficiency"
                 />
               </div>
               <div>
@@ -718,6 +779,7 @@ export default function CoursesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Write efficient code, Debug programs, Design algorithms, Implement data structures"
                 />
               </div>
               <div className="flex gap-2 justify-end">

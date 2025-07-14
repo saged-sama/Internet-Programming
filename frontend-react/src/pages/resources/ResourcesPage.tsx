@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 import { EnhancedFeeStructure } from "../../components/financials/EnhancedFeeStructure";
 import { LabEquipmentBooking } from "../../components/lab/LabEquipmentBooking";
-import { CourseMaterials } from "../../components/courses/CourseMaterials";
 import {
   Tabs,
   TabsContent,
@@ -17,6 +16,7 @@ import type {
 } from "../../types/financials";
 import financialsData from "../../assets/financials.json";
 import { getCurrentUser } from "../../lib/auth";
+import CourseMaterialPage from "@/components/courses/CourseMaterialPage";
 
 export function ResourcesPage() {
   const [fees, setFees] = useState<FeeStructureType[]>([]);
@@ -131,7 +131,7 @@ export function ResourcesPage() {
             amount: 35000,
             deadline: "2024-12-20",
             status: "pending",
-            category: "tuition",
+            category: "other",
             semester: "Fall 2024",
             academicYear: "2024-2025",
             installmentOptions: { count: 2, amount: 17500 },
@@ -143,7 +143,7 @@ export function ResourcesPage() {
             amount: 35000,
             deadline: "2025-06-20",
             status: "pending",
-            category: "tuition",
+            category: "other",
             semester: "Spring 2025",
             academicYear: "2024-2025",
             installmentOptions: { count: 2, amount: 17500 },

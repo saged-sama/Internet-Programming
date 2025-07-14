@@ -11,7 +11,8 @@ from app.models.assignment import Assignment, AssignmentSubmission
 from app.models.class_schedule import ClassSchedule
 from app.models.equipment import LabEquipment, Booking
 from app.models.event import Event, EventCategoryEnum
-from app.models.fee import Fee, FeePayment
+from app.models.exam import ExamTimeTable
+from app.models.fee import Fee, FeePayment, StudentFee, StripePaymentIntent
 from app.models.grades import Grade
 from app.models.meeting import Meeting
 from app.models.project import Project, ProjectTeamMember

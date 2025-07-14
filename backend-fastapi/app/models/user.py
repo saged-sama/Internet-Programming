@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import Enum
 from typing import Optional
 
@@ -8,7 +8,6 @@ from sqlmodel import Field, SQLModel
 class UserRoles(str, Enum):
     student = "student"
     faculty = "faculty"
-    staff = "staff"
     admin = "admin"
 
 class StudentTypeEnum(str, Enum):
@@ -47,6 +46,16 @@ class FacultyProfile(SQLModel, table=True):
     courses_taught: Optional[str]
     office_hours: Optional[str]
     office_location: Optional[str]
+    chairman: bool = Field(default=False)
+
+
+# class StudentProfile(SQLModel, table=True):
+#     id: Optional[str] = Field(default=None, primary_key=True)
+#     user_id: Optional[str] = Field(foreign_key="user.id")
+#     department: Optional[str]
+#     responsibilities: Optional[str]
+#     office_location: Optional[str]
+#     joining_date: Optional[date]
 
 class StudentProfile(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
@@ -56,7 +65,6 @@ class StudentProfile(SQLModel, table=True):
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
-    current_program: Optional[str] = Field(foreign_key="program.id")
     student_type: Optional[str]
     cgpa: Optional[float]
     extracurricular_activities: Optional[str]
@@ -92,5 +100,99 @@ class UserCreateRequest(BaseModel):
     confirm_password: str
 
 class UserLoginRequest(BaseModel):
-    username: str = None
+    username: str
     password: str
+    
+    
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    role: Optional[UserRoles]
+    department: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
+    image: Optional[str]
+    bio: Optional[str]
+    address: Optional[str]
+    date_of_birth: Optional[date]
+    
+    model_config = {
+        "from_attributes": True
+    }
+    
+
+class FacultyResponse(BaseModel):
+    id: str
+    user_id: str
+    specialization: Optional[str]
+    research_interests: Optional[str]
+    publications: Optional[str]
+    courses_taught: Optional[str]
+    office_hours: Optional[str]
+    office_location: Optional[str]
+    chairman: bool
+    user: UserResponse
+    
+    model_config = {
+        "from_attributes": True
+    }
+    
+
+class FacultyProfileCreateRequest(BaseModel):
+    user_id: str
+    specialization: Optional[str] = None
+    research_interests: Optional[str] = None
+    publications: Optional[str] = None
+    courses_taught: Optional[str] = None
+    office_hours: Optional[str] = None
+    office_location: Optional[str] = None
+    chairman: bool = False
+
+
+class FacultyProfileUpdateRequest(BaseModel):
+    specialization: Optional[str] = None
+    research_interests: Optional[str] = None
+    publications: Optional[str] = None
+    courses_taught: Optional[str] = None
+    office_hours: Optional[str] = None
+    office_location: Optional[str] = None
+    chairman: bool = False
+    
+
+class StudentResponse(BaseModel):
+    id: str
+    user_id: str
+    student_id: Optional[str]
+    major: Optional[str]
+    admission_date: Optional[date]
+    graduation_date: Optional[date]
+    year_of_study: Optional[int]
+    student_type: Optional[str]
+    cgpa: Optional[float]
+    extracurricular_activities: Optional[str]
+    user: UserResponse
+
+    model_config = { "from_attributes": True }
+
+
+class StudentProfileCreateRequest(BaseModel):
+    user_id: str
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    admission_date: Optional[date] = None
+    graduation_date: Optional[date] = None
+    year_of_study: Optional[int] = None
+    student_type: Optional[str] = None
+    cgpa: Optional[float] = None
+    extracurricular_activities: Optional[str] = None
+
+
+class StudentProfileUpdateRequest(BaseModel):
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    admission_date: Optional[date] = None
+    graduation_date: Optional[date] = None
+    year_of_study: Optional[int] = None
+    student_type: Optional[str] = None
+    cgpa: Optional[float] = None
+    extracurricular_activities: Optional[str] = None
