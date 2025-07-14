@@ -6,6 +6,7 @@ import type {
   DegreeLevel,
   Curriculum,
 } from "../../types/degree";
+import type { Course } from "../../types/course";
 import { DegreeCard } from "./components/DegreeCard";
 import { DegreeFilter } from "./components/DegreeFilter";
 import { getCurrentUser } from "../../lib/auth";
@@ -16,6 +17,7 @@ import {
   createDegreeProgram,
   updateDegreeProgram,
   deleteDegreeProgram,
+  getCourses,
 } from "../../lib/api";
 
 export default function DegreesPage() {
@@ -29,6 +31,10 @@ export default function DegreesPage() {
   const [editingDegree, setEditingDegree] = useState<DegreeProgram | null>(
     null
   );
+  const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
+  const [coreCoursesDropdownOpen, setCoreCoursesDropdownOpen] = useState(false);
+  const [electiveCoursesDropdownOpen, setElectiveCoursesDropdownOpen] = useState(false);
   const [formData, setFormData] = useState<{
     title: string;
     level: DegreeLevel;
@@ -95,6 +101,36 @@ export default function DegreesPage() {
     fetchDegreePrograms();
   }, [filter]);
 
+  // Fetch available courses for dropdowns
+  const fetchCourses = async () => {
+    try {
+      setLoadingCourses(true);
+      const response = await getCourses();
+      setAvailableCourses(response.data);
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+      setError("Failed to load courses. Please try again.");
+    } finally {
+      setLoadingCourses(false);
+    }
+  };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown-container')) {
+        setCoreCoursesDropdownOpen(false);
+        setElectiveCoursesDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleDegreeClick = (degree: DegreeProgram) => {
     navigate(`/degrees/${degree.id}`);
   };
@@ -118,6 +154,7 @@ export default function DegreesPage() {
       curriculum: { coreCourses: [], electiveCourses: [] },
     });
     setIsModalOpen(true);
+    fetchCourses(); // Fetch courses when opening modal
   };
 
   const handleEditDegree = (degree: DegreeProgram) => {
@@ -134,6 +171,7 @@ export default function DegreesPage() {
       curriculum: degree.curriculum || { coreCourses: [], electiveCourses: [] },
     });
     setIsModalOpen(true);
+    fetchCourses(); // Fetch courses when opening modal
   };
 
   const handleDeleteDegree = async (id: string) => {
@@ -338,6 +376,7 @@ export default function DegreesPage() {
                       setFormData({ ...formData, title: e.target.value })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., Bachelor of Science in Computer Science"
                     required
                   />
                 </div>
@@ -374,6 +413,8 @@ export default function DegreesPage() {
                       })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., 120"
+                    min="1"
                     required
                   />
                 </div>
@@ -388,6 +429,7 @@ export default function DegreesPage() {
                       setFormData({ ...formData, duration: e.target.value })
                     }
                     className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g., 4 years"
                     required
                   />
                 </div>
@@ -403,12 +445,13 @@ export default function DegreesPage() {
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
                   rows={3}
+                  placeholder="Provide a comprehensive description of the degree program, including its objectives, scope, and unique features..."
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Concentrations (comma separated)
+                  Goals (comma separated)
                 </label>
                 <input
                   type="text"
@@ -423,6 +466,7 @@ export default function DegreesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Develop technical expertise, Foster innovation, Prepare industry leaders"
                 />
               </div>
               <div>
@@ -442,6 +486,7 @@ export default function DegreesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., High school diploma, Minimum GPA 3.0, SAT/ACT scores"
                 />
               </div>
               <div>
@@ -461,54 +506,241 @@ export default function DegreesPage() {
                     })
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Software Developer, System Analyst, Data Scientist, IT Manager"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium mb-1">
-                    Core Courses (comma separated)
+                    Core Courses
                   </label>
-                  <input
-                    type="text"
-                    value={formData.curriculum.coreCourses.join(", ")}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        curriculum: {
-                          ...formData.curriculum,
-                          coreCourses: e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        },
-                      })
-                    }
-                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  />
+                  {loadingCourses ? (
+                    <div className="w-full p-2 border rounded bg-gray-50 text-gray-500">
+                      Loading courses...
+                    </div>
+                  ) : (
+                    <div className="relative dropdown-container">
+                      <button
+                        type="button"
+                        onClick={() => setCoreCoursesDropdownOpen(!coreCoursesDropdownOpen)}
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 bg-white text-left flex items-center justify-between"
+                      >
+                        <span className="text-sm">
+                          {formData.curriculum.coreCourses.length > 0
+                            ? "Core courses selected"
+                            : "Select core courses"}
+                        </span>
+                        <svg
+                          className={`w-4 h-4 transform transition-transform ${
+                            coreCoursesDropdownOpen ? "rotate-180" : ""
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {formData.curriculum.coreCourses.length > 0 && (
+                        <div className="mt-2 p-2 bg-gray-50 rounded border">
+                          <div className="text-xs text-gray-600 mb-1">Selected courses:</div>
+                          <div className="flex flex-wrap gap-1">
+                            {formData.curriculum.coreCourses.map((courseName, index) => {
+                              const courseData = availableCourses.find(c => c.name === courseName);
+                              return (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                                >
+                                  {courseData ? `${courseData.code} - ${courseData.name}` : courseName}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setFormData({
+                                        ...formData,
+                                        curriculum: {
+                                          ...formData.curriculum,
+                                          coreCourses: formData.curriculum.coreCourses.filter(
+                                            (c) => c !== courseName
+                                          ),
+                                        },
+                                      });
+                                    }}
+                                    className="ml-1 text-blue-600 hover:text-blue-800"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                      {coreCoursesDropdownOpen && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
+                          {availableCourses.length > 0 ? (
+                            <div className="p-2 space-y-1">
+                              {availableCourses.map((course) => (
+                                <label
+                                  key={course.id}
+                                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={formData.curriculum.coreCourses.includes(course.name)}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      setFormData({
+                                        ...formData,
+                                        curriculum: {
+                                          ...formData.curriculum,
+                                          coreCourses: isChecked
+                                            ? [...formData.curriculum.coreCourses, course.name]
+                                            : formData.curriculum.coreCourses.filter(
+                                                (c) => c !== course.name
+                                              ),
+                                        },
+                                      });
+                                    }}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  />
+                                  <span className="text-sm">
+                                    {course.code} - {course.name}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-gray-500 text-sm p-4">
+                              No courses available
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium mb-1">
-                    Elective Courses (comma separated)
+                    Elective Courses
                   </label>
-                  <input
-                    type="text"
-                    value={
-                      formData.curriculum.electiveCourses?.join(", ") || ""
-                    }
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        curriculum: {
-                          ...formData.curriculum,
-                          electiveCourses: e.target.value
-                            .split(",")
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        },
-                      })
-                    }
-                    className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  />
+                  {loadingCourses ? (
+                    <div className="w-full p-2 border rounded bg-gray-50 text-gray-500">
+                      Loading courses...
+                    </div>
+                  ) : (
+                    <div className="relative dropdown-container">
+                      <button
+                        type="button"
+                        onClick={() => setElectiveCoursesDropdownOpen(!electiveCoursesDropdownOpen)}
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 bg-white text-left flex items-center justify-between"
+                      >
+                        <span className="text-sm">
+                          {(formData.curriculum.electiveCourses?.length || 0) > 0
+                            ? "Elective courses selected"
+                            : "Select elective courses"}
+                        </span>
+                        <svg
+                          className={`w-4 h-4 transform transition-transform ${
+                            electiveCoursesDropdownOpen ? "rotate-180" : ""
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {(formData.curriculum.electiveCourses?.length || 0) > 0 && (
+                        <div className="mt-2 p-2 bg-gray-50 rounded border">
+                          <div className="text-xs text-gray-600 mb-1">Selected courses:</div>
+                          <div className="flex flex-wrap gap-1">
+                            {formData.curriculum.electiveCourses?.map((courseName, index) => {
+                              const courseData = availableCourses.find(c => c.name === courseName);
+                              return (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"
+                                >
+                                  {courseData ? `${courseData.code} - ${courseData.name}` : courseName}
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setFormData({
+                                        ...formData,
+                                        curriculum: {
+                                          ...formData.curriculum,
+                                          electiveCourses: (formData.curriculum.electiveCourses || []).filter(
+                                            (c) => c !== courseName
+                                          ),
+                                        },
+                                      });
+                                    }}
+                                    className="ml-1 text-green-600 hover:text-green-800"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              );
+                            }) || []}
+                          </div>
+                        </div>
+                      )}
+                      {electiveCoursesDropdownOpen && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
+                          {availableCourses.length > 0 ? (
+                            <div className="p-2 space-y-1">
+                              {availableCourses.map((course) => (
+                                <label
+                                  key={course.id}
+                                  className="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={formData.curriculum.electiveCourses?.includes(course.name) || false}
+                                    onChange={(e) => {
+                                      const isChecked = e.target.checked;
+                                      setFormData({
+                                        ...formData,
+                                        curriculum: {
+                                          ...formData.curriculum,
+                                          electiveCourses: isChecked
+                                            ? [...(formData.curriculum.electiveCourses || []), course.name]
+                                            : (formData.curriculum.electiveCourses || []).filter(
+                                                (c) => c !== course.name
+                                              ),
+                                        },
+                                      });
+                                    }}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  />
+                                  <span className="text-sm">
+                                    {course.code} - {course.name}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-gray-500 text-sm p-4">
+                              No courses available
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex gap-2 justify-end">
