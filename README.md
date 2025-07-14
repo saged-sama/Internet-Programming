@@ -84,7 +84,7 @@ faculty@gmail.com / 123456
 📊 STUDENTPROFILE:
    └── user_id → user.id
 
-📊 USEREDUCATION:
+📊 USEREDUCAdsaION:
    └── user_id → user.id
 
 📊 USERPUBLICATION:

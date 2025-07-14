@@ -9,7 +9,7 @@ from app.models.program import Program
 from app.models.course import Course, CourseMaterial
 from app.models.assignment import Assignment, AssignmentSubmission
 from app.models.class_schedule import ClassSchedule
-from app.models.equipment import LabEquipment, EquipmentBooking
+from app.models.equipment import LabEquipment, Booking
 from app.models.event import Event, EventCategoryEnum
 from app.models.exam import ExamTimeTable
 from app.models.fee import Fee, FeePayment, StudentFee, StripePaymentIntent

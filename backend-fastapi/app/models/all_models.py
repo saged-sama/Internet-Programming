@@ -4,10 +4,14 @@ from .program import Program
 from .course import Course, CourseType, CourseMaterial
 from .assignment import Assignment, AssignmentSubmission
 from .class_schedule import ClassSchedule
-from .equipment import LabEquipment, EquipmentBooking
+from .equipment import LabEquipment, Booking
 from .event import Event, EventCategoryEnum
 from .exam import ExamTimeTable, ExamTypeEnum
+<<<<<<< HEAD
+from .fee import Fee, FeePayment, FeeTypeEnum, FeeStatusEnum
+=======
 from .fee import Fee, FeePayment, StudentFee, StripePaymentIntent, FeeTypeEnum, FeeStatusEnum, PaymentMethodEnum
+>>>>>>> edaf098ee3c4895ab50d73e6a77ce70591fe77fa
 from .grades import Grade
 from .meeting import Meeting
 from .project import Project, ProjectTeamMember

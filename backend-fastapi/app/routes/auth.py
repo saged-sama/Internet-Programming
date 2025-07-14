@@ -47,6 +47,8 @@ async def signup(user_create_request: Annotated[UserCreateRequest, Form()], sess
 @router.post("/login")
 async def login(login_request: Annotated[UserLoginRequest, Form()], session: SessionDependency):
     try:
+<<<<<<< HEAD
+=======
         # Check for hardcoded admin credentials first
         if login_request.username == "admin@gmail.com" and login_request.password == "123456":
             # Create a fake admin user object for hardcoded credentials
@@ -67,6 +69,7 @@ async def login(login_request: Annotated[UserLoginRequest, Form()], session: Ses
             return response
         
         # Continue with normal authentication for other users
+>>>>>>> edaf098ee3c4895ab50d73e6a77ce70591fe77fa
         user = authenticate_user(session, login_request.username, login_request.password)
         if not user:
             raise HTTPException(status_code=401, detail="Invalid email or password")
