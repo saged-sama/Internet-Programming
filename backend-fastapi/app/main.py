@@ -12,7 +12,8 @@ from .routes import (
     rooms,
     exams,
     events,
-    meetings
+    meetings,
+    lab_equipments as equipments
 )
 
 @asynccontextmanager
@@ -43,4 +44,5 @@ app.include_router(exams.router)
 app.include_router(assignments.router)
 app.include_router(events.router)
 app.include_router(meetings.router)
+app.include_router(equipments.router)
 

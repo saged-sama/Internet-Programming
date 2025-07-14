@@ -46,8 +46,8 @@ pip install -r requirements.txt
 
 ### Using Uvicorn
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+ --host 0.0.0.0 --port 8000
+```uvicorn app.main:app --reload
 
 ### Using FastAPI CLI
 ```bash
