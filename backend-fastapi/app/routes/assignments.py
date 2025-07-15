@@ -144,4 +144,21 @@ async def get_my_submissions(
 ):
     return session.exec(
         select(AssignmentSubmission).where(AssignmentSubmission.student_id == current_user.id)
-    ).all() 
+    ).all()
+
+@router.get("/submissions/created-by-me", response_model=List[AssignmentSubmission])
+async def get_submissions_for_my_assignments(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    # Get all assignments created by the current user
+    my_assignments = session.exec(
+        select(Assignment.id).where(Assignment.created_by == current_user.name)
+    ).all()
+    if not my_assignments:
+        return []
+    # Get all submissions for those assignments
+    submissions = session.exec(
+        select(AssignmentSubmission).where(AssignmentSubmission.assignment_id.in_(my_assignments))
+    ).all()
+    return submissions 

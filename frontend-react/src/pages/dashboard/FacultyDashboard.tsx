@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MarksUpload from "@/components/faculty/MarksUpload";
+import { fetchSubmissionsForMyAssignments } from "@/lib/schedulingApi";
+import { getCurrentUser } from "@/lib/auth";
+import { apiRequest2 } from "@/lib/schedulingApi";
 
 // Mock data for faculty dashboard
 const facultyStats = [
@@ -55,41 +58,7 @@ const currentCourses = [
   },
 ];
 
-const recentSubmissions = [
-  {
-    id: 1,
-    student: "Ahmed Hassan",
-    course: "CSE 2101",
-    assignment: "Assignment 1 - Linked Lists",
-    submittedAt: "2 hours ago",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    student: "Fatima Ali",
-    course: "CSE 2203",
-    assignment: "Assignment 2 - CPU Design",
-    submittedAt: "4 hours ago",
-    status: "Graded",
-  },
-  {
-    id: 3,
-    student: "Mohammed Khan",
-    course: "CSE 3107",
-    assignment: "Assignment 3 - Process Scheduling",
-    submittedAt: "1 day ago",
-    status: "Pending",
-  },
-  {
-    id: 4,
-    student: "Aisha Rahman",
-    course: "CSE 4101",
-    assignment: "Assignment 1 - Requirements Analysis",
-    submittedAt: "2 days ago",
-    status: "Graded",
-  },
-];
-
+// Recent submissions will be fetched from backend
 const recentExams = [
   {
     id: 1,
@@ -168,9 +137,38 @@ const quickActions = [
   },
 ];
 
+// Fetch all user profiles
+async function fetchAllUserProfiles() {
+  return apiRequest2("/users-api/profiles/");
+}
+
 export default function FacultyDashboard() {
   const navigate = useNavigate();
   const [showMarksUpload, setShowMarksUpload] = useState(false);
+  const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
+  const [assignmentsMap, setAssignmentsMap] = useState<Record<string, any>>({});
+  const [usersMap, setUsersMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch all submissions for assignments created by this faculty
+        const submissions = await fetchSubmissionsForMyAssignments();
+        setRecentSubmissions(submissions);
+        // Fetch all user profiles and build a map
+        const users = await fetchAllUserProfiles();
+        const userMap: Record<string, string> = {};
+        users.forEach((user: any) => {
+          userMap[user.id] = user.name;
+        });
+        setUsersMap(userMap);
+      } catch (err) {
+        setRecentSubmissions([]);
+        setUsersMap({});
+      }
+    }
+    fetchData();
+  }, []);
 
   const handleSignOut = () => {
     localStorage.removeItem("user");
@@ -324,48 +322,57 @@ export default function FacultyDashboard() {
               Recent Submissions
             </h2>
             <div className="space-y-4">
-              {recentSubmissions.map((submission) => (
-                <div
-                  key={submission.id}
-                  className="border border-gray-200 rounded-lg p-4"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-semibold text-[#25345D]">
-                        {submission.student}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        {submission.course}
-                      </p>
-                    </div>
-                    <span
-                      className={`text-xs px-2 py-1 rounded ${
-                        submission.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {submission.status}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">
-                    {submission.assignment}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">
-                      {submission.submittedAt}
-                    </span>
-                    {submission.status === "Pending" && (
-                      <button
-                        onClick={() => handleGradeSubmission(submission.id)}
-                        className="text-sm bg-[#EAB308] text-[#25345D] px-3 py-1 rounded hover:bg-[#F5C940] transition"
-                      >
-                        Grade
-                      </button>
-                    )}
-                  </div>
+              {recentSubmissions.length === 0 ? (
+                <div className="text-gray-500">
+                  No recent submissions found.
                 </div>
-              ))}
+              ) : (
+                recentSubmissions.map((submission) => (
+                  <div
+                    key={submission.id}
+                    className="border border-gray-200 rounded-lg p-4"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 className="font-semibold text-[#25345D]">
+                          Student:{" "}
+                          {usersMap[submission.student_id] ||
+                            submission.student_id}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Assignment ID: {submission.assignment_id}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-xs px-2 py-1 rounded ${
+                          submission.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {submission.status || "Submitted"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-500">
+                        {submission.submission_time
+                          ? new Date(
+                              submission.submission_time
+                            ).toLocaleString()
+                          : ""}
+                      </span>
+                      {submission.status === "Pending" && (
+                        <button
+                          onClick={() => handleGradeSubmission(submission.id)}
+                          className="text-sm bg-[#EAB308] text-[#25345D] px-3 py-1 rounded hover:bg-[#F5C940] transition"
+                        >
+                          Grade
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -373,9 +380,7 @@ export default function FacultyDashboard() {
         {/* Recent Exams Section */}
         <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-[#25345D]">
-              Recent Exams
-            </h2>
+            <h2 className="text-xl font-bold text-[#25345D]">Recent Exams</h2>
             <button
               onClick={() => navigate("/exams/management")}
               className="text-sm text-[#EAB308] hover:text-[#F5C940] font-medium"
@@ -396,11 +401,15 @@ export default function FacultyDashboard() {
                     </h3>
                     <p className="text-sm text-gray-600">{exam.courseTitle}</p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    exam.examType === "Midterm" ? "bg-blue-100 text-blue-800" :
-                    exam.examType === "Final" ? "bg-red-100 text-red-800" :
-                    "bg-green-100 text-green-800"
-                  }`}>
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${
+                      exam.examType === "Midterm"
+                        ? "bg-blue-100 text-blue-800"
+                        : exam.examType === "Final"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-green-100 text-green-800"
+                    }`}
+                  >
                     {exam.examType}
                   </span>
                 </div>
