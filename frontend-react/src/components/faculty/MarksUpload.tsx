@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  fetchSubmissionsForAssignment,
+  apiRequest,
+  fetchAssignments,
+  fetchAllUserProfiles,
+} from "@/lib/schedulingApi";
 
 interface MarksUploadProps {
   onClose: () => void;
@@ -20,6 +26,19 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
   const [previewData, setPreviewData] = useState<StudentMark[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [assignments, setAssignments] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadAssignments() {
+      try {
+        const data = await fetchAssignments();
+        setAssignments(data);
+      } catch {
+        setAssignments([]);
+      }
+    }
+    loadAssignments();
+  }, []);
 
   // Mock data
   const courses = [
@@ -27,13 +46,6 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
     { code: "CSE 2203", name: "Computer Organization" },
     { code: "CSE 3107", name: "Operating Systems" },
     { code: "CSE 4101", name: "Software Engineering" },
-  ];
-
-  const assignments = [
-    { id: "1", title: "Assignment 1 - Linked Lists", maxMarks: 100 },
-    { id: "2", title: "Assignment 2 - Stacks and Queues", maxMarks: 100 },
-    { id: "3", title: "Assignment 3 - Trees and Graphs", maxMarks: 100 },
-    { id: "4", title: "Final Project", maxMarks: 200 },
   ];
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,41 +89,32 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
     }
   };
 
-  const handleManualEntry = () => {
-    // Mock data for manual entry
-    const mockData: StudentMark[] = [
-      {
-        studentId: "2021001",
-        studentName: "Ahmed Hassan",
-        marks: 0,
-        maxMarks: 100,
-      },
-      {
-        studentId: "2021002",
-        studentName: "Fatima Ali",
-        marks: 0,
-        maxMarks: 100,
-      },
-      {
-        studentId: "2021003",
-        studentName: "Mohammed Khan",
-        marks: 0,
-        maxMarks: 100,
-      },
-      {
-        studentId: "2021004",
-        studentName: "Aisha Rahman",
-        marks: 0,
-        maxMarks: 100,
-      },
-      {
-        studentId: "2021005",
-        studentName: "Omar Ahmed",
-        marks: 0,
-        maxMarks: 100,
-      },
-    ];
-    setPreviewData(mockData);
+  const handleManualEntry = async () => {
+    if (!selectedAssignment) {
+      alert("Please select an assignment first.");
+      return;
+    }
+
+    // Fetch all submissions for the selected assignment
+    const submissions = await fetchSubmissionsForAssignment(selectedAssignment);
+
+    // Fetch all user profiles to map student_id to name
+    const users = await fetchAllUserProfiles();
+    const userMap: Record<string, string> = {};
+    users.forEach((user: any) => {
+      userMap[user.id] = user.name;
+    });
+
+    // Build preview data from submissions
+    const preview = submissions.map((sub: any) => ({
+      studentId: sub.student_id,
+      studentName: userMap[sub.student_id] || sub.student_id,
+      marks: sub.marks_obtained || 0,
+      maxMarks: 100, // Adjust if you have max marks info
+      comments: sub.feedback || "",
+    }));
+
+    setPreviewData(preview);
   };
 
   const handleMarksChange = (index: number, value: string) => {
@@ -134,15 +137,45 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
 
     setIsUploading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Fetch all submissions for the selected assignment
+      const submissions = await fetchSubmissionsForAssignment(
+        selectedAssignment
+      );
 
-    setIsUploading(false);
-    setShowSuccess(true);
+      // Map studentId to submissionId
+      const submissionMap: Record<string, string> = {};
+      submissions.forEach((sub: any) => {
+        submissionMap[sub.student_id] = sub.id;
+      });
 
-    setTimeout(() => {
-      onClose();
-    }, 2000);
+      // For each student in previewData, upload marks
+      for (const student of previewData) {
+        const submissionId = submissionMap[student.studentId];
+        if (!submissionId) continue; // Optionally, handle missing submissions
+
+        await apiRequest(
+          `/staff-api/assignments/submissions/${submissionId}/grade`,
+          {
+            method: "PUT",
+            body: JSON.stringify({
+              marks_obtained: student.marks,
+              feedback: student.comments || "",
+            }),
+          }
+        );
+      }
+
+      setIsUploading(false);
+      setShowSuccess(true);
+
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (error) {
+      setIsUploading(false);
+      alert("Failed to upload marks. Please try again.");
+    }
   };
 
   const downloadTemplate = () => {

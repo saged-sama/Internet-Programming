@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlmodel import Session, select
 from pydantic import BaseModel
 from datetime import datetime
@@ -30,6 +30,10 @@ class AssignmentUpdateRequest(BaseModel):
     semester: Optional[str] = None
     deadline: Optional[datetime] = None
     description: Optional[str] = None
+
+class GradeUpdateRequest(BaseModel):
+    marks_obtained: int
+    feedback: Optional[str] = None
 
 @router.post("", response_model=dict)
 async def create_assignment(
@@ -160,5 +164,40 @@ async def get_submissions_for_my_assignments(
     # Get all submissions for those assignments
     submissions = session.exec(
         select(AssignmentSubmission).where(AssignmentSubmission.assignment_id.in_(my_assignments))
+    ).all()
+    return submissions
+
+@router.put("/submissions/{submission_id}/grade", response_model=dict)
+async def upload_marks(
+    submission_id: str,
+    grade_data: GradeUpdateRequest = Body(...),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    submission = session.get(AssignmentSubmission, submission_id)
+    if not submission:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    # Optionally, check if current_user is faculty or admin
+    if current_user.role not in ("faculty", "admin"):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    submission.marks_obtained = grade_data.marks_obtained
+    if grade_data.feedback is not None:
+        submission.feedback = grade_data.feedback
+    session.add(submission)
+    session.commit()
+    session.refresh(submission)
+    return {"message": "Marks uploaded successfully", "submission_id": submission.id, "marks_obtained": submission.marks_obtained, "feedback": submission.feedback}
+
+@router.get("/{assignment_id}/submissions", response_model=List[AssignmentSubmission])
+async def get_submissions_for_assignment(
+    assignment_id: str,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    # Optionally, check if current_user is faculty or admin
+    if current_user.role not in ("faculty", "admin"):
+        raise HTTPException(status_code=403, detail="Not authorized")
+    submissions = session.exec(
+        select(AssignmentSubmission).where(AssignmentSubmission.assignment_id == assignment_id)
     ).all()
     return submissions 

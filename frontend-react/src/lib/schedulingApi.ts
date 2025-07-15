@@ -355,6 +355,10 @@ export async function fetchSubmissionsForMyAssignments() {
   return apiRequest('/staff-api/assignments/submissions/created-by-me');
 }
 
+export async function fetchSubmissionsForAssignment(assignmentId: string) {
+  return apiRequest(`/staff-api/assignments/${assignmentId}/submissions`);
+}
+
 // Courses API (from courses.py)
 export const coursesApi = {
   // Get all courses for dropdowns
@@ -386,3 +390,7 @@ export const schedulingApi = {
   roomBooking: roomBookingApi,
   classSchedule: classScheduleApi,
 }; 
+
+export async function fetchAllUserProfiles() {
+  return apiRequest2('/users-api/profiles/');
+} 
