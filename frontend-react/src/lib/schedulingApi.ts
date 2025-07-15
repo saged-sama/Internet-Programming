@@ -15,7 +15,7 @@ const getAuthToken = () => {
 };
 
 // Helper function to make authenticated requests
-const apiRequest = async (url: string, options: RequestInit = {}) => {
+export const apiRequest = async (url: string, options: RequestInit = {}) => {
   const token = getAuthToken();
   const headers = {
     'Content-Type': 'application/json',

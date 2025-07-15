@@ -8,6 +8,7 @@ import {
   createAssignment,
   updateAssignment,
   deleteAssignment,
+  apiRequest,
 } from "../../lib/schedulingApi";
 import { getCurrentUser } from "../../lib/auth";
 
@@ -121,9 +122,20 @@ export default function AssignmentsPage() {
     }
   };
 
-  const handleSubmitSolution = () => {
-    // In a real app, this would be an API call to submit the solution
-    showSuccess("Assignment submitted successfully!");
+  const handleSubmitSolution = async () => {
+    if (!selectedAssignment) return;
+    try {
+      await apiRequest(
+        `/staff-api/assignments/${selectedAssignment.id}/submit`,
+        {
+          method: "POST",
+        }
+      );
+      showSuccess("Assignment submitted successfully!");
+      setTimeout(() => window.location.reload(), 1000);
+    } catch {
+      showSuccess("Error submitting assignment");
+    }
     setSelectedAssignment(null);
   };
 

@@ -98,4 +98,23 @@ async def list_assignments(
     current_user: User = Depends(get_current_user)
 ):
     assignments = session.exec(select(Assignment)).all()
-    return assignments 
+    return assignments
+
+@router.post("/{assignment_id}/submit", response_model=dict)
+async def submit_assignment(
+    assignment_id: str,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    assignment = session.get(Assignment, assignment_id)
+    if not assignment:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    # Increment submission_count (initialize if None)
+    if assignment.submission_count is None:
+        assignment.submission_count = 1
+    else:
+        assignment.submission_count += 1
+    session.add(assignment)
+    session.commit()
+    session.refresh(assignment)
+    return {"message": "Assignment submitted successfully", "submission_count": assignment.submission_count} 
