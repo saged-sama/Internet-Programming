@@ -307,6 +307,10 @@ export async function fetchExams() {
   return apiRequest('/api/exams/staff-api/list');
 }
 
+export async function fetchMyAssignmentSubmissions() {
+  return apiRequest('/staff-api/assignments/submissions/me');
+}
+
 // Courses API (from courses.py)
 export const coursesApi = {
   // Get all courses for dropdowns

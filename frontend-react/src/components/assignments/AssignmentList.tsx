@@ -4,6 +4,7 @@ import { getCurrentUser } from "../../lib/auth";
 
 interface AssignmentListProps {
   assignments: Assignment[];
+  mySubmissions?: Array<{ assignment_id: string }>;
   onViewDetails: (assignment: Assignment) => void;
   onEdit?: (assignment: Assignment) => void;
   onDelete?: (assignment: Assignment) => void;
@@ -11,12 +12,16 @@ interface AssignmentListProps {
 
 export default function AssignmentList({
   assignments,
+  mySubmissions = [],
   onViewDetails,
   onEdit,
   onDelete,
 }: AssignmentListProps) {
   const currentUser = getCurrentUser();
   const isFaculty = currentUser?.role === "faculty";
+
+  const hasSubmitted = (assignmentId: string | number) =>
+    mySubmissions.some((sub) => sub.assignment_id === String(assignmentId));
 
   if (assignments.length === 0) {
     return (
@@ -40,14 +45,21 @@ export default function AssignmentList({
             <div className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <h4 className="font-medium">{assignment.title}</h4>
-                <div
-                  className={`text-xs px-2 py-1 rounded-full ${
-                    status === "Open"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {status}
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      status === "Open"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {status}
+                  </div>
+                  {hasSubmitted(assignment.id) && (
+                    <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800 font-semibold">
+                      Submitted
+                    </span>
+                  )}
                 </div>
               </div>
 

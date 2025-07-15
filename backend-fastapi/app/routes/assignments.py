@@ -7,6 +7,7 @@ from typing import Optional, List
 from app.utils.db import get_session
 from app.utils.auth import get_current_user
 from app.models.assignment import Assignment
+from app.models.assignment import AssignmentSubmission
 from app.models.user import User
 
 router = APIRouter(prefix="/api/staff-api/assignments", tags=["assignments"])
@@ -109,6 +110,23 @@ async def submit_assignment(
     assignment = session.get(Assignment, assignment_id)
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment not found")
+    # Check if the student has already submitted
+    existing_submission = session.exec(
+        select(AssignmentSubmission).where(
+            AssignmentSubmission.assignment_id == assignment_id,
+            AssignmentSubmission.student_id == current_user.id
+        )
+    ).first()
+    if existing_submission:
+        raise HTTPException(status_code=400, detail="You have already submitted this assignment.")
+    # Create a new submission record
+    submission = AssignmentSubmission(
+        assignment_id=assignment_id,
+        student_id=current_user.id,
+        submission_time=datetime.utcnow(),
+        status="Submitted"
+    )
+    session.add(submission)
     # Increment submission_count (initialize if None)
     if assignment.submission_count is None:
         assignment.submission_count = 1
@@ -117,4 +135,13 @@ async def submit_assignment(
     session.add(assignment)
     session.commit()
     session.refresh(assignment)
-    return {"message": "Assignment submitted successfully", "submission_count": assignment.submission_count} 
+    return {"message": "Assignment submitted successfully", "submission_count": assignment.submission_count, "submission_id": submission.id, "status": submission.status}
+
+@router.get("/submissions/me", response_model=List[AssignmentSubmission])
+async def get_my_submissions(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    return session.exec(
+        select(AssignmentSubmission).where(AssignmentSubmission.student_id == current_user.id)
+    ).all() 

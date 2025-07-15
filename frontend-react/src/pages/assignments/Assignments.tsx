@@ -9,6 +9,7 @@ import {
   updateAssignment,
   deleteAssignment,
   apiRequest,
+  fetchMyAssignmentSubmissions,
 } from "../../lib/schedulingApi";
 import { getCurrentUser } from "../../lib/auth";
 
@@ -22,6 +23,7 @@ export default function AssignmentsPage() {
   );
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [mySubmissions, setMySubmissions] = useState([]);
 
   const currentUser = getCurrentUser();
   const isFaculty = currentUser?.role === "faculty";
@@ -51,6 +53,9 @@ export default function AssignmentsPage() {
         setAssignments(mapped);
       })
       .catch(() => showSuccess("Failed to load assignments"));
+    fetchMyAssignmentSubmissions()
+      .then((subs) => setMySubmissions(subs))
+      .catch(() => setMySubmissions([]));
   }, []);
 
   const handleViewDetails = (assignment: Assignment) => {
@@ -194,6 +199,7 @@ export default function AssignmentsPage() {
       ) : (
         <AssignmentList
           assignments={assignments}
+          mySubmissions={mySubmissions}
           onViewDetails={handleViewDetails}
           onEdit={handleEditAssignment}
           onDelete={handleDeleteAssignment}
