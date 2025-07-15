@@ -9,7 +9,7 @@ from app.utils.auth import get_current_user
 from app.models.assignment import Assignment
 from app.models.user import User
 
-router = APIRouter(prefix="/staff-api/assignments", tags=["assignments"])
+router = APIRouter(prefix="/api/staff-api/assignments", tags=["assignments"])
 
 class AssignmentCreateRequest(BaseModel):
     title: str
