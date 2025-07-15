@@ -75,7 +75,7 @@ export default function AssignmentsPage() {
       window.confirm(`Are you sure you want to delete "${assignment.title}"?`)
     ) {
       try {
-        await deleteAssignment(assignment.id);
+        await deleteAssignment(String(assignment.id));
         setAssignments(await fetchAssignments());
         showSuccess("Assignment deleted successfully!");
       } catch {
@@ -105,11 +105,13 @@ export default function AssignmentsPage() {
     };
     try {
       if (editingAssignment) {
-        await updateAssignment(editingAssignment.id, apiData);
+        await updateAssignment(String(editingAssignment.id), apiData);
         showSuccess("Assignment updated successfully!");
+        setTimeout(() => window.location.reload(), 1000);
       } else {
         await createAssignment(apiData);
         showSuccess("Assignment created successfully!");
+        setTimeout(() => window.location.reload(), 1000);
       }
       setAssignments(await fetchAssignments());
       setShowCreateForm(false);
