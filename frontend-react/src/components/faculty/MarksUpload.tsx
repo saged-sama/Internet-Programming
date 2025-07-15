@@ -5,6 +5,7 @@ import {
   fetchAssignments,
   fetchAllUserProfiles,
 } from "@/lib/schedulingApi";
+import Papa from "papaparse";
 
 interface MarksUploadProps {
   onClose: () => void;
@@ -24,6 +25,7 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
   const [uploadMethod, setUploadMethod] = useState<"file" | "manual">("file");
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [previewData, setPreviewData] = useState<StudentMark[]>([]);
+  const [studentList, setStudentList] = useState<StudentMark[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -40,6 +42,34 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
     loadAssignments();
   }, []);
 
+  useEffect(() => {
+    async function fetchStudentsForAssignment() {
+      if (!selectedAssignment) {
+        setStudentList([]);
+        setPreviewData([]);
+        return;
+      }
+      const submissions = await fetchSubmissionsForAssignment(
+        selectedAssignment
+      );
+      const users = await fetchAllUserProfiles();
+      const userMap: Record<string, string> = {};
+      users.forEach((user: any) => {
+        userMap[user.id] = user.name;
+      });
+      const students = submissions.map((sub: any) => ({
+        studentId: sub.student_id,
+        studentName: userMap[sub.student_id] || sub.student_id,
+        marks: sub.marks_obtained || 0,
+        maxMarks: 100,
+        comments: sub.feedback || "",
+      }));
+      setStudentList(students);
+      setPreviewData(students);
+    }
+    fetchStudentsForAssignment();
+  }, [selectedAssignment]);
+
   // Mock data
   const courses = [
     { code: "CSE 2101", name: "Data Structures and Algorithms" },
@@ -52,40 +82,25 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
     const file = event.target.files?.[0];
     if (file && file.type === "text/csv") {
       setCsvFile(file);
-      // Simulate CSV parsing
-      const mockData: StudentMark[] = [
-        {
-          studentId: "2021001",
-          studentName: "Ahmed Hassan",
-          marks: 85,
-          maxMarks: 100,
+      Papa.parse(file, {
+        header: true,
+        complete: (results) => {
+          // Map CSV rows to StudentMark[]
+          const data: StudentMark[] = (results.data as any[])
+            .map((row: any) => ({
+              studentId: row["Student ID"],
+              studentName: row["Student Name"],
+              marks: Number(row["Marks"]),
+              maxMarks: Number(row["Max Marks"]),
+              comments: row["Comments"] || "",
+            }))
+            .filter((student) => student.studentId && student.studentName);
+          setPreviewData(data);
         },
-        {
-          studentId: "2021002",
-          studentName: "Fatima Ali",
-          marks: 92,
-          maxMarks: 100,
+        error: () => {
+          alert("Failed to parse CSV file.");
         },
-        {
-          studentId: "2021003",
-          studentName: "Mohammed Khan",
-          marks: 78,
-          maxMarks: 100,
-        },
-        {
-          studentId: "2021004",
-          studentName: "Aisha Rahman",
-          marks: 95,
-          maxMarks: 100,
-        },
-        {
-          studentId: "2021005",
-          studentName: "Omar Ahmed",
-          marks: 88,
-          maxMarks: 100,
-        },
-      ];
-      setPreviewData(mockData);
+      });
     }
   };
 
@@ -179,8 +194,12 @@ export default function MarksUpload({ onClose }: MarksUploadProps) {
   };
 
   const downloadTemplate = () => {
-    const csvContent =
-      "Student ID,Student Name,Marks,Max Marks,Comments\n2021001,Ahmed Hassan,85,100,Good work\n2021002,Fatima Ali,92,100,Excellent";
+    const header = "Student ID,Student Name,Marks,Max Marks";
+    const rows = studentList.map(
+      (student) =>
+        `${student.studentId},${student.studentName},${student.marks},${student.maxMarks}`
+    );
+    const csvContent = [header, ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
