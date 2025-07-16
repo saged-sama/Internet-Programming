@@ -583,7 +583,7 @@ export default function DegreesPage() {
                         </div>
                       )}
                       {coreCoursesDropdownOpen && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-8 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
                           {availableCourses.length > 0 ? (
                             <div className="p-2 space-y-1">
                               {availableCourses.map((course) => (
@@ -699,7 +699,7 @@ export default function DegreesPage() {
                         </div>
                       )}
                       {electiveCoursesDropdownOpen && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-8 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
                           {availableCourses.length > 0 ? (
                             <div className="p-2 space-y-1">
                               {availableCourses.map((course) => (

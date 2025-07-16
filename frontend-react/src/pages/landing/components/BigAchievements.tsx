@@ -147,7 +147,7 @@ export default function BigAchievements() {
               {milestones.map((milestone, index) => (
                 <div key={index} className="text-center group">
                   {/* Milestone Icon */}
-                  <div className="relative z-10 w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:scale-105">
+                  <div className="relative z-8 w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:scale-105">
                     <span className="text-2xl text-primary">{milestone.icon}</span>
                   </div>
                   
