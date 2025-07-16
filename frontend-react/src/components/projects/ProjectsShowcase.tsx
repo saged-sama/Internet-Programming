@@ -1,5 +1,4 @@
-import { useState, useMemo } from "react";
-import type { Project } from "../../types/financials";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -16,19 +15,47 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
+import { ExternalLink, Users, Calendar, BookOpen } from "lucide-react";
+import { getProjects } from "../../api/projects";
+import type { Project } from "../../types/research";
+import { toast } from "sonner";
+import { Skeleton } from "../ui/skeleton";
 
 interface ProjectsShowcaseProps {
-  projects: Project[];
+  refreshTrigger?: number;
 }
 
-export function ProjectsShowcase({ projects }: ProjectsShowcaseProps) {
+export function ProjectsShowcase({ refreshTrigger }: ProjectsShowcaseProps) {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState<string>("all");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [selectedSupervisor, setSelectedSupervisor] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  // Fetch projects from API
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      try {
+        const response = await getProjects({
+          searchQuery: searchQuery || undefined,
+          year: selectedYear !== "all" ? parseInt(selectedYear) : undefined,
+          topic: selectedTopic !== "all" ? selectedTopic : undefined,
+          supervisor: selectedSupervisor !== "all" ? selectedSupervisor : undefined,
+        });
+        setProjects(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch projects");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [searchQuery, selectedYear, selectedTopic, selectedSupervisor, refreshTrigger]);
 
   const years = useMemo(() => {
     const uniqueYears = [...new Set(projects.map((p) => p.year))].sort(
@@ -39,35 +66,51 @@ export function ProjectsShowcase({ projects }: ProjectsShowcaseProps) {
 
   const topics = useMemo(() => {
     const uniqueTopics = [...new Set(projects.map((p) => p.topic))];
-    return uniqueTopics;
+    return uniqueTopics.sort();
   }, [projects]);
 
   const supervisors = useMemo(() => {
-    const uniqueSupervisors = [...new Set(projects.map((p) => p.supervisor))];
-    return uniqueSupervisors;
+    const uniqueSupervisors = [...new Set(projects.map((p) => p.supervisorName).filter(Boolean))];
+    return uniqueSupervisors.sort();
   }, [projects]);
 
-  const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const matchesYear =
-        selectedYear === "all" || project.year.toString() === selectedYear;
-      const matchesTopic =
-        selectedTopic === "all" || project.topic === selectedTopic;
-      const matchesSupervisor =
-        selectedSupervisor === "all" ||
-        project.supervisor === selectedSupervisor;
-      const matchesSearch =
-        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.abstract.toLowerCase().includes(searchQuery.toLowerCase());
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "completed":
+        return "bg-green-500";
+      case "ongoing":
+        return "bg-blue-500";
+      case "planning":
+        return "bg-yellow-500";
+      case "paused":
+        return "bg-gray-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
 
-      return matchesYear && matchesTopic && matchesSupervisor && matchesSearch;
-    });
-  }, [projects, selectedYear, selectedTopic, selectedSupervisor, searchQuery]);
+  const LoadingSkeleton = () => (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Card key={i}>
+          <CardHeader>
+            <Skeleton className="h-6 w-3/4" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <div className="space-y-6">
-      <h2>Projects Showcase</h2>
-
       <div className="grid gap-4 md:grid-cols-4">
         <Select value={selectedYear} onValueChange={setSelectedYear}>
           <SelectTrigger>
@@ -107,7 +150,7 @@ export function ProjectsShowcase({ projects }: ProjectsShowcaseProps) {
           <SelectContent>
             <SelectItem value="all">All Supervisors</SelectItem>
             {supervisors.map((supervisor) => (
-              <SelectItem key={supervisor} value={supervisor}>
+              <SelectItem key={supervisor} value={supervisor || ""}>
                 {supervisor}
               </SelectItem>
             ))}
@@ -121,64 +164,145 @@ export function ProjectsShowcase({ projects }: ProjectsShowcaseProps) {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProjects.map((project) => (
-          <Card key={project.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>{project.title}</span>
-                <Badge>{project.status}</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  Year: {project.year}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Topic: {project.topic}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Supervisor: {project.supervisor}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Team: {project.team.join(", ")}
-                </p>
-                <div className="flex space-x-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        onClick={() => setSelectedProject(project)}
-                      >
-                        View Abstract
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>{project.title}</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <p>{project.abstract}</p>
-                        {project.demoUrl && (
-                          <Button
-                            variant="secondary"
-                            onClick={() =>
-                              window.open(project.demoUrl, "_blank")
-                            }
-                          >
-                            View Demo
-                          </Button>
-                        )}
+      {loading ? (
+        <LoadingSkeleton />
+      ) : projects.length === 0 ? (
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">No projects found</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <Card key={project.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between gap-2">
+                  <span className="line-clamp-2">{project.title}</span>
+                  <Badge className={getStatusColor(project.status)}>
+                    {project.status}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>Year: {project.year}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <BookOpen className="h-4 w-4" />
+                    <span>Topic: {project.topic}</span>
+                  </div>
+                  
+                  {project.supervisorName && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      <span>Supervisor: {project.supervisorName}</span>
+                    </div>
+                  )}
+                  
+                  {project.team.length > 0 && (
+                    <div className="text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Users className="h-4 w-4" />
+                        <span>Team:</span>
                       </div>
-                    </DialogContent>
-                  </Dialog>
+                      <div className="ml-6 line-clamp-2">
+                        {project.team.join(", ")}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setSelectedProject(project)}
+                  >
+                    View Details
+                  </Button>
                 </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Project Details Dialog */}
+      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">{selectedProject?.title}</DialogTitle>
+          </DialogHeader>
+          {selectedProject && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="font-semibold mb-1">Year</h3>
+                  <p className="text-muted-foreground">{selectedProject.year}</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Status</h3>
+                  <Badge className={getStatusColor(selectedProject.status)}>
+                    {selectedProject.status}
+                  </Badge>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Topic</h3>
+                  <p className="text-muted-foreground">{selectedProject.topic}</p>
+                </div>
+                {selectedProject.supervisorName && (
+                  <div>
+                    <h3 className="font-semibold mb-1">Supervisor</h3>
+                    <p className="text-muted-foreground">{selectedProject.supervisorName}</p>
+                  </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
+              {selectedProject.team.length > 0 && (
+                <div>
+                  <h3 className="font-semibold mb-2">Team Members</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.team.map((member, index) => (
+                      <Badge key={index} variant="secondary">
+                        {member}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedProject.description && (
+                <div>
+                  <h3 className="font-semibold mb-2">Description</h3>
+                  <p className="text-muted-foreground whitespace-pre-wrap">
+                    {selectedProject.description}
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <h3 className="font-semibold mb-2">Abstract</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap">
+                  {selectedProject.abstract}
+                </p>
+              </div>
+
+              {selectedProject.demoUrl && (
+                <div className="pt-4 border-t">
+                  <Button
+                    variant="default"
+                    onClick={() => window.open(selectedProject.demoUrl, "_blank")}
+                    className="w-full sm:w-auto"
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    View Demo
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
