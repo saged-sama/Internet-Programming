@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query, Depends, status
 from datetime import date
 
-from sqlmodel import select
+from sqlmodel import select, text
 
 from app.utils.db import SessionDependency
 from app.models.notice import Notice, NoticeCategoryEnum, NoticeResponse, NoticeCreateRequest, NoticeUpdateRequest
@@ -84,8 +84,14 @@ async def create_notice(
             detail=f"Invalid category: {notice_data.category}. Valid categories are: {[c.value for c in NoticeCategoryEnum]}"
         )
     
-    # Create new notice
+    # Find the maximum ID currently in the database to ensure a unique ID
+    result = session.exec(text("SELECT MAX(id) FROM notice")).one()
+    max_id = result[0] if result[0] is not None else 0
+    next_id = max_id + 1
+    
+    # Create new notice with explicit ID to avoid conflicts
     new_notice = Notice(
+        id=next_id,  # Set explicit ID to avoid conflicts
         title=notice_data.title,
         category=category_enum,
         description=notice_data.description,
@@ -93,11 +99,17 @@ async def create_notice(
         notice_date=date.today()  # Set current date
     )
     
-    session.add(new_notice)
-    session.commit()
-    session.refresh(new_notice)
-    
-    return notice_to_response(new_notice)
+    try:
+        session.add(new_notice)
+        session.commit()
+        session.refresh(new_notice)
+        return notice_to_response(new_notice)
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create notice: {str(e)}"
+        )
 
 @router.patch("/{notice_id}", response_model=NoticeResponse)
 async def update_notice(
@@ -141,11 +153,17 @@ async def update_notice(
     if notice_update.is_important is not None:
         notice.is_important = notice_update.is_important
     
-    session.add(notice)
-    session.commit()
-    session.refresh(notice)
-    
-    return notice_to_response(notice)
+    try:
+        session.add(notice)
+        session.commit()
+        session.refresh(notice)
+        return notice_to_response(notice)
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update notice: {str(e)}"
+        )
 
 @router.delete("/{notice_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_notice(
@@ -170,7 +188,13 @@ async def delete_notice(
         )
     
     # Delete the notice
-    session.delete(notice)
-    session.commit()
-    
-    return None
+    try:
+        session.delete(notice)
+        session.commit()
+        return None
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to delete notice: {str(e)}"
+        )
