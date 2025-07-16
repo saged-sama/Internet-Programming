@@ -308,13 +308,19 @@ const ApplicationPage = () => {
                       Our expert team is ready to guide you through every step
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <button className="group bg-white text-[#31466F] px-6 py-3 rounded-full font-bold text-base hover:scale-105 transition-all duration-300 shadow-xl">
+                      <button 
+                        onClick={() => window.location.href = '/contact'} 
+                        className="group bg-white text-[#31466F] px-6 py-3 rounded-full font-bold text-base hover:scale-105 transition-all duration-300 shadow-xl"
+                      >
                         <span className="flex items-center space-x-2">
                           <Mail className="w-4 h-4" />
                           <span>Email Support</span>
                         </span>
                       </button>
-                      <button className="group bg-[#F5C940] text-[#31466F] px-6 py-3 rounded-full font-bold text-base hover:scale-105 transition-all duration-300 shadow-xl">
+                      <button 
+                        onClick={() => window.location.href = '/contact'} 
+                        className="group bg-[#F5C940] text-[#31466F] px-6 py-3 rounded-full font-bold text-base hover:scale-105 transition-all duration-300 shadow-xl"
+                      >
                         <span className="flex items-center space-x-2">
                           <Phone className="w-4 h-4" />
                           <span>Call Now</span>
