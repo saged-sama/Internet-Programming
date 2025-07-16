@@ -10,13 +10,8 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Input } from "../ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-import { ExternalLink, Users, Calendar, BookOpen } from "lucide-react";
+import { Users, Calendar, BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { getProjects } from "../../api/projects";
 import type { Project } from "../../types/research";
 import { toast } from "sonner";
@@ -33,7 +28,7 @@ export function ProjectsShowcase({ refreshTrigger }: ProjectsShowcaseProps) {
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
   const [selectedSupervisor, setSelectedSupervisor] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const navigate = useNavigate();
 
   // Fetch projects from API
   useEffect(() => {
@@ -216,7 +211,7 @@ export function ProjectsShowcase({ refreshTrigger }: ProjectsShowcaseProps) {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => setSelectedProject(project)}
+                    onClick={() => navigate(`/research/project/${project.id}`)}
                   >
                     View Details
                   </Button>
@@ -227,82 +222,7 @@ export function ProjectsShowcase({ refreshTrigger }: ProjectsShowcaseProps) {
         </div>
       )}
 
-      {/* Project Details Dialog */}
-      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">{selectedProject?.title}</DialogTitle>
-          </DialogHeader>
-          {selectedProject && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h3 className="font-semibold mb-1">Year</h3>
-                  <p className="text-muted-foreground">{selectedProject.year}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Status</h3>
-                  <Badge className={getStatusColor(selectedProject.status)}>
-                    {selectedProject.status}
-                  </Badge>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-1">Topic</h3>
-                  <p className="text-muted-foreground">{selectedProject.topic}</p>
-                </div>
-                {selectedProject.supervisorName && (
-                  <div>
-                    <h3 className="font-semibold mb-1">Supervisor</h3>
-                    <p className="text-muted-foreground">{selectedProject.supervisorName}</p>
-                  </div>
-                )}
-              </div>
-
-              {selectedProject.team.length > 0 && (
-                <div>
-                  <h3 className="font-semibold mb-2">Team Members</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.team.map((member, index) => (
-                      <Badge key={index} variant="secondary">
-                        {member}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {selectedProject.description && (
-                <div>
-                  <h3 className="font-semibold mb-2">Description</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
-                    {selectedProject.description}
-                  </p>
-                </div>
-              )}
-
-              <div>
-                <h3 className="font-semibold mb-2">Abstract</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap">
-                  {selectedProject.abstract}
-                </p>
-              </div>
-
-              {selectedProject.demoUrl && (
-                <div className="pt-4 border-t">
-                  <Button
-                    variant="default"
-                    onClick={() => window.open(selectedProject.demoUrl, "_blank")}
-                    className="w-full sm:w-auto"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    View Demo
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Project details are now shown on a dedicated page */}
     </div>
   );
 }

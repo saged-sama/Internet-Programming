@@ -64,14 +64,14 @@ def project_to_response(project: Project, session: SessionDependency) -> Project
     for member in team_members:
         user = session.exec(select(User).where(User.id == member.member)).first()
         if user:
-            team_names.append(f"{user.first_name} {user.last_name}")
+            team_names.append(user.name)
     
     # Get supervisor name
     supervisor_name = None
     if project.supervisor:
         supervisor = session.exec(select(User).where(User.id == project.supervisor)).first()
         if supervisor:
-            supervisor_name = f"{supervisor.first_name} {supervisor.last_name}"
+            supervisor_name = supervisor.name
     
     # Extract demo URL from description if present (temporary solution)
     demo_url = None
