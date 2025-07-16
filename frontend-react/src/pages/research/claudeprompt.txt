@@ -1,0 +1,18 @@
+Internet-Programming\frontend-react\src\pages\research:**ResearchPage.tsx**
+1. create add button beside research  publication section
+by clicking this button it will open form that will take input reasearch information 
+submit the form add a new project to the projectlist
+1. when we click the view abstract button it will show the reasearh or project detail with abstract and demo link
+2. any projects of reasearhes can be filter by selection a year,topics or supervisor. also any project canbe searchd using the search field
+
+
+this first README.md conatining my frontend project structure 
+second READM.md containing my backend project structure 
+implement complete fronted and backened part for my requirements 
+some demo frontend and backend implementation flie also provided to understand how actually the code are written:
+Internet-Programming\backend-fastapi\app\routes:courses.py
+Internet-Programming\backend-fastapi\app\models : cours.py, project.py
+Internet-Programming\frontend-react\src\api: **courseMaterials.ts**
+finally the  main.py also provided .
+Internet-Programming\backend-fastapi\app:main.py
+give me the complete implemenatation code
