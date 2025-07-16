@@ -49,7 +49,7 @@ export default function Navbar() {
   const isActive = (to: string) => location.pathname === to;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 w-full flex flex-row items-center bg-[#3F4864] rounded-2xl mt-4 shadow-lg min-h-[120px]">
+    <div className="max-w-7xl mx-auto px-6 w-full flex flex-row items-center bg-[#13274D]/85 backdrop-blur-sm rounded-2xl shadow-lg min-h-[90px]">
       {/* Logo Column */}
       <div
         className="flex flex-col justify-center items-center h-full z-10 mr-6"
@@ -66,11 +66,11 @@ export default function Navbar() {
       {/* Main Navbar Content */}
       <div className="flex-1 flex flex-col justify-center relative">
         {/* Top Row */}
-        <div className="w-full flex items-center px-6  min-h-[96px]">
+        <div className="w-full flex items-center px-6  min-h-[80px]">
           {/* Gold Line Behind Logo to Dashboard */}
-          <div className="absolute top-[33px] -left-13 right-[43%] h-1 bg-[#ECB31D] rounded-full z-0 -translate-y-1/2" />
+          <div className="absolute top-[33px] -left-13 right-[50%] h-1 bg-[#ECB31D] rounded-full z-0 -translate-y-1/2" />
           {/* Diamond indicator aligned with Dashboard */}
-          <div className="absolute left-[57%] top-[33px] -translate-y-1/2 z-10">
+          <div className="absolute left-[50%] top-[33px] -translate-y-1/2 z-10">
             <div className="w-4 h-4 bg-[#ECB31D] rotate-45" />
           </div>
           {/* Top nav links */}
