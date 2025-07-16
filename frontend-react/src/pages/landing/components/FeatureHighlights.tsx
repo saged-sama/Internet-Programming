@@ -95,7 +95,7 @@ export default function FeatureHighlights() {
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, idx) => (
+          {features.map((feature) => (
             <div
               key={feature.title}
               className="flex flex-col items-center text-center bg-white rounded-2xl shadow-md border border-gray-100 p-8 hover:shadow-lg transition"

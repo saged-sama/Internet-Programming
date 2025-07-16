@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { ExamTimetable } from "@/types/scheduling";
-import { createExam } from "@/lib/schedulingApi";
 
 interface ExamFormData {
   courseCode: string;

@@ -29,11 +29,7 @@ interface LabEquipmentBookingProps {
 
 export function LabEquipmentBooking({
   equipment,
-  bookings,
   onBook,
-  onApprove,
-  onReject,
-  isAdmin = false,
 }: LabEquipmentBookingProps) {
   const [selectedEquipment, setSelectedEquipment] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(

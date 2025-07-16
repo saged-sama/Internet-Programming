@@ -78,7 +78,7 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
     if (slotValue) {
       // Parse the slot value to extract start and end time
       // Format: "day-startTime-endTime" (e.g., "Monday-09:00-10:00")
-      const [day, startTime, endTime] = slotValue.split('-');
+      const [_, startTime, endTime] = slotValue.split('-');
       setFormData((prev) => ({
         ...prev,
         startTime,

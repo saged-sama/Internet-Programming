@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import MarksUpload from "@/components/faculty/MarksUpload";
 import { fetchSubmissionsForMyAssignments } from "@/lib/schedulingApi";
-import { getCurrentUser } from "@/lib/auth";
 import { apiRequest2 } from "@/lib/schedulingApi";
 
 // Mock data for faculty dashboard
@@ -58,39 +57,7 @@ const currentCourses = [
   },
 ];
 
-// Recent submissions will be fetched from backend
-const recentExams = [
-  {
-    id: 1,
-    courseCode: "CSE 2101",
-    courseTitle: "Data Structures and Algorithms",
-    examType: "Midterm",
-    date: "2024-01-15",
-    time: "10:00 - 12:00",
-    room: "301",
-    status: "Scheduled",
-  },
-  {
-    id: 2,
-    courseCode: "CSE 2203",
-    courseTitle: "Computer Organization",
-    examType: "Final",
-    date: "2024-01-20",
-    time: "14:00 - 17:00",
-    room: "302",
-    status: "Scheduled",
-  },
-  {
-    id: 3,
-    courseCode: "CSE 3107",
-    courseTitle: "Operating Systems",
-    examType: "Quiz",
-    date: "2024-01-18",
-    time: "09:00 - 10:00",
-    room: "303",
-    status: "Scheduled",
-  },
-];
+
 
 const quickActions = [
   {
@@ -117,7 +84,6 @@ export default function FacultyDashboard() {
   const navigate = useNavigate();
   const [showMarksUpload, setShowMarksUpload] = useState(false);
   const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
-  const [assignmentsMap, setAssignmentsMap] = useState<Record<string, any>>({});
   const [usersMap, setUsersMap] = useState<Record<string, string>>({});
 
   useEffect(() => {

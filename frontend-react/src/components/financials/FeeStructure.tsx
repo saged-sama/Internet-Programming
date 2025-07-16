@@ -63,6 +63,9 @@ export function FeeStructure({ fees, onPayment }: FeeStructureProps) {
                   </p>
                 )}
               </div>
+              <div className="hidden">
+                {selectedFee}
+              </div>
             </CardContent>
           </Card>
         ))}

@@ -27,7 +27,6 @@ export default function AssignmentsPage() {
 
   const currentUser = getCurrentUser();
   const isFaculty = currentUser?.role === "faculty";
-  const isStudent = currentUser?.role === "student";
 
   useEffect(() => {
     fetchAssignments()

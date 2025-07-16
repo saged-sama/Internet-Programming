@@ -3,7 +3,6 @@ import type { FeeStructure as FeeStructureType } from "../../types/financials";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { PaymentModal } from "./PaymentModal";
 import { EditFeeModal } from "./EditFeeModal";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
@@ -62,6 +61,7 @@ export function EnhancedFeeStructure({ userInfo }: EnhancedFeeStructureProps) {
             : fee
         )
       );
+      console.log(paymentMethod)
 
       // Refresh fees from server to get latest data
       await loadFees();

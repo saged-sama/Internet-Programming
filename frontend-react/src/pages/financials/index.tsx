@@ -25,7 +25,7 @@ export default function FinancialPage() {
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [_, setUserRole] = useState<string | null>(null);
   const [adminStats, setAdminStats] = useState({
     totalDue: 0,
     totalPaid: 0,

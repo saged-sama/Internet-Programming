@@ -7,7 +7,7 @@ import {
 } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Download, FileText } from "lucide-react";
+import { Download } from "lucide-react";
 import type { ResearchPaper } from "../../types/financials";
 
 interface ResearchPapersProps {

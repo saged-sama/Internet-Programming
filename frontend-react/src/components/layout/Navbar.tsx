@@ -1,16 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
-import { useState } from "react";
 import { isLoggedIn, getDashboardRoute } from "../../lib/auth";
 import CurrentUser from "./CurrentUser";
 
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
 
   const topNav = [
     {

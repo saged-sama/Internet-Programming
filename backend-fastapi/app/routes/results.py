@@ -14,6 +14,14 @@ from app.utils.file_handler import BaseFilePath, delete_file, save_file
 
 router = APIRouter(prefix="/api/results", tags=["Results"])
 
+@router.get("/all_results")
+async def get_all_results(session: Session = Depends(get_session)
+):
+    results = session.exec(select(Results)).all()
+    if not results:
+        raise HTTPException(status_code=404, detail="No results found")
+    return results
+
 @router.get("/")
 async def get_results(
     query: ResultsReadQuery = Depends(),

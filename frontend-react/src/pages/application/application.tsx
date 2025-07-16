@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Calendar, FileText, Users, HelpCircle, CheckCircle, Clock, AlertTriangle, Download, Mail, Phone, Star, ArrowRight, Zap, Shield, Award, Globe } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronDown, Calendar, FileText, Users, HelpCircle, CheckCircle, Clock, AlertTriangle, Download, Mail, Phone, Star, ArrowRight, Zap, Shield, Award, Globe } from 'lucide-react';
 
 const ApplicationPage = () => {
   const [activeTab, setActiveTab] = useState('process');
-  const [expandedFAQ, setExpandedFAQ] = useState(null);
-  const [scrollY, setScrollY] = useState(0);
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [_, setScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -12,7 +12,7 @@ const ApplicationPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleFAQ = (index) => {
+  const toggleFAQ = (index: number) => {
     setExpandedFAQ(expandedFAQ === index ? null : index);
   };
 

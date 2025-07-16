@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
 import themeClasses from '../../../lib/theme-utils';
 import ImageSlider from './ImageSlider';
+import landingImage from '../../../assets/photos/landing.jpg';
 
 export default function HeroSection() {
   return (
     <div 
       className="relative bg-cover bg-center min-h-[600px] w-full mt-5"
       style={{ 
-        backgroundImage: "url('src/assets/photos/landing.jpg')",
+        backgroundImage: `url('${landingImage}')`,
       }}
     >
-      {/* Dark overlay for better text visibility */}
+      {/* Rest of your component remains the same */}
       <div className="absolute inset-0 bg-black/50"></div>
       
-      {/* Content positioned on top of the background image */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-13 text-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>

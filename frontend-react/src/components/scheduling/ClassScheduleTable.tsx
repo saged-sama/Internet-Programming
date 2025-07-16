@@ -95,7 +95,7 @@ export default function ClassScheduleTable({ schedules }: ClassScheduleTableProp
               </div>
               {days.map(day => (
                 <div key={`${day}-${slot.time}`} className="p-2 border-r border-border last:border-r-0 min-h-[80px] bg-card">
-                  {scheduleGrid[day][slot.time].map((schedule, index) => {
+                  {scheduleGrid[day][slot.time].map((schedule) => {
                     const duration = getClassDuration(schedule.startTime, schedule.endTime);
                     return (
                       <div

@@ -57,7 +57,7 @@ export default function DirectoryDetailPage() {
   const [profile, setProfile] = useState<FacultyResponse | StudentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'publications' | 'office' | 'courses'>('overview');
+  const [_, setActiveTab] = useState<'overview' | 'publications' | 'office' | 'courses'>('overview');
 
   // No mock data - using real API calls
 

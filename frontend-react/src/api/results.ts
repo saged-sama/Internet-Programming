@@ -39,7 +39,16 @@ export interface StudentsGrades {
     },
     file: string;
 }
-
+// Get all results without filters
+export const getAllResults = async (): Promise<Result[]> => {
+    const response = await fetch(`${BACKEND_URL}/api/results/all_results`);
+    
+    if (!response.ok) {
+        throw new Error(`Failed to fetch all results: ${response.statusText}`);
+    }
+    
+    return response.json();
+};
 // Get all results with optional filters
 export const getResults = async (query?: ResultsReadQuery): Promise<StudentsGrades[]> => {
     const params = new URLSearchParams();

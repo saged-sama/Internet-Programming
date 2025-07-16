@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getResults, type Result, type ResultsReadQuery } from '../../api/results';
+import { getAllResults, type Result, type ResultsReadQuery } from '../../api/results';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,10 @@ const ResultsList: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState<ResultsReadQuery>({});
 
-    const fetchResults = async (queryFilters: ResultsReadQuery = {}) => {
+    const fetchResults = async () => {
         try {
             setLoading(true);
-            const data = await getResults(queryFilters);
+            const data = await getAllResults();
             setResults(data);
         } catch (err) {
             console.error('Failed to fetch results:', err);
@@ -26,7 +26,7 @@ const ResultsList: React.FC = () => {
     const handleFilterChange = (key: keyof ResultsReadQuery, value: string) => {
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
-        fetchResults(newFilters);
+        fetchResults();
     };
 
     useEffect(() => {

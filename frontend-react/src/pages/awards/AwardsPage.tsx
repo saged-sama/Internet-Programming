@@ -6,7 +6,6 @@ import { getCurrentUser } from "../../lib/auth";
 import awardsImg from "@/assets/studentawards.jpg"; // Replace with your actual image
 import researchImg from "@/assets/research.jpg"; // Replace with your actual image
 import innovationImg from "@/assets/innovation.jpg";
-import FeatureHighlights from "../landing/components/FeatureHighlights";
 
 export function AwardsPage() {
   const [awards, setAwards] = useState<Award[]>([]);

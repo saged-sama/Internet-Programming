@@ -17,15 +17,14 @@ import type {
 import financialsData from "../../assets/financials.json";
 import { getCurrentUser } from "../../lib/auth";
 import CourseMaterialPage from "@/components/courses/CourseMaterialPage";
-import { set } from "date-fns";
 
 export function ResourcesPage() {
-  const [fees, setFees] = useState<FeeStructureType[]>([]);
-  const [equipment, setEquipment] = useState<LabEquipment[]>([]);
+  const [____, setFees] = useState<FeeStructureType[]>([]);
+  const [equipment, __] = useState<LabEquipment[]>([]);
   const [equipments, setEquipments] = useState([]);
   const [bookings, setBookings] = useState<BookingSlot[]>([]);
-  const [bookingsList , setbookingList] = useState<BookingSlot[]>([]);
-  const [materials, setMaterials] = useState<CourseMaterial[]>([]);
+  const [_ , setbookingList] = useState<BookingSlot[]>([]);
+  const [___, setMaterials] = useState<CourseMaterial[]>([]);
   const [loading, setLoading] = useState({
     fees: false,
     equipment: false,
@@ -215,24 +214,25 @@ export function ResourcesPage() {
     }
   }, [activeTab, isAdmin]);
 
-  const handlePayment = async (
-    feeId: string,
-    paymentMethod: string,
-    transactionId: string
-  ) => {
-    setFees(
-      fees.map((fee) =>
-        fee.id === feeId
-          ? {
-              ...fee,
-              status: "paid" as const,
-              paymentDate: new Date().toISOString(),
-              transactionId,
-            }
-          : fee
-      )
-    );
-  };
+  // const handlePayment = async (
+  //   feeId: string,
+  //   paymentMethod: string,
+  //   transactionId: string
+  // ) => {
+  //   console.log(paymentMethod)
+  //   setFees(
+  //     fees.map((fee) =>
+  //       fee.id === feeId
+  //         ? {
+  //             ...fee,
+  //             status: "paid" as const,
+  //             paymentDate: new Date().toISOString(),
+  //             transactionId,
+  //           }
+  //         : fee
+  //     )
+  //   );
+  // };
 
   const handleBooking = async (
   equipmentId: string,
@@ -265,13 +265,14 @@ export function ResourcesPage() {
     // Transform the backend response to match frontend interface
     const newBooking: BookingSlot = {
       id: response.data.id,
-      equipmentId: response.data.equipment_id,
+      equipment_id: response.data.equipment_id,
       userId: response.data.user_id,
-      startTime: response.data.start_time,
-      endTime: response.data.end_time,
+      start_time: response.data.start_time,
+      end_time: response.data.end_time,
       purpose: response.data.purpose,
       status: response.data.status,
-      createdAt: response.data.created_at
+      createdAt: response.data.created_at,
+      equipment_name: response.data.equipment_name || "Unknown Equipment",
     };
 
     setBookings(prev => [...prev, newBooking]);
@@ -331,21 +332,21 @@ export function ResourcesPage() {
       setLoading(prev => ({ ...prev, bookings: true }));
       setError(null);
 
-      const updateData = {
-        status: approved ? 'approved' : 'rejected',
-        updated_at: new Date().toISOString()
-      };
+      // const updateData = {
+      //   status: approved ? 'approved' : 'rejected',
+      //   updated_at: new Date().toISOString()
+      // };
 
-      const response = await axios.patch(
-        `http://localhost:8000/staff-api/lab-equipments/bookings/${bookingId}`,
-        updateData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-      );
+      // const response = await axios.patch(
+      //   `http://localhost:8000/staff-api/lab-equipments/bookings/${bookingId}`,
+      //   updateData,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      //     }
+      //   }
+      // );
 
       setbookingList(prev => 
         prev.map(booking => 
@@ -421,8 +422,6 @@ export function ResourcesPage() {
 
         <TabsContent value="fees">
           <EnhancedFeeStructure
-            fees={fees}
-            onPayment={handlePayment}
             userInfo={userInfo}
           />
         </TabsContent>
