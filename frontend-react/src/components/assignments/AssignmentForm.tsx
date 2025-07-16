@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
+import { getCurrentUser } from "@/lib/auth";
 import type { Assignment } from "@/types/scheduling";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AssignmentFormProps {
   onSubmit: (
@@ -23,7 +31,10 @@ export default function AssignmentForm({
     semester: "",
     deadline: "",
     createdBy: "",
+    totalMarks: 0,
   });
+  const [courseCodes, setCourseCodes] = useState<string[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
 
   const isEditing = !!assignment;
 
@@ -38,9 +49,31 @@ export default function AssignmentForm({
         semester: assignment.semester,
         deadline: assignment.deadline,
         createdBy: assignment.createdBy,
+        totalMarks: assignment.totalMarks,
       });
+    } else {
+      // Set createdBy to current user's name when creating
+      const user = getCurrentUser();
+      setFormData((prev) => ({ ...prev, createdBy: user?.name || "" }));
     }
   }, [assignment]);
+
+  useEffect(() => {
+    async function fetchCourseCodes() {
+      setLoadingCourses(true);
+      try {
+        const response = await fetch("http://0.0.0.0:8000/api/courses/codes");
+        if (!response.ok) throw new Error("Failed to fetch course codes");
+        const codes = await response.json();
+        setCourseCodes(codes);
+      } catch (err) {
+        setCourseCodes([]);
+      } finally {
+        setLoadingCourses(false);
+      }
+    }
+    fetchCourseCodes();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,15 +119,24 @@ export default function AssignmentForm({
             >
               Course Code
             </label>
-            <input
-              type="text"
+            <select
               id="courseCode"
               name="courseCode"
               value={formData.courseCode}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+              disabled={loadingCourses}
+            >
+              <option value="">
+                {loadingCourses ? "Loading..." : "Select Course Code"}
+              </option>
+              {courseCodes.map((code) => (
+                <option key={code} value={code}>
+                  {code}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -196,20 +238,24 @@ export default function AssignmentForm({
           />
         </div>
 
-        <div>
-          <label htmlFor="createdBy" className="block text-sm font-medium mb-1">
-            Created By
-          </label>
-          <input
-            type="text"
-            id="createdBy"
-            name="createdBy"
-            value={formData.createdBy}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-muted rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
+        {isEditing && (
+          <div>
+            <label
+              htmlFor="createdBy"
+              className="block text-sm font-medium mb-1"
+            >
+              Created By
+            </label>
+            <input
+              type="text"
+              id="createdBy"
+              name="createdBy"
+              value={formData.createdBy}
+              readOnly
+              className="w-full px-3 py-2 border border-muted rounded-md bg-gray-100 focus:outline-none"
+            />
+          </div>
+        )}
 
         <div className="flex justify-end gap-3 pt-4">
           <button

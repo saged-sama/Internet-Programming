@@ -15,7 +15,8 @@ const getAuthToken = () => {
 };
 
 // Helper function to make authenticated requests
-const apiRequest = async (url: string, options: RequestInit = {}) => {
+
+export const apiRequest = async (url: string, options: RequestInit = {}) => {
   const token = getAuthToken();
   const headers = {
     'Content-Type': 'application/json',
@@ -25,6 +26,45 @@ const apiRequest = async (url: string, options: RequestInit = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL}${url}`, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      // Try to get error details from response body
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // Keep the default error message if response is not JSON
+      }
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error('❌ Failed to connect to server. Please check if the backend is running.');
+    }
+    throw error;
+  }
+};
+
+export const apiRequest2 = async (url: string, options: RequestInit = {}) => {
+  const token = getAuthToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  try {
+    const response = await fetch(`${API_BASE}${url}`, {
       ...options,
       headers,
     });
@@ -307,6 +347,18 @@ export async function fetchExams() {
   return apiRequest('/api/exams/staff-api/list');
 }
 
+export async function fetchMyAssignmentSubmissions() {
+  return apiRequest('/staff-api/assignments/submissions/me');
+}
+
+export async function fetchSubmissionsForMyAssignments() {
+  return apiRequest('/staff-api/assignments/submissions/created-by-me');
+}
+
+export async function fetchSubmissionsForAssignment(assignmentId: string) {
+  return apiRequest(`/staff-api/assignments/${assignmentId}/submissions`);
+}
+
 // Courses API (from courses.py)
 export const coursesApi = {
   // Get all courses for dropdowns
@@ -338,3 +390,7 @@ export const schedulingApi = {
   roomBooking: roomBookingApi,
   classSchedule: classScheduleApi,
 }; 
+
+export async function fetchAllUserProfiles() {
+  return apiRequest2('/users-api/profiles/');
+} 

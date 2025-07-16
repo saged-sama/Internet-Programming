@@ -6,6 +6,7 @@ from .assignment import Assignment, AssignmentSubmission
 from .class_schedule import ClassSchedule
 from .equipment import LabEquipment, Booking
 from .event import Event, EventCategoryEnum
+from .notice import Notice, NoticeCategoryEnum
 from .exam import ExamTimeTable, ExamTypeEnum
 from .fee import Fee, FeePayment, StudentFee, StripePaymentIntent, FeeTypeEnum, FeeStatusEnum, PaymentMethodEnum
 from .grades import Grade
@@ -41,13 +42,7 @@ class Announcement(SQLModel, table=True):
     category: Optional[str]
     description: Optional[str]
 
-class Notice(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    title: str
-    date: date
-    category: Optional[str]
-    description: Optional[str]
-    is_important: bool = False
+# Notice model is now imported from notice.py
 
 class ContactDepartment(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

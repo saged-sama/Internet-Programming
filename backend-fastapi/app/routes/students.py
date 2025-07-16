@@ -109,6 +109,7 @@ async def create_student_profile(
         user_id=current_user.id,
         student_id=profile_data.student_id,
         major=profile_data.major,
+        current_degree=profile_data.current_degree,
         admission_date=profile_data.admission_date,
         graduation_date=profile_data.graduation_date,
         year_of_study=profile_data.year_of_study,

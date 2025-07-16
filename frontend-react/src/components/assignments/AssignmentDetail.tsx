@@ -81,17 +81,7 @@ export default function AssignmentDetail({ assignment, onClose, onSubmit }: Assi
               className="w-full p-2 border rounded-md bg-background"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="comments" className="block mb-2 text-sm text-muted-foreground">
-              Comments
-            </label>
-            <textarea
-              id="comments"
-              rows={3}
-              className="w-full p-2 border rounded-md bg-background"
-              placeholder="Add any comments about your submission"
-            />
-          </div>
+          
         </div>
       )}
 

@@ -2,6 +2,7 @@ import "./App.css";
 import { Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./pages/landing";
 import NoticesPage from "./pages/notices";
+import NoticeDetailPage from "./pages/notices/NoticeDetail";
 import EventsPage from "./pages/events";
 import ContactPage from "./pages/contact";
 import DirectoryPage from "./pages/directory";
@@ -47,6 +48,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/notices" element={<NoticesPage />} />
+        <Route path="/notices/:id" element={<NoticeDetailPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/directory" element={<DirectoryPage />} />

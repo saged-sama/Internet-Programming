@@ -21,7 +21,7 @@ export default function NoticeCard({ id, title, date, category, description, isI
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 ${themeClasses.bgPrimaryLight} ${themeClasses.textPrimary}`}>
+            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 ${themeClasses.bgPrimary} ${themeClasses.textAccentYellow}`}>
               {category}
             </span>
             {isImportant && (
@@ -31,7 +31,7 @@ export default function NoticeCard({ id, title, date, category, description, isI
             )}
           </div>
           <h3 className={themeClasses.textPrimary}>{title}</h3>
-          <p>{description}</p>
+          <p className="line-clamp-1 overflow-hidden">{description}</p>
           <Button variant="link" className={themeClasses.textAccentYellow} asChild>
             <Link to={`/notices/${id}`}>Read more</Link>
           </Button>

@@ -115,6 +115,12 @@ async def get_courses(
         limit=limit
     )
 
+@router.get("/codes", response_model=List[str])
+async def get_course_codes(session: SessionDependency):
+    """Get a list of all course codes"""
+    codes = session.exec(select(Course.course_code)).all()
+    return codes
+
 @router.get("/{course_code}", response_model=CourseResponse)
 async def get_course(course_code: str, session: SessionDependency):
     """Get a specific course by code"""

@@ -19,7 +19,8 @@ from .routes import (
     financials,
     students,
     users,
-    grades
+    grades,
+    notices
 )
 
 @asynccontextmanager
@@ -51,6 +52,7 @@ app.include_router(assignments.router)
 app.include_router(events.router)
 app.include_router(meetings.router)
 app.include_router(equipments.router)
+app.include_router(notices.router)
 
 app.include_router(financials.router, prefix="/api/financials")
 app.include_router(faculty.router)
