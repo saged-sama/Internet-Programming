@@ -1,4 +1,7 @@
+// src/pages/AboutPage.tsx
+
 import { useState } from "react";
+import AboutBg from "@/assets/photos/About.jpg";
 
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState<"history" | "mission">("history");
@@ -10,40 +13,47 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div 
-        className="relative h-64 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80')"
-        }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white">
+      <div
+  className="relative h-64 bg-cover bg-center bg-no-repeat"
+  style={{
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${AboutBg})`,
+  }}
+>
+        <div
+  className="relative z-10 flex flex-col items-center justify-center h-full text-white"
+>
           <h1 className="text-4xl font-bold mb-4">
-            {activeTab === "history" ? "History of the Department" : "Mission & Vision"}
+            {activeTab === "history"
+              ? "History of the Department"
+              : "Mission & Vision"}
           </h1>
           <nav className="flex items-center space-x-2 text-sm">
             <span>🏠 Home</span>
             <span>•</span>
-            <span className="text-blue-300">
-              {activeTab === "history" ? "History" : "Mission Vision"}
+            <span className="text-accent">
+              {activeTab === "history" ? "History" : "Mission & Vision"}
             </span>
           </nav>
         </div>
       </div>
 
-      <div className="container mx-auto py-8 px-4">
+      <div className="max-w-6xl mx-auto py-8 px-8">
         <div className="flex">
           {/* Main Content */}
           <div className="flex-1 mr-8">
             {activeTab === "history" ? (
               <div className="prose max-w-none">
                 <p className="text-justify mb-6">
-                  The journey of the Department of Computer Science and Engineering started in a bright morning of September 1992. 
-                  It was a brainchild of Dr. M. Lutfor Rahman, a visionary Professor of the Department of Applied Physics and 
-                  Electronics, University of Dhaka, who felt the urge to come up with an academic department to tackle the 
-                  snowballing necessity for computer scientists and IT specialists. In spite of a humble beginning, the department, 
-                  then known as Department of Computer Science, attracted the very best minds of the nation and soon 
-                  accumulated a star studded faculty roster as well as the brightest of the students.
+                  The journey of the Department of Computer Science and Engineering
+                  started in a bright morning of September 1992. It was a brainchild
+                  of Dr. M. Lutfor Rahman, a visionary Professor of the Department of
+                  Applied Physics and Electronics, University of Dhaka, who felt the
+                  urge to come up with an academic department to tackle the
+                  snowballing necessity for computer scientists and IT specialists.
+                  In spite of a humble beginning, the department, then known as the
+                  Department of Computer Science, attracted the very best minds of the
+                  nation and soon accumulated a star‑studded faculty roster as well as
+                  the brightest of the students.
                 </p>
 
                 <p className="text-justify mb-6">
@@ -310,10 +320,10 @@ export default function AboutPage() {
 
           {/* Sidebar */}
           <div className="w-80">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="border-b border-gray-200 pb-4 mb-4">
-                <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                  <span className="text-bg-[#3F4864] mr-2">—</span>
+            <div className="bg-card border border-border rounded-lg p-6">
+              <div className="border-b border-border pb-4 mb-4">
+                <h3 className="text-lg font-semibold text-foreground flex items-center">
+                  <span className="text-muted-foreground mr-2">—</span>
                   ABOUT
                 </h3>
               </div>
@@ -322,8 +332,8 @@ export default function AboutPage() {
                   onClick={() => handleTabChange("history")}
                   className={`w-full text-left px-4 py-2 rounded-md transition-colors ${
                     activeTab === "history"
-                      ? "bg-blue-50 text-${themeClasses.textPrimary} border-l-4 border-bg-[#3F4864]"
-                      : "text-gray-700 hover:bg-gray-50"
+                      ? "bg-accent/10 text-primary border-l-4 border-primary"
+                      : "text-foreground hover:bg-muted"
                   }`}
                 >
                   History
@@ -332,8 +342,8 @@ export default function AboutPage() {
                   onClick={() => handleTabChange("mission")}
                   className={`w-full text-left px-4 py-2 rounded-md transition-colors ${
                     activeTab === "mission"
-                      ? "bg-blue-50 text-${themeClasses.textPrimary} border-l-4 border-bg-[#3F4864]"
-                      : "text-gray-700 hover:bg-gray-50"
+                      ? "bg-accent/10 text-primary border-l-4 border-primary"
+                      : "text-foreground hover:bg-muted"
                   }`}
                 >
                   Mission & Vision

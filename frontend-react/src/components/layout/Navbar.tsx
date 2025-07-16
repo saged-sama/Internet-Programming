@@ -22,10 +22,10 @@ export default function Navbar() {
       label: "For You",
       to: "/foryou",
       dropdown: [
+        { label: "Application", to: "/application" },
         { label: "Research", to: "/research" },
         { label: "Awards", to: "/awards" },
-        { label: "Events", to: "/events" },
-
+        { label: "Events", to: "/events" },        
         { label: "Contact", to: "/contact" },
       ],
     },
