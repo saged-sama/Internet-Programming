@@ -109,6 +109,7 @@ async def create_faculty_profile(
     faculty = FacultyProfile(
         id=id,
         user_id=profile_data.user_id,
+        current_role=profile_data.current_role,
         specialization=profile_data.specialization,
         research_interests=profile_data.research_interests,
         publications=profile_data.publications,

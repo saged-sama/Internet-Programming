@@ -24,11 +24,14 @@ const CurrentUser: React.FC = () => {
         localStorage.removeItem('user');
         navigate("/auth/login");
     };
-
-    const getInitials = (name: string): string => {
-        return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+    
+    const getInitials = (name: string) => {
+        const names = name.split(' ');
+        if (names.length === 1) {
+            return names[0].charAt(0).toUpperCase();
+        }
+        return names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
     };
-
     return (
         <div className="flex items-center space-x-3 z-10">
             <DropdownMenu>

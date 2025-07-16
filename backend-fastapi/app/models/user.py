@@ -15,6 +15,18 @@ class StudentTypeEnum(str, Enum):
     Transfer = "Transfer"
     Exchange = "Exchange"
 
+class FacultyRoleEnum(str, Enum):
+    Lecturer = "Lecturer"
+    Assistant_Professor = "Assistant Professor"
+    Associate_Professor = "Associate Professor"
+    Professor = "Professor"
+
+
+class StudentDegreeEnum(str, Enum):
+    BSc = "BSc"
+    MSc = "MSc"
+    PhD = "PhD"
+
 class UserVerificationStatus(str, Enum):
     Pending = "Pending"
     Verified = "Verified"
@@ -40,6 +52,7 @@ class User(SQLModel, table=True):
 class FacultyProfile(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
     user_id: Optional[str] = Field(foreign_key="user.id")
+    current_role: Optional[str] = Field(default=FacultyRoleEnum.Lecturer)
     specialization: Optional[str]
     research_interests: Optional[str]
     publications: Optional[str]
@@ -62,6 +75,7 @@ class StudentProfile(SQLModel, table=True):
     user_id: Optional[str] = Field(foreign_key="user.id")
     student_id: Optional[str]
     major: Optional[str]
+    current_degree: Optional[str] = Field(default=StudentDegreeEnum.BSc)
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
@@ -124,6 +138,7 @@ class UserResponse(BaseModel):
 class FacultyResponse(BaseModel):
     id: str
     user_id: str
+    current_role: Optional[str]
     specialization: Optional[str]
     research_interests: Optional[str]
     publications: Optional[str]
@@ -140,6 +155,7 @@ class FacultyResponse(BaseModel):
 
 class FacultyProfileCreateRequest(BaseModel):
     user_id: str
+    current_role: Optional[str] = None
     specialization: Optional[str] = None
     research_interests: Optional[str] = None
     publications: Optional[str] = None
@@ -150,6 +166,7 @@ class FacultyProfileCreateRequest(BaseModel):
 
 
 class FacultyProfileUpdateRequest(BaseModel):
+    current_role: Optional[str] = None
     specialization: Optional[str] = None
     research_interests: Optional[str] = None
     publications: Optional[str] = None
@@ -164,6 +181,7 @@ class StudentResponse(BaseModel):
     user_id: str
     student_id: Optional[str]
     major: Optional[str]
+    current_degree: Optional[str]
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
@@ -179,6 +197,7 @@ class StudentProfileCreateRequest(BaseModel):
     user_id: str
     student_id: Optional[str] = None
     major: Optional[str] = None
+    current_degree: Optional[str] = None
     admission_date: Optional[date] = None
     graduation_date: Optional[date] = None
     year_of_study: Optional[int] = None
@@ -190,6 +209,7 @@ class StudentProfileCreateRequest(BaseModel):
 class StudentProfileUpdateRequest(BaseModel):
     student_id: Optional[str] = None
     major: Optional[str] = None
+    current_degree: Optional[str] = None
     admission_date: Optional[date] = None
     graduation_date: Optional[date] = None
     year_of_study: Optional[int] = None

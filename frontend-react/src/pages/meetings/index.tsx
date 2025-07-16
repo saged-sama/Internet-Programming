@@ -4,7 +4,7 @@ import themeClasses from '../../lib/theme-utils';
 import MeetingFilters from '../../components/meetings/MeetingFilters';
 import MeetingList from '../../components/meetings/MeetingList';
 import MeetingCalendar from '../../components/meetings/MeetingCalendar';
-import { filterMeetings, groupMeetingsByDate, getSortedDates } from '../../lib/utils';
+import { filterMeetings } from '../../lib/utils';
 import { getCurrentUser } from '../../lib/auth';
 import { type Meeting, type MeetingFilters as MeetingFilterParams, getMeetings, createMeeting, updateMeeting, deleteMeeting } from '../../api/meetings';
 import meetingTypesData from '../../assets/meetingTypes.json';
@@ -28,6 +28,8 @@ export default function MeetingsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<string>('All');
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
+  const [currentCalendarDate, setCurrentCalendarDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,10 +61,10 @@ export default function MeetingsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
   
-  // Fetch meetings when type or date changes
+  // Fetch meetings when type, date, or date range changes
   useEffect(() => {
     fetchMeetings();
-  }, [selectedType, selectedDate]);
+  }, [selectedType, selectedDate, dateRange]);
 
   const fetchMeetings = useCallback(async () => {
     try {
@@ -80,8 +82,14 @@ export default function MeetingsPage() {
         filters.meeting_type = selectedType;
       }
 
-      if (selectedDate) {
+      // Handle date filtering based on view mode
+      if (viewMode === 'list' && selectedDate) {
+        // For list view, use the selected date
         filters.start_date = selectedDate;
+      } else if (viewMode === 'calendar' && dateRange.start && dateRange.end) {
+        // For calendar view, use the date range
+        filters.start_date = dateRange.start.toISOString().split('T')[0];
+        filters.end_date = dateRange.end.toISOString().split('T')[0];
       }
 
       try {
@@ -118,8 +126,6 @@ export default function MeetingsPage() {
   }, [searchQuery, selectedType, selectedDate]);
 
   const filteredMeetings = filterMeetings(meetings, selectedType, selectedDate, searchQuery);
-  const meetingsByDate = groupMeetingsByDate(filteredMeetings);
-  const sortedDates = getSortedDates(meetingsByDate);
 
   const handleAddMeeting = () => {
     setEditingMeeting(null);
@@ -309,7 +315,15 @@ export default function MeetingsPage() {
                   />
                 </div>
               ) : (
-                <MeetingCalendar meetingsByDate={meetingsByDate} sortedDates={sortedDates} />
+                <MeetingCalendar 
+                  meetings={filteredMeetings} 
+                  defaultDate={currentCalendarDate}
+                  onDateRangeChange={(start, end) => {
+                    // Always update the date range when it changes
+                    setCurrentCalendarDate(start);
+                    setDateRange({ start, end });
+                  }}
+                />
               )
             ) : (
               <div className="text-center py-12">

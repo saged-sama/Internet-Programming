@@ -17,7 +17,7 @@ export default function HeroSection() {
 </p>
         <div className="flex flex-wrap gap-4">
           <Button size="lg" className={themeClasses.primaryButton} asChild>
-            <Link to="/directory">Faculty Directory</Link>
+            <Link to="/directory">University Directory</Link>
           </Button>
           <Button variant="outline" size="lg" className={themeClasses.outlineButton} asChild>
             <Link to="/events">Upcoming Events</Link>

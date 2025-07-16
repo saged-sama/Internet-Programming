@@ -1,18 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
-import { Link } from "react-router-dom";
 import themeClasses from "../../lib/theme-utils";
 import NoticeCard from "../../components/notices/NoticeCard";
 import NoticeFilters from "../../components/notices/NoticeFilters";
-import noticesData from "../../assets/notices.json";
 import { getCurrentUser } from "../../lib/auth";
-
-type NoticeCategory =
-  | "All"
-  | "Academic"
-  | "Administrative"
-  | "General"
-  | "Research";
+import { getNotices, createNotice, updateNotice, deleteNotice } from "../../lib/noticeApi";
+import type { NoticeCategory } from "../../types/notice";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface Notice {
   id: number;
@@ -27,7 +21,8 @@ export default function NoticesPage() {
   const [selectedCategory, setSelectedCategory] =
     useState<NoticeCategory>("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [notices, setNotices] = useState<Notice[]>(noticesData as Notice[]);
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [showAllNotices, setShowAllNotices] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNotice, setEditingNotice] = useState<Notice | null>(null);
   const [formData, setFormData] = useState({
@@ -36,6 +31,12 @@ export default function NoticesPage() {
     category: "Academic" as Exclude<NoticeCategory, "All">,
     isImportant: false,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === "admin";
@@ -48,14 +49,54 @@ export default function NoticesPage() {
     "Research",
   ];
 
+  // Fetch notices from the backend
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const category = selectedCategory !== "All" ? selectedCategory : undefined;
+        const response = await getNotices({ category });
+        
+        // Convert backend notice format to frontend notice format
+        const formattedNotices = response.map((notice: any) => ({
+          id: notice.id,
+          title: notice.title,
+          date: new Date(notice.notice_date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          category: notice.category as Exclude<NoticeCategory, "All">,
+          description: notice.description,
+          isImportant: notice.is_important
+        }));
+        
+        setNotices(formattedNotices);
+      } catch (err) {
+        console.error("Failed to fetch notices:", err);
+        setError("Failed to load notices. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNotices();
+  }, [selectedCategory]);
+
   const filteredNotices = notices.filter((notice) => {
-    const matchesCategory =
-      selectedCategory === "All" || notice.category === selectedCategory;
     const matchesSearch =
       notice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       notice.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+
+    const matchesCategory =
+      selectedCategory === "All" || notice.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
   });
+  
+  // Limit to 10 notices unless View Archive is clicked
+  const displayedNotices = showAllNotices ? filteredNotices : filteredNotices.slice(0, 10);
 
   const handleAddNotice = () => {
     setEditingNotice(null);
@@ -79,55 +120,132 @@ export default function NoticesPage() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteNotice = (id: number) => {
+  const handleDeleteNotice = async (id: number) => {
     if (window.confirm("Are you sure you want to delete this notice?")) {
-      setNotices(notices.filter((notice) => notice.id !== id));
+      setIsDeleting(true);
+      setDeleteError(null);
+      
+      try {
+        await deleteNotice(id);
+        setNotices(notices.filter((notice) => notice.id !== id));
+        // Clear any previous error since deletion was successful
+        setDeleteError(null);
+      } catch (err: any) {
+        console.error("Failed to delete notice:", err);
+        
+        // Set error message based on error type
+        if (err.message && err.message.includes('Unauthorized')) {
+          setDeleteError("Unauthorized: You need to be logged in as an admin to delete notices.");
+        } else {
+          setDeleteError("Failed to delete notice. Please try again later.");
+        }
+      } finally {
+        setIsDeleting(false);
+      }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setFormError(null);
 
-    if (editingNotice) {
-      // Edit existing notice
-      setNotices(
-        notices.map((notice) =>
-          notice.id === editingNotice.id ? { ...notice, ...formData } : notice
-        )
-      );
-    } else {
-      // Add new notice
-      const newNotice: Notice = {
-        id: Date.now(), // Simple ID generation
-        ...formData,
-        date: new Date().toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-      };
-      setNotices([newNotice, ...notices]);
+    try {
+      if (editingNotice) {
+        // Edit existing notice
+        const updatedNoticeData = {
+          title: formData.title,
+          category: formData.category,
+          description: formData.description,
+          is_important: formData.isImportant
+        };
+        
+        const updatedNotice = await updateNotice(editingNotice.id, updatedNoticeData);
+        
+        // Update the local state with the updated notice
+        setNotices(
+          notices.map((notice) =>
+            notice.id === editingNotice.id ? {
+              ...notice,
+              title: updatedNotice.title,
+              category: updatedNotice.category as Exclude<NoticeCategory, "All">,
+              description: updatedNotice.description,
+              isImportant: updatedNotice.is_important
+            } : notice
+          )
+        );
+
+        setIsModalOpen(false);
+        setEditingNotice(null);
+      } else {
+        // Add new notice
+        const newNoticeData = {
+          title: formData.title,
+          category: formData.category,
+          description: formData.description,
+          is_important: formData.isImportant
+        };
+        
+        const createdNotice = await createNotice(newNoticeData);
+        
+        // Add the new notice to the local state
+        const newNotice: Notice = {
+          id: createdNotice.id,
+          title: createdNotice.title,
+          date: new Date(createdNotice.notice_date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+          category: createdNotice.category as Exclude<NoticeCategory, "All">,
+          description: createdNotice.description,
+          isImportant: createdNotice.is_important
+        };
+        
+        setNotices([newNotice, ...notices]);
+        setIsModalOpen(false);
+        setEditingNotice(null);
+      }
+    } catch (err: any) {
+      console.error("Failed to save notice:", err);
+      // Check for unauthorized error message
+      if (err.message && err.message.includes('Unauthorized')) {
+        setFormError("Unauthorized: You need to be logged in as an admin to perform this action.");
+      } else {
+        setFormError("Failed to save notice. Please try again later.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsModalOpen(false);
-    setEditingNotice(null);
   };
 
   return (
     <div className="bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className={themeClasses.textPrimary}>University Notices</h1>
-          <p className={themeClasses.textPrimaryLight}>
-            Stay updated with the latest announcements, academic updates, and
-            administrative notices.
-          </p>
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+        
+        {isLoading ? (
+          <div className="text-center py-10">
+            <p className="text-lg">Loading notices...</p>
+          </div>
+        ) : (
+          <div>
+            <div className="text-center mb-12">
+              <h1 className={themeClasses.textPrimary}>University Notices</h1>
+              <p className={themeClasses.textPrimaryLight}>
+                Stay updated with the latest announcements, academic updates, and
+                administrative notices.
+              </p>
 
           {/* Admin Controls */}
           {isAdmin && (
-            <div className="mt-6">
-              <Button
-                onClick={handleAddNotice}
+            <div className="mb-6">
+              <Button 
+                onClick={handleAddNotice} 
                 className={`${themeClasses.primaryButton} flex items-center gap-2`}
               >
                 <svg
@@ -158,53 +276,42 @@ export default function NoticesPage() {
           setSearchQuery={setSearchQuery}
         />
 
+        {/* Error message for delete operations */}
+        {deleteError && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm mb-4">
+            {deleteError}
+          </div>
+        )}
+        
         {/* Notices List */}
         <div className="space-y-6">
-          {filteredNotices.length > 0 ? (
-            filteredNotices.map((notice) => (
+          {displayedNotices.length > 0 ? (
+            displayedNotices.map((notice) => (
               <div key={notice.id} className="relative">
                 <NoticeCard {...notice} />
                 {isAdmin && (
-                  <div className="absolute top-12 right-4 flex gap-2">
+                  <div className="absolute bottom-2 right-2 flex gap-2">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleEditNotice(notice)}
                       className="bg-white hover:bg-gray-50"
+                      disabled={isSubmitting}
                     >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
+                      <Pencil size={16} />
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handleDeleteNotice(notice.id)}
                       className="bg-white hover:bg-red-50 text-red-600 hover:text-red-700"
+                      disabled={isDeleting}
                     >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
+                      {isDeleting ? (
+                        <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+                      ) : (
+                        <Trash2 size={16} />
+                      )}
                     </Button>
                   </div>
                 )}
@@ -212,20 +319,6 @@ export default function NoticesPage() {
             ))
           ) : (
             <div className="text-center py-12">
-              <svg
-                className={`mx-auto h-12 w-12 ${themeClasses.textAccentYellow}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               <h3 className={themeClasses.textPrimary}>No notices found</h3>
               <p>Try changing your search or filter criteria.</p>
               <div className="mt-6">
@@ -241,20 +334,26 @@ export default function NoticesPage() {
               </div>
             </div>
           )}
+          
+          {/* This section is no longer needed as we're using the Archive Section below */}
         </div>
 
         {/* Archive Section */}
-        <div className="mt-12 text-center">
-          <h2>Looking for older notices?</h2>
-          <Button
-            variant="outline"
-            className={themeClasses.outlineButton}
-            asChild
-          >
-            <Link to="/notices/archive">View Archive</Link>
-          </Button>
-        </div>
+        {!showAllNotices && filteredNotices.length > 10 && (
+          <div className="mt-12 text-center">
+            <h2>Looking for older notices?</h2>
+            <Button
+              variant="outline"
+              className={themeClasses.outlineButton}
+              onClick={() => setShowAllNotices(true)}
+            >
+              View Archive
+            </Button>
+          </div>
+        )}
       </div>
+    )}
+    </div>
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
@@ -264,6 +363,11 @@ export default function NoticesPage() {
               {editingNotice ? "Edit Notice" : "Add New Notice"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {formError && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+                  {formError}
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium mb-1">Title</label>
                 <input
@@ -321,9 +425,9 @@ export default function NoticesPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, isImportant: e.target.checked })
                   }
-                  className="mr-2"
+                  className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label htmlFor="isImportant" className="text-sm">
+                <label htmlFor="isImportant" className="text-sm font-medium text-gray-700">
                   Mark as Important
                 </label>
               </div>
@@ -335,8 +439,19 @@ export default function NoticesPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className={themeClasses.primaryButton}>
-                  {editingNotice ? "Update" : "Add"}
+                <Button 
+                  type="submit" 
+                  className={themeClasses.primaryButton}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+                      {editingNotice ? "Updating..." : "Adding..."}
+                    </>
+                  ) : (
+                    editingNotice ? "Update" : "Add"
+                  )}
                 </Button>
               </div>
             </form>

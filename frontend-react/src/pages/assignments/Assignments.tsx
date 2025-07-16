@@ -8,6 +8,8 @@ import {
   createAssignment,
   updateAssignment,
   deleteAssignment,
+  apiRequest,
+  fetchMyAssignmentSubmissions,
 } from "../../lib/schedulingApi";
 import { getCurrentUser } from "../../lib/auth";
 
@@ -21,6 +23,7 @@ export default function AssignmentsPage() {
   );
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [mySubmissions, setMySubmissions] = useState([]);
 
   const currentUser = getCurrentUser();
   const isFaculty = currentUser?.role === "faculty";
@@ -50,6 +53,9 @@ export default function AssignmentsPage() {
         setAssignments(mapped);
       })
       .catch(() => showSuccess("Failed to load assignments"));
+    fetchMyAssignmentSubmissions()
+      .then((subs) => setMySubmissions(subs))
+      .catch(() => setMySubmissions([]));
   }, []);
 
   const handleViewDetails = (assignment: Assignment) => {
@@ -75,7 +81,7 @@ export default function AssignmentsPage() {
       window.confirm(`Are you sure you want to delete "${assignment.title}"?`)
     ) {
       try {
-        await deleteAssignment(assignment.id);
+        await deleteAssignment(String(assignment.id));
         setAssignments(await fetchAssignments());
         showSuccess("Assignment deleted successfully!");
       } catch {
@@ -105,11 +111,13 @@ export default function AssignmentsPage() {
     };
     try {
       if (editingAssignment) {
-        await updateAssignment(editingAssignment.id, apiData);
+        await updateAssignment(String(editingAssignment.id), apiData);
         showSuccess("Assignment updated successfully!");
+        setTimeout(() => window.location.reload(), 1000);
       } else {
         await createAssignment(apiData);
         showSuccess("Assignment created successfully!");
+        setTimeout(() => window.location.reload(), 1000);
       }
       setAssignments(await fetchAssignments());
       setShowCreateForm(false);
@@ -119,9 +127,20 @@ export default function AssignmentsPage() {
     }
   };
 
-  const handleSubmitSolution = () => {
-    // In a real app, this would be an API call to submit the solution
-    showSuccess("Assignment submitted successfully!");
+  const handleSubmitSolution = async () => {
+    if (!selectedAssignment) return;
+    try {
+      await apiRequest(
+        `/staff-api/assignments/${selectedAssignment.id}/submit`,
+        {
+          method: "POST",
+        }
+      );
+      showSuccess("Assignment submitted successfully!");
+      setTimeout(() => window.location.reload(), 1000);
+    } catch {
+      showSuccess("Error submitting assignment");
+    }
     setSelectedAssignment(null);
   };
 
@@ -180,6 +199,7 @@ export default function AssignmentsPage() {
       ) : (
         <AssignmentList
           assignments={assignments}
+          mySubmissions={mySubmissions}
           onViewDetails={handleViewDetails}
           onEdit={handleEditAssignment}
           onDelete={handleDeleteAssignment}

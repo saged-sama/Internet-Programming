@@ -65,7 +65,7 @@ export const getAuthToken = (): string | null => {
   return token;
 };
 
-export const logout = () => {
+export const logout = (): void => {
   localStorage.removeItem('user');
   localStorage.removeItem('token');
   localStorage.removeItem('access_token');
@@ -99,9 +99,6 @@ export const requireStudent = (): User => {
 
 export const login = async (formData: FormData): Promise<User | null> => {
   try {
-    // const email = formData.get('username') as string; // Form field is 'username' but backend expects 'email'
-    // const password = formData.get('password') as string;
-
     const response = await fetch('http://localhost:8000/api/auth/login', {
       method: 'POST',
       body: formData
@@ -150,4 +147,4 @@ export const getDashboardRoute = (): string => {
     default:
       return '/dashboard';
   }
-}; 
+};

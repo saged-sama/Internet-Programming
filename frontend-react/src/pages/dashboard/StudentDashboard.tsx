@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import StudentProfileCard from "@/components/studentDashboard/studentProfileCard";
 import StudentShortcuts from "@/components/studentDashboard/studentShortcuts";
 import DashBoardTitle from "@/components/studentDashboard/dashboardTitle";
+import WeeklyActivitiesCard from "@/components/studentDashboard/weeklyActivitiesCard";
 
 const courses = [
   {
@@ -125,150 +126,6 @@ function gradeColor(grade: string) {
   return "bg-gray-100 text-gray-800";
 }
 
-
-
-// Weekly Activities Calendar Component
-function WeeklyActivitiesCard() {
-  return (
-    <div className="flex-1 bg-white rounded-xl shadow p-8">
-      <div>
-        <h2 className="text-3xl font-bold text-[#25345D] mb-4">
-          Weekly Activities
-        </h2>
-        {/* Calendar Grid */}
-        <div className="overflow-x-auto mb-8">
-          <table className="min-w-full border text-sm">
-            <thead>
-              <tr className="bg-[#F8F6F1]">
-                <th className="p-2 border">Mon.</th>
-                <th className="p-2 border">Tue.</th>
-                <th className="p-2 border">Wed.</th>
-                <th className="p-2 border">Thu.</th>
-                <th className="p-2 border">Fri.</th>
-                <th className="p-2 border">Sat.</th>
-                <th className="p-2 border">Sun.</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Week 1 */}
-              <tr>
-                <td className="border align-top p-2">
-                  <div className="bg-gray-200 rounded p-1 mb-1 text-xs">
-                    Academic calendar
-                    <br />
-                    Semester begins
-                    <br />
-                    Week 1
-                  </div>
-                  <div className="text-xs text-gray-500">Jan 13</div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-yellow-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 2<br />
-                    Ex: Intro discussion
-                  </div>
-                  <div className="bg-pink-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 1<br />
-                    Ex: Intro discussion
-                  </div>
-                  <div className="bg-cyan-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 4<br />
-                    Ex: Intro discussion
-                  </div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-green-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 3<br />
-                    Ex: Intro discussion
-                  </div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-pink-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 1<br />
-                    Draft: Blog post
-                  </div>
-                  <div className="bg-yellow-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 2<br />
-                    Collage project
-                  </div>
-                </td>
-              </tr>
-              {/* Week 2 */}
-              <tr>
-                <td className="border align-top p-2">
-                  <div className="bg-gray-200 rounded p-1 mb-1 text-xs">
-                    Academic calendar
-                    <br />
-                    Week 2
-                  </div>
-                  <div className="text-xs text-gray-500">20</div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-yellow-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 2<br />
-                    Assign groups
-                  </div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-green-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 3<br />
-                    Draft: Photo series
-                  </div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-yellow-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 2<br />
-                    Ex: Brainstorm doc
-                  </div>
-                  <div className="bg-cyan-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 4<br />
-                    Essay draft
-                  </div>
-                </td>
-              </tr>
-              {/* Week 3 */}
-              <tr>
-                <td className="border align-top p-2">
-                  <div className="bg-gray-200 rounded p-1 mb-1 text-xs">
-                    Academic calendar
-                    <br />
-                    Week 3
-                  </div>
-                  <div className="text-xs text-gray-500">27</div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-yellow-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 2<br />
-                    Ex: Discussion post
-                  </div>
-                </td>
-                <td className="border align-top p-2"></td>
-                <td className="border align-top p-2">
-                  <div className="bg-green-200 rounded p-1 mb-1 text-xs font-semibold">
-                    CLASS 3<br />
-                    Revision: Photo series
-                  </div>
-                </td>
-                <td className="border align-top p-2 font-bold text-lg text-black">
-                  FEB 1
-                </td>
-                <td className="border align-top p-2"></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // Course Card Component
 function CourseCard({ course }: { course: typeof courses[0] }) {
   return (
@@ -383,11 +240,11 @@ export default function StudentDashboard() {
       <div className="flex flex-col gap-8 w-full max-w-7xl">
         {/* Row 1: Profile + Weekly Activities */}
         <div className="flex flex-row gap-4 w-full">
-          <div className="flex flex-col gap-5">  
+          <div className="flex flex-col gap-5 w-1/4">  
             <StudentProfileCard userProfile={userProfile} onSignOut={handleSignOut} />
             <StudentShortcuts />
           </div>
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-4 w-3/4">
             <DashBoardTitle />
             <WeeklyActivitiesCard />
             <CurrentSemesterCoursesCard />
