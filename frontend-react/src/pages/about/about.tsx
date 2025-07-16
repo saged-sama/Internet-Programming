@@ -313,7 +313,7 @@ export default function AboutPage() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="border-b border-gray-200 pb-4 mb-4">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                  <span className="text-blue-500 mr-2">—</span>
+                  <span className="text-bg-[#3F4864] mr-2">—</span>
                   ABOUT
                 </h3>
               </div>
@@ -322,7 +322,7 @@ export default function AboutPage() {
                   onClick={() => handleTabChange("history")}
                   className={`w-full text-left px-4 py-2 rounded-md transition-colors ${
                     activeTab === "history"
-                      ? "bg-blue-50 text-blue-600 border-l-4 border-blue-500"
+                      ? "bg-blue-50 text-${themeClasses.textPrimary} border-l-4 border-bg-[#3F4864]"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
@@ -332,7 +332,7 @@ export default function AboutPage() {
                   onClick={() => handleTabChange("mission")}
                   className={`w-full text-left px-4 py-2 rounded-md transition-colors ${
                     activeTab === "mission"
-                      ? "bg-blue-50 text-blue-600 border-l-4 border-blue-500"
+                      ? "bg-blue-50 text-${themeClasses.textPrimary} border-l-4 border-bg-[#3F4864]"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
