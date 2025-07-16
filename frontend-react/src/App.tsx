@@ -34,6 +34,7 @@ import FeeCreatePage from "./pages/financials/FeeCreatePage";
 import { getCurrentUser } from "./lib/auth";
 import Layout from "./components/layout/Layout";
 import React from "react";
+import GradesPage from "./pages/grades";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const user = getCurrentUser();
@@ -159,6 +160,14 @@ function App() {
           element={
             <ProtectedRoute>
               <FacultyDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/faculty/grading"
+          element={
+            <ProtectedRoute>
+              <GradesPage />
             </ProtectedRoute>
           }
         />

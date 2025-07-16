@@ -401,7 +401,7 @@ export function ResourcesPage() {
         </TabsContent>
 
         <TabsContent value="materials">
-          <CourseMaterials materials={materials} />
+          <CourseMaterialPage />
         </TabsContent>
       </Tabs>
 

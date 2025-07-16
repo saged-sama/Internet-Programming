@@ -6,74 +6,7 @@ import StudentProfileCard from "@/components/studentDashboard/studentProfileCard
 import StudentShortcuts from "@/components/studentDashboard/studentShortcuts";
 import DashBoardTitle from "@/components/studentDashboard/dashboardTitle";
 import WeeklyActivitiesCard from "@/components/studentDashboard/weeklyActivitiesCard";
-
-const courses = [
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  // Repeat for demo
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-  {
-    code: "CSE 2101",
-    name: "Data Structure and Algorithms",
-    badge: "Easy",
-    credits: 3,
-    semester: "3rd Year 2nd Semester",
-    instructor: "Dr. Ahmed Khan",
-  },
-];
+import CurrentSemesterCoursesCard from "@/components/studentDashboard/currentCourses";
 
 const grades = [
   {
@@ -124,47 +57,6 @@ function gradeColor(grade: string) {
   if (grade === "B+" || grade === "B") return "bg-blue-100 text-blue-800";
   if (grade === "F") return "bg-red-100 text-red-800";
   return "bg-gray-100 text-gray-800";
-}
-
-// Course Card Component
-function CourseCard({ course }: { course: typeof courses[0] }) {
-  return (
-    <div className="bg-white border rounded-lg p-4 flex flex-col shadow-sm">
-      <div className="flex items-center mb-2">
-        <span className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded mr-2">
-          {course.badge}
-        </span>
-        <span className="text-xs text-gray-500">
-          {course.credits} Credits
-        </span>
-      </div>
-      <div className="font-semibold text-[#25345D] mb-1">
-        {course.code} - {course.name}
-      </div>
-      <div className="text-xs text-gray-500 mb-1">
-        {course.semester}
-      </div>
-      <div className="text-xs text-gray-500">
-        Instructor: {course.instructor}
-      </div>
-    </div>
-  );
-}
-
-// Current Semester Courses Component
-function CurrentSemesterCoursesCard() {
-  return (
-    <div className="bg-white rounded-xl shadow p-6 border">
-      <h2 className="text-2xl font-bold text-[#25345D] mb-4">
-        Current Semester Courses
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {courses.map((course, idx) => (
-          <CourseCard key={idx} course={course} />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 // Grades Table Component
@@ -218,7 +110,6 @@ function GradesTableCard() {
 export default function StudentDashboard() {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-
   const handleSignOut = () => {
     localStorage.removeItem("user");
     navigate("/auth/login");
@@ -247,7 +138,7 @@ export default function StudentDashboard() {
           <div className="flex flex-col gap-4 w-3/4">
             <DashBoardTitle />
             <WeeklyActivitiesCard />
-            <CurrentSemesterCoursesCard />
+            <CurrentSemesterCoursesCard user={userProfile} />
             <GradesTableCard />
           </div>
         </div>
