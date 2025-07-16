@@ -25,6 +25,7 @@ import { AwardsPage } from "./pages/awards/AwardsPage";
 import ExamTimetablesPage from "./pages/exams/ExamTimetables";
 import ExamManagementPage from "./pages/exams/ExamManagement";
 import AssignmentsPage from "./pages/assignments/Assignments";
+import AboutPage from "./pages/about/about";
 import StudentLoginPage from "./pages/auth/StudentLogin";
 import StudentDashboard from "./pages/dashboard/StudentDashboard";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
@@ -60,6 +61,8 @@ function App() {
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/research" element={<ResearchPage />} />
         <Route path="/awards" element={<AwardsPage />} />
+        <Route path="/about" element={<AboutPage />} />        
+        {/* Public Routes */}
         
         {/* Financial Routes */}
         <Route 
