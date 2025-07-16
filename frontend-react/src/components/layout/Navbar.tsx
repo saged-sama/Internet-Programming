@@ -68,9 +68,9 @@ export default function Navbar() {
         {/* Top Row */}
         <div className="w-full flex items-center px-6  min-h-[80px]">
           {/* Gold Line Behind Logo to Dashboard */}
-          <div className="absolute top-[33px] -left-13 right-[50%] h-1 bg-[#ECB31D] rounded-full z-0 -translate-y-1/2" />
+          <div className="absolute top-[33px] -left-13 right-[57%] h-1 bg-[#ECB31D] rounded-full z-0 -translate-y-1/2" />
           {/* Diamond indicator aligned with Dashboard */}
-          <div className="absolute left-[50%] top-[33px] -translate-y-1/2 z-10">
+          <div className="absolute left-[43%] top-[33px] -translate-y-1/2 z-10">
             <div className="w-4 h-4 bg-[#ECB31D] rotate-45" />
           </div>
           {/* Top nav links */}
