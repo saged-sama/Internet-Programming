@@ -99,41 +99,12 @@ const quickActions = [
     route: "/assignments",
     color: "bg-blue-500",
   },
-  {
-    title: "Exam Management",
-    icon: "📋",
-    route: "/exams/management",
-    color: "bg-indigo-500",
-  },
+
   {
     title: "Upload Marks",
     icon: "📊",
     action: "upload-marks",
     color: "bg-green-500",
-  },
-  {
-    title: "Grade Submissions",
-    icon: "📈",
-    route: "/faculty/grading",
-    color: "bg-purple-500",
-  },
-  {
-    title: "Course Materials",
-    icon: "📚",
-    route: "/faculty/materials",
-    color: "bg-orange-500",
-  },
-  {
-    title: "Office Hours",
-    icon: "🕐",
-    route: "/faculty/office-hours",
-    color: "bg-red-500",
-  },
-  {
-    title: "Course Settings",
-    icon: "⚙️",
-    route: "/faculty/settings",
-    color: "bg-gray-500",
   },
 ];
 
@@ -249,15 +220,15 @@ export default function FacultyDashboard() {
           <h2 className="text-xl font-bold text-[#25345D] mb-4">
             Quick Actions
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="flex justify-center gap-8">
             {quickActions.map((action, index) => (
               <button
                 key={index}
+                className="flex flex-col items-center p-6 min-w-[160px] rounded-lg border border-gray-200 hover:border-[#EAB308] hover:shadow-md transition-all"
                 onClick={() => handleQuickAction(action)}
-                className="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-[#EAB308] hover:shadow-md transition-all"
               >
-                <span className="text-2xl mb-2">{action.icon}</span>
-                <span className="text-sm text-[#25345D] font-medium text-center">
+                <span className="text-3xl mb-3">{action.icon}</span>
+                <span className="text-base text-[#25345D] font-semibold text-center">
                   {action.title}
                 </span>
               </button>
@@ -374,60 +345,6 @@ export default function FacultyDashboard() {
                 ))
               )}
             </div>
-          </div>
-        </div>
-
-        {/* Recent Exams Section */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-[#25345D]">Recent Exams</h2>
-            <button
-              onClick={() => navigate("/exams/management")}
-              className="text-sm text-[#EAB308] hover:text-[#F5C940] font-medium"
-            >
-              Manage All Exams →
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {recentExams.map((exam) => (
-              <div
-                key={exam.id}
-                className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="font-semibold text-[#25345D]">
-                      {exam.courseCode}
-                    </h3>
-                    <p className="text-sm text-gray-600">{exam.courseTitle}</p>
-                  </div>
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      exam.examType === "Midterm"
-                        ? "bg-blue-100 text-blue-800"
-                        : exam.examType === "Final"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-green-100 text-green-800"
-                    }`}
-                  >
-                    {exam.examType}
-                  </span>
-                </div>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <div>📅 {new Date(exam.date).toLocaleDateString()}</div>
-                  <div>⏰ {exam.time}</div>
-                  <div>🏠 Room {exam.room}</div>
-                </div>
-                <div className="mt-3 flex gap-2">
-                  <button className="text-xs text-[#EAB308] hover:text-[#F5C940] font-medium">
-                    Edit
-                  </button>
-                  <button className="text-xs text-[#EAB308] hover:text-[#F5C940] font-medium">
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 

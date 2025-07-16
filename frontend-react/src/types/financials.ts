@@ -27,9 +27,10 @@ export interface LabEquipment {
 
 export interface BookingSlot {
   id: string;
-  equipmentId: string;
-  startTime: string;
-  endTime: string;
+  equipment_id: string;
+  equipment_name: string;
+  start_time: string;
+  end_time: string;
   userId: string;
   status: 'pending' | 'approved' | 'rejected';
   purpose: string;
