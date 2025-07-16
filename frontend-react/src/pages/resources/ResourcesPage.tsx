@@ -17,12 +17,14 @@ import type {
 import financialsData from "../../assets/financials.json";
 import { getCurrentUser } from "../../lib/auth";
 import CourseMaterialPage from "@/components/courses/CourseMaterialPage";
+import { set } from "date-fns";
 
 export function ResourcesPage() {
   const [fees, setFees] = useState<FeeStructureType[]>([]);
   const [equipment, setEquipment] = useState<LabEquipment[]>([]);
   const [equipments, setEquipments] = useState([]);
   const [bookings, setBookings] = useState<BookingSlot[]>([]);
+  const [bookingsList , setbookingList] = useState<BookingSlot[]>([]);
   const [materials, setMaterials] = useState<CourseMaterial[]>([]);
   const [loading, setLoading] = useState({
     fees: false,
@@ -197,8 +199,10 @@ export function ResourcesPage() {
           console.log("Lab Equipment Data Loaded:", response.data);
           setEquipments(response.data.data); // Access the 'data' array from response
           if (isAdmin) {
-            const bookingsResponse = await axios.get('/staff-api/lab-equipments/bookings');
+            const bookingsResponse = await axios.get('/staff-api/lab-equipments/all/booking');
             setBookings(bookingsResponse.data.data);
+            setbookingList(bookingsResponse.data.data);
+            console.log("Bookings Data Loaded:", bookingsResponse.data.data);
           }
         } catch (err) {
           setError("Failed to load lab equipment data");
@@ -321,6 +325,59 @@ export function ResourcesPage() {
     }
   };
 
+
+  const handleBookingApprovalByBookingId = async (bookingId: string, approved: boolean) => {
+    try {
+      setLoading(prev => ({ ...prev, bookings: true }));
+      setError(null);
+
+      const updateData = {
+        status: approved ? 'approved' : 'rejected',
+        updated_at: new Date().toISOString()
+      };
+
+      const response = await axios.patch(
+        `http://localhost:8000/staff-api/lab-equipments/bookings/${bookingId}`,
+        updateData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+      );
+
+      setbookingList(prev => 
+        prev.map(booking => 
+          booking.id === bookingId 
+            ? { ...booking, status: approved ? 'approved' : 'rejected' }
+            : booking
+        )
+      );
+
+      setDialogContent({
+        title: 'Booking Updated',
+        message: `Booking has been ${approved ? 'approved' : 'rejected'} successfully.`,
+        isSuccess: true
+      });
+      setDialogOpen(true);
+
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.detail || "Failed to update booking";
+      setError(errorMessage);
+      setDialogContent({
+        title: 'Update Failed',
+        message: errorMessage,
+        isSuccess: false
+      });
+      setDialogOpen(true);
+    } finally {
+      setLoading(prev => ({ ...prev, bookings: false }));
+    }
+  };
+  
+
+
   if (loading.fees && activeTab === "fees") {
     return <div className="text-center py-8">Loading fee structure...</div>;
   }
@@ -397,6 +454,9 @@ export function ResourcesPage() {
               onReject={(id) => handleBookingApproval(id, false)}
               isAdmin={isAdmin}
             />
+
+            
+
           )}
         </TabsContent>
 
@@ -406,23 +466,63 @@ export function ResourcesPage() {
       </Tabs>
 
 
+          {isAdmin && (
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4">All Bookings</h2>
+              <div className="grid gap-4">
+                {bookings.map((booking) => (
+                  <div key={booking.id} className="border p-4 rounded-lg shadow">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p><strong>Equipment ID:</strong> {booking.equipment_id}</p>
+                        <p><strong>Equipment Name:</strong> {booking.equipment_name}</p>
+                        <p><strong>Start Time:</strong> {new Date(booking.start_time).toLocaleString()}</p>
+                        <p><strong>End Time:</strong> {new Date(booking.end_time).toLocaleString()}</p>
+                        <p><strong>Purpose:</strong> {booking.purpose}</p>
+                        <p><strong>Status:</strong> <span className={`font-bold ${
+                          booking.status === 'approved' ? 'text-green-600' : 
+                          booking.status === 'rejected' ? 'text-red-600' : 
+                          'text-yellow-600'
+                        }`}>{booking.status}</span></p>
+                      </div>
+                      {booking.status === 'pending' && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleBookingApprovalByBookingId(booking.id, true)}
+                            className="bg-green-500 text-white px-4 py-2 rounded"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => handleBookingApprovalByBookingId(booking.id, false)}
+                            className="bg-red-500 text-white px-4 py-2 rounded"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-
-      {/* Dialog Component */}
-{dialogOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white p-6 rounded-lg max-w-md w-full">
-      <h3 className="text-lg font-bold mb-2">{dialogContent.title}</h3>
-      <p className="mb-4">{dialogContent.message}</p>
-      <button
-        onClick={() => setDialogOpen(false)}
-        className={`px-4 py-2 rounded text-white ${dialogContent.isSuccess ? 'bg-green-500' : 'bg-red-500'}`}
-      >
-        OK
-      </button>
-    </div>
-  </div>
-)}
+            {/* Dialog Component */}
+      {dialogOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-bold mb-2">{dialogContent.title}</h3>
+            <p className="mb-4">{dialogContent.message}</p>
+            <button
+              onClick={() => setDialogOpen(false)}
+              className={`px-4 py-2 rounded text-white ${dialogContent.isSuccess ? 'bg-green-500' : 'bg-red-500'}`}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
