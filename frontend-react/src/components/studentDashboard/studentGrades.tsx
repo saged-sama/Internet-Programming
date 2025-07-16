@@ -20,6 +20,7 @@ const StudentGrades: React.FC = () => {
             };
             
             const data = await getResults(query);
+            console.log('Fetched results:', data);
             setResults(data);
             setError(null);
         } catch (err) {
@@ -142,7 +143,7 @@ const StudentGrades: React.FC = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         <a
-                                            href={result.file}
+                                            href={`${import.meta.env.VITE_BACKEND_URL}/api/files/${result.file}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-blue-600 hover:text-blue-900"

@@ -37,14 +37,19 @@ async def get_results(
                 try:
                     with open(filepath, 'r') as f:
                         reader = csv.reader(f)
-                        next(reader)  # Skip header
+                        header = next(reader)
                         for row in reader:
                             if row[1] == query.student_id:  # student_id is second column
-                                filtered_results.append(result)
+                                filtered_results.append({
+                                    "title": result.title,
+                                    "year": result.year,
+                                    "semester": result.semester,
+                                    "student_data": dict(zip(header, row))
+                                })
                                 break
                 except Exception as e:
                     print(f"Error reading CSV file: {e}")
-        results = filtered_results
+        return filtered_results
     
     return results
 
