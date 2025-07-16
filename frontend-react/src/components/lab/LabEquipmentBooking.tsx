@@ -176,7 +176,7 @@ export function LabEquipmentBooking({
           </Card>
         </div>
       </div>
-
+{/* 
       {isAdmin && (
         <div className="space-y-4">
           <h3>Pending Approvals</h3>
@@ -221,6 +221,8 @@ export function LabEquipmentBooking({
           </div>
         </div>
       )}
+
+       */}
     </div>
   );
 }

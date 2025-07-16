@@ -21,6 +21,7 @@ import RoomAvailabilityAdmin from "./pages/scheduling/RoomAvailabilityAdmin";
 import AdminApprovalPage from "./pages/scheduling/AdminApproval";
 import { ResourcesPage } from "./pages/resources/ResourcesPage";
 import { ResearchPage } from "./pages/research/ResearchPage";
+import { ProjectDetailPage } from "./pages/research/ProjectDetailPage";
 import { AwardsPage } from "./pages/awards/AwardsPage";
 import ExamTimetablesPage from "./pages/exams/ExamTimetables";
 import ExamManagementPage from "./pages/exams/ExamManagement";
@@ -62,6 +63,7 @@ function App() {
         <Route path="/courses/:degreeId" element={<CoursesPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/research" element={<ResearchPage />} />
+        <Route path="/research/project/:projectId" element={<ProjectDetailPage />} />
         <Route path="/awards" element={<AwardsPage />} />
         <Route path="/about" element={<AboutPage />} />   
         <Route path="/application" element={<ApplicationPage />} />        
