@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className='min-w-full fixed top-0 z-50 px-4 py-2'>
         <Navbar />
       </div>
-      <main className="flex-grow pt-32">
+      <main className="flex-grow pt-35">
         {children}
       </main>
       <Footer />
