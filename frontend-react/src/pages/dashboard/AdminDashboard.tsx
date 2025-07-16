@@ -323,6 +323,12 @@ const quickActions = [
     color: "bg-purple-500",
   },
   {
+    title: "Publish Results",
+    icon: "📈",
+    action: () => navigate("/results"),
+    color: "bg-orange-500",
+  },
+  {
     title: "View Reports",
     icon: "📊",
       action: () => navigate("/admin/reports"),
