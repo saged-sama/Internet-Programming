@@ -19,6 +19,7 @@ type UserResponse = {
 type FacultyResponse = {
   id: string;
   user_id: string;
+  current_role?: string;
   specialization?: string;
   research_interests?: string;
   publications?: string;
@@ -34,6 +35,7 @@ type StudentResponse = {
   user_id: string;
   student_id?: string;
   major?: string;
+  current_degree?: string;
   admission_date?: string;
   graduation_date?: string;
   year_of_study?: number;
@@ -77,11 +79,13 @@ const DirectoryCard: React.FC<DirectoryCardProps> = ({ item, type }) => {
           <div>
             <h3 className={`text-lg font-semibold ${themeClasses.textPrimary}`}>{user.name}</h3>
             <div className="flex items-center space-x-2 mb-1">
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${themeClasses.bgPrimary} text-white`}
-              >
-                Faculty
-              </span>
+              {faculty.current_role ? (
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800`}
+                >
+                  {faculty.current_role}
+                </span>
+              ) : null}
               {/* Department is hidden for faculty as requested */}
             </div>
             {faculty.specialization && (
@@ -139,9 +143,10 @@ const DirectoryCard: React.FC<DirectoryCardProps> = ({ item, type }) => {
             {student.student_id && (
               <p className="text-sm text-gray-600">ID: {student.student_id}</p>
             )}
-            {student.major && (
-              <p className="text-sm text-gray-600">{student.major}</p>
+            {student.current_degree && (
+              <p className="text-sm text-gray-600">{student.current_degree}</p>
             )}
+            {/* major is kept in the backend but hidden from UI */}
             {student.year_of_study && (
               <div className="mt-1">
                 <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-800">

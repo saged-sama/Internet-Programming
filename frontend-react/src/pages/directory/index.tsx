@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 import themeClasses from '../../lib/theme-utils';
+import { apiRequest2 } from '../../lib/schedulingApi';
 import DirectoryCard from '../../components/directory/DirectoryCard';
 
 // Define types based on backend API responses
@@ -21,6 +22,7 @@ type UserResponse = {
 type FacultyResponse = {
   id: string;
   user_id: string;
+  current_role?: string;
   specialization?: string;
   research_interests?: string;
   publications?: string;
@@ -36,6 +38,7 @@ type StudentResponse = {
   user_id: string;
   student_id?: string;
   major?: string;
+  current_degree?: string;
   admission_date?: string;
   graduation_date?: string;
   year_of_study?: number;
@@ -59,253 +62,39 @@ export default function DirectoryPage() {
 
   const personTypes: PersonType[] = ['Faculty', 'Student'];
 
-  // Mock data for faculty
-  const mockFacultyData: FacultyResponse[] = [
-    {
-      id: "1",
-      user_id: "101",
-      specialization: "Artificial Intelligence",
-      research_interests: "Machine Learning, Deep Learning, Computer Vision",
-      publications: "<p>1. Smith, J. (2023). 'Advances in Deep Learning'. Journal of AI, 45(2), 112-128.</p>",
-      courses_taught: "<p>CSE 401: Introduction to AI</p><p>CSE 505: Advanced Machine Learning</p>",
-      office_hours: "Monday and Wednesday: 2:00 PM - 4:00 PM",
-      office_location: "Science Building, Room 305",
-      chairman: true,
-      user: {
-        id: "101",
-        name: "Dr. John Smith",
-        role: "faculty",
-        department: "Department of Computer Science and Engineering",
-        email: "john.smith@university.edu",
-        phone: "+1-555-123-4567",
-        image: "https://randomuser.me/api/portraits/men/1.jpg",
-        bio: "Professor with 15 years of experience in AI and Machine Learning."
-      }
-    },
-    {
-      id: "2",
-      user_id: "102",
-      specialization: "Database Systems",
-      research_interests: "Data Mining, Big Data Analytics, Database Optimization",
-      publications: "<p>1. Johnson, E. (2023). 'Optimizing NoSQL Databases'. Journal of Database Systems, 32(1), 78-92.</p>",
-      courses_taught: "<p>CSE 310: Database Management Systems</p><p>CSE 510: Advanced Database Concepts</p>",
-      office_hours: "Tuesday and Thursday: 1:00 PM - 3:00 PM",
-      office_location: "Science Building, Room 310",
-      chairman: false,
-      user: {
-        id: "102",
-        name: "Dr. Emily Johnson",
-        role: "faculty",
-        department: "Department of Computer Science and Engineering",
-        email: "emily.johnson@university.edu",
-        phone: "+1-555-234-5678",
-        image: "https://randomuser.me/api/portraits/women/1.jpg",
-        bio: "Associate Professor specializing in database systems and data mining."
-      }
-    },
-    {
-      id: "3",
-      user_id: "103",
-      specialization: "Cybersecurity",
-      research_interests: "Network Security, Cryptography, Ethical Hacking",
-      publications: "<p>1. Brown, M. (2023). 'Advanced Encryption Techniques'. Journal of Cybersecurity, 28(3), 145-160.</p>",
-      courses_taught: "<p>CSE 320: Network Security</p><p>CSE 520: Cryptography</p>",
-      office_hours: "Monday and Friday: 10:00 AM - 12:00 PM",
-      office_location: "Science Building, Room 315",
-      chairman: false,
-      user: {
-        id: "103",
-        name: "Dr. Michael Brown",
-        role: "faculty",
-        department: "Department of Computer Science and Engineering",
-        email: "michael.brown@university.edu",
-        phone: "+1-555-345-6789",
-        image: "https://randomuser.me/api/portraits/men/2.jpg",
-        bio: "Assistant Professor focusing on cybersecurity and network systems."
-      }
-    },
-    {
-      id: "4",
-      user_id: "104",
-      specialization: "Software Engineering",
-      research_interests: "Agile Development, DevOps, Software Testing",
-      publications: "<p>1. Wilson, S. (2023). 'Agile Practices in Large Organizations'. Journal of Software Engineering, 40(2), 112-127.</p>",
-      courses_taught: "<p>CSE 330: Software Engineering</p><p>CSE 530: Agile Development</p>",
-      office_hours: "Wednesday and Friday: 3:00 PM - 5:00 PM",
-      office_location: "Science Building, Room 320",
-      chairman: false,
-      user: {
-        id: "104",
-        name: "Dr. Sarah Wilson",
-        role: "faculty",
-        department: "Department of Computer Science and Engineering",
-        email: "sarah.wilson@university.edu",
-        phone: "+1-555-456-7890",
-        image: "https://randomuser.me/api/portraits/women/2.jpg",
-        bio: "Professor with expertise in software engineering and agile methodologies."
-      }
-    },
-    {
-      id: "5",
-      user_id: "105",
-      specialization: "Computer Graphics",
-      research_interests: "Virtual Reality, Augmented Reality, 3D Modeling",
-      publications: "<p>1. Lee, R. (2023). 'Real-time Rendering Techniques'. Journal of Computer Graphics, 35(4), 189-204.</p>",
-      courses_taught: "<p>CSE 340: Computer Graphics</p><p>CSE 540: Virtual Reality</p>",
-      office_hours: "Tuesday and Thursday: 10:00 AM - 12:00 PM",
-      office_location: "Science Building, Room 325",
-      chairman: false,
-      user: {
-        id: "105",
-        name: "Dr. Robert Lee",
-        role: "faculty",
-        department: "Department of Computer Science and Engineering",
-        email: "robert.lee@university.edu",
-        phone: "+1-555-567-8901",
-        image: "https://randomuser.me/api/portraits/men/3.jpg",
-        bio: "Associate Professor specializing in computer graphics and virtual reality."
-      }
-    }
-  ];
-
-  // Mock data for students
-  const mockStudentData: StudentResponse[] = [
-    {
-      id: "6",
-      user_id: "106",
-      student_id: "ST12345",
-      major: "BSc",
-      admission_date: "2020-09-01",
-      graduation_date: "2024-06-15",
-      year_of_study: 4,
-      student_type: "Regular",
-      cgpa: 3.8,
-      extracurricular_activities: "Web Development Club President, Hackathon Participant",
-      user: {
-        id: "106",
-        name: "Alex Thompson",
-        role: "student",
-        department: "Department of Computer Science and Engineering",
-        email: "alex.thompson@university.edu",
-        phone: "+1-555-678-9012",
-        image: "https://randomuser.me/api/portraits/men/4.jpg",
-        bio: "Senior student passionate about web development and UI/UX design."
-      }
-    },
-    {
-      id: "7",
-      user_id: "107",
-      student_id: "ST23456",
-      major: "MSc",
-      admission_date: "2021-09-01",
-      graduation_date: "2025-06-15",
-      year_of_study: 3,
-      student_type: "Regular",
-      cgpa: 3.9,
-      extracurricular_activities: "Data Science Club, Research Assistant",
-      user: {
-        id: "107",
-        name: "Jessica Martinez",
-        role: "student",
-        department: "Department of Computer Science and Engineering",
-        email: "jessica.martinez@university.edu",
-        phone: "+1-555-789-0123",
-        image: "https://randomuser.me/api/portraits/women/3.jpg",
-        bio: "Junior student interested in data science and machine learning applications."
-      }
-    },
-    {
-      id: "8",
-      user_id: "108",
-      student_id: "ST34567",
-      major: "BSc",
-      admission_date: "2022-09-01",
-      graduation_date: "2026-06-15",
-      year_of_study: 2,
-      student_type: "Regular",
-      cgpa: 3.7,
-      extracurricular_activities: "Cybersecurity Club, CTF Competition Participant",
-      user: {
-        id: "108",
-        name: "David Kim",
-        role: "student",
-        department: "Department of Computer Science and Engineering",
-        email: "david.kim@university.edu",
-        phone: "+1-555-890-1234",
-        image: "https://randomuser.me/api/portraits/men/5.jpg",
-        bio: "Sophomore student focusing on cybersecurity and ethical hacking."
-      }
-    },
-    {
-      id: "9",
-      user_id: "109",
-      student_id: "ST45678",
-      major: "PhD",
-      admission_date: "2020-09-01",
-      graduation_date: "2024-06-15",
-      year_of_study: 4,
-      student_type: "Regular",
-      cgpa: 4.0,
-      extracurricular_activities: "Robotics Team Lead, AI Research Assistant",
-      user: {
-        id: "109",
-        name: "Olivia Chen",
-        role: "student",
-        department: "Department of Computer Science and Engineering",
-        email: "olivia.chen@university.edu",
-        phone: "+1-555-901-2345",
-        image: "https://randomuser.me/api/portraits/women/4.jpg",
-        bio: "Senior student specializing in artificial intelligence and robotics."
-      }
-    },
-    {
-      id: "10",
-      user_id: "110",
-      student_id: "ST56789",
-      major: "MSc",
-      admission_date: "2021-09-01",
-      graduation_date: "2025-06-15",
-      year_of_study: 3,
-      student_type: "Transfer",
-      cgpa: 3.6,
-      extracurricular_activities: "App Development Club, Open Source Contributor",
-      user: {
-        id: "110",
-        name: "Ethan Patel",
-        role: "student",
-        department: "Department of Computer Science and Engineering",
-        email: "ethan.patel@university.edu",
-        phone: "+1-555-012-3456",
-        image: "https://randomuser.me/api/portraits/men/6.jpg",
-        bio: "Junior student interested in software development and mobile applications."
-      }
-    }
-  ];
-
   useEffect(() => {
-    // Use mock data instead of API calls
+    // Fetch data from the backend API
     setLoading(true);
     setError(null);
     
-    try {
-      // Find chairman from mock data
-      const chairmanData = mockFacultyData.find(faculty => faculty.chairman);
-      if (chairmanData) {
-        setChairman(chairmanData);
-        // Remove chairman from regular faculty list
-        setFacultyList(mockFacultyData.filter(faculty => !faculty.chairman));
-      } else {
-        setFacultyList(mockFacultyData);
-      }
+    const fetchData = async () => {
+      try {
+        // Fetch faculty data
+        const facultyData: FacultyResponse[] = await apiRequest2('/staff-api/faculty', { method: 'GET' });
+        
+        // Find chairman and separate from regular faculty
+        const chairmanData = facultyData.find(faculty => faculty.chairman);
+        if (chairmanData) {
+          setChairman(chairmanData);
+          // Remove chairman from regular faculty list
+          setFacultyList(facultyData.filter(faculty => !faculty.chairman));
+        } else {
+          setFacultyList(facultyData);
+        }
 
-      // Set student list from mock data
-      setStudentList(mockStudentData);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error setting mock data:', err);
-      setError('Failed to load directory data. Please try again later.');
-      setLoading(false);
-    }
+        // Fetch student data
+        const studentData: StudentResponse[] = await apiRequest2('/staff-api/student', { method: 'GET' });
+        setStudentList(studentData);
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading directory data:', err);
+        setError('Failed to load directory data. Please try again.');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   // Filter function for search

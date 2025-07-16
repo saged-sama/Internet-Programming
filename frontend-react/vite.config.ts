@@ -12,5 +12,14 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, './src'),
     }
+  },
+  server: {
+    proxy: {
+      '/staff-api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   }
 })
