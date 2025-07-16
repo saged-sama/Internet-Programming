@@ -192,7 +192,7 @@ export function ProjectDetailPage() {
             <Button 
               variant="outline" 
               onClick={() => setIsEditDialogOpen(true)}
-              disabled={!isSupervisor && getUserRole() !== 'admin'}
+              disabled={!isSupervisor && getUserRole() === 'student'}
             >
               <Pencil className="mr-2 h-4 w-4" />
               Edit Project
@@ -200,7 +200,7 @@ export function ProjectDetailPage() {
             <Button 
               variant="destructive" 
               onClick={() => setIsDeleteDialogOpen(true)}
-              disabled={!isSupervisor && getUserRole() !== 'admin'}
+              disabled={!isSupervisor && getUserRole() === 'student'}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Project

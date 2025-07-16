@@ -155,7 +155,7 @@ export default function DirectoryDetailPage() {
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#13274D] bg-gray-100 flex items-center justify-center">
             {user.image ? (
               <img
-                src={user.image}
+                src={`${user.image.startsWith("http") ? user.image : import.meta.env.VITE_BACKEND_URL+user.image}`}
                 alt={user.name}
                 className="w-full h-full object-cover"
               />

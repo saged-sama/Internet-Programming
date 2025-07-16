@@ -62,7 +62,7 @@ export default function AssignmentForm({
     async function fetchCourseCodes() {
       setLoadingCourses(true);
       try {
-        const response = await fetch("http://0.0.0.0:8000/api/courses/codes");
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/courses/codes`);
         if (!response.ok) throw new Error("Failed to fetch course codes");
         const codes = await response.json();
         setCourseCodes(codes);
@@ -105,6 +105,7 @@ export default function AssignmentForm({
               type="text"
               id="title"
               name="title"
+              placeholder="Title of the assignment"
               value={formData.title}
               onChange={handleChange}
               required
@@ -151,6 +152,7 @@ export default function AssignmentForm({
             type="text"
             id="courseTitle"
             name="courseTitle"
+            placeholder="Title of the course"
             value={formData.courseTitle}
             onChange={handleChange}
             required
@@ -167,6 +169,7 @@ export default function AssignmentForm({
               type="text"
               id="batch"
               name="batch"
+              placeholder="Batch (e.g., 27, 28)"
               value={formData.batch}
               onChange={handleChange}
               required
@@ -230,6 +233,7 @@ export default function AssignmentForm({
           <textarea
             id="description"
             name="description"
+            placeholder="Detailed description of the assignment"
             value={formData.description}
             onChange={handleChange}
             required

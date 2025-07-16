@@ -85,6 +85,7 @@ export default function SignupPage() {
     try {
       const form = (new FormData(e.target as HTMLFormElement));
       form.delete("agreeToTerms");
+      console.log('Form data:', Object.fromEntries(form.entries()));
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
         method: 'POST',
         body: form,

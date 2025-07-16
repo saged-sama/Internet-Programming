@@ -108,7 +108,7 @@ class UserPublication(SQLModel, table=True):
     publication: Optional[str]
 
 class UserCreateRequest(BaseModel):
-    id: str
+    id: Optional[str] = None
     firstname: str
     lastname: str
     email: str

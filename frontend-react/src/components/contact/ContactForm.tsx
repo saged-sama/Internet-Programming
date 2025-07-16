@@ -47,6 +47,7 @@ const ContactForm: React.FC = () => {
               type="text"
               id="name"
               name="name"
+              placeholder='Your Name'
               value={formData.name}
               onChange={handleChange}
               required
@@ -61,6 +62,7 @@ const ContactForm: React.FC = () => {
               type="email"
               id="email"
               name="email"
+              placeholder='Email'
               value={formData.email}
               onChange={handleChange}
               required
@@ -92,6 +94,7 @@ const ContactForm: React.FC = () => {
             <textarea
               id="message"
               name="message"
+              placeholder='Your message...'
               rows={5}
               value={formData.message}
               onChange={handleChange}

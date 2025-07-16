@@ -1,5 +1,7 @@
 // API functions for Course Materials
 
+import { getAuthToken } from "@/lib/auth";
+
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 export interface CourseMaterial {
@@ -30,6 +32,7 @@ export const addCourseMaterial = async (courseCode: string, material: Omit<Cours
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            "Authorization": `Bearer ${getAuthToken()}`,
         },
         body: JSON.stringify(material),
     });

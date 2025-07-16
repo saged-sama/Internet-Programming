@@ -68,7 +68,7 @@ const DirectoryCard: React.FC<DirectoryCardProps> = ({ item, type }) => {
           <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 bg-gray-100 flex items-center justify-center">
             {user.image ? (
               <img
-                src={user.image}
+                src={`${user.image.startsWith("http") ? user.image : import.meta.env.VITE_BACKEND_URL+user.image}`}
                 alt={user.name}
                 className="w-full h-full object-cover"
               />
@@ -122,7 +122,7 @@ const DirectoryCard: React.FC<DirectoryCardProps> = ({ item, type }) => {
           <div className="w-16 h-16 rounded-full overflow-hidden mr-4 border-2 bg-gray-100 flex items-center justify-center border-amber-300">
             {user.image ? (
               <img
-                src={user.image}
+                src={`${user.image.startsWith("http") ? user.image : import.meta.env.VITE_BACKEND_URL+user.image}`}
                 alt={user.name}
                 className="w-full h-full object-cover"
               />

@@ -1,5 +1,6 @@
 from datetime import timedelta
 from typing import Annotated
+import uuid
 from fastapi import APIRouter, Body, Form, HTTPException, Response
 from sqlmodel import select
 
@@ -27,12 +28,12 @@ async def signup(user_create_request: Annotated[UserCreateRequest, Form()], sess
         if user_create_request.password != user_create_request.confirm_password:
             raise HTTPException(status_code=400, detail="Passwords do not match")
         new_user = User(
+            id=user_create_request.id or uuid.uuid4().hex,
             username=user_create_request.email,
             hashed_password=get_password_hash(user_create_request.password),
             name=user_create_request.firstname + " " + user_create_request.lastname,
             email=user_create_request.email,
             role=user_create_request.role,
-            id=user_create_request.id,
             verification=UserVerificationStatus.Verified
         )
         # print(f"Creating new user: {new_user}")
