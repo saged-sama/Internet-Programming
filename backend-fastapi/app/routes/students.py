@@ -58,7 +58,7 @@ async def get_student(
     stmt = (
         select(StudentProfile, User)
         .join(User, StudentProfile.user_id == User.id)
-        .where(StudentProfile.id == student_id)
+        .where((StudentProfile.id == student_id) | (StudentProfile.student_id == student_id))
     )
     row = session.exec(stmt).first()
     if not row:
