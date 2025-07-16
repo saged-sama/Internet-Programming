@@ -5,6 +5,8 @@ from typing import Optional
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 
+from app.models.course import CourseSemester
+
 class UserRoles(str, Enum):
     student = "student"
     faculty = "faculty"
@@ -65,6 +67,7 @@ class StudentProfile(SQLModel, table=True):
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
+    current_semester: Optional[CourseSemester] = Field(default="first")
     student_type: Optional[str]
     cgpa: Optional[float]
     extracurricular_activities: Optional[str]
@@ -167,6 +170,7 @@ class StudentResponse(BaseModel):
     admission_date: Optional[date]
     graduation_date: Optional[date]
     year_of_study: Optional[int]
+    current_semester: Optional[CourseSemester] = Field(default="first")
     student_type: Optional[str]
     cgpa: Optional[float]
     extracurricular_activities: Optional[str]
@@ -182,6 +186,7 @@ class StudentProfileCreateRequest(BaseModel):
     admission_date: Optional[date] = None
     graduation_date: Optional[date] = None
     year_of_study: Optional[int] = None
+    current_semester: Optional[CourseSemester] = None
     student_type: Optional[str] = None
     cgpa: Optional[float] = None
     extracurricular_activities: Optional[str] = None

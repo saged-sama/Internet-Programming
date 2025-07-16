@@ -27,7 +27,7 @@ from app.models.research import *
 from app.models.room import *
 from app.models.all_models import *
 
-from app.utils.config import settings  # <-- Use your actual config loader
+from app.utils.config import settings
 
 # Set Alembic config database URL dynamically
 config = context.config

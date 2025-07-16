@@ -18,7 +18,8 @@ from .routes import (
     lab_equipments as equipments,
     financials,
     students,
-    users
+    users,
+    grades
 )
 
 @asynccontextmanager
@@ -56,3 +57,4 @@ app.include_router(faculty.router)
 app.include_router(users.router)
 app.include_router(students.router)
 app.include_router(files.router)
+app.include_router(grades.router, tags=["Grades"])

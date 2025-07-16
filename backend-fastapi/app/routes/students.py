@@ -1,8 +1,9 @@
-from typing import List
+from typing import Annotated, List
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
+from app.utils.auth import get_current_user, roled_access
 from app.utils.db import get_session
 from app.models.user import (
     User,
@@ -57,7 +58,7 @@ async def get_student(
     stmt = (
         select(StudentProfile, User)
         .join(User, StudentProfile.user_id == User.id)
-        .where(StudentProfile.id == student_id)
+        .where(StudentProfile.user_id == student_id)
     )
     row = session.exec(stmt).first()
     if not row:
@@ -78,6 +79,7 @@ async def get_student(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_student_profile(
+    current_user: Annotated[User, Depends(roled_access(UserRoles.student))],
     profile_data: StudentProfileCreateRequest,
     session: Session = Depends(get_session),
 ):
@@ -104,12 +106,13 @@ async def create_student_profile(
     new_id = str(uuid.uuid4())
     student = StudentProfile(
         id=new_id,
-        user_id=profile_data.user_id,
+        user_id=current_user.id,
         student_id=profile_data.student_id,
         major=profile_data.major,
         admission_date=profile_data.admission_date,
         graduation_date=profile_data.graduation_date,
         year_of_study=profile_data.year_of_study,
+        current_semester=profile_data.current_semester,
         student_type=profile_data.student_type,
         cgpa=profile_data.cgpa,
         extracurricular_activities=profile_data.extracurricular_activities,

@@ -5,7 +5,7 @@ from sqlmodel import select
 from pydantic import BaseModel
 
 from app.models.user import User
-from app.utils.auth import get_current_active_user, get_current_user
+from app.utils.auth import get_current_user
 from app.utils.db import SessionDependency
 from app.models.course import Course, CourseMaterial, CourseDegreeLevel, CourseMaterialCreateRequest, CourseSemester
 from app.utils.file_handler import BaseFilePath, save_file
@@ -205,7 +205,7 @@ async def get_course_materials(course_code: str, session: SessionDependency):
 @router.post("/{course_code}/materials", response_model=CourseMaterial)
 async def add_course_material(
     session: SessionDependency,
-    current_user: Annotated[User, Depends(get_current_active_user)],
+    current_user: Annotated[User, Depends(get_current_user)],
     course_code: str,
     title: Annotated[str, Form()],
     type: Annotated[str, Form()],
