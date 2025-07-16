@@ -11,7 +11,7 @@ export type CourseDifficulty = 'introductory' | 'intermediate' | 'advanced';
 /**
  * The semesters a course can be offered in
  */
-export type CourseSemester = '1st' | '2nd' | '3rd' | '4th' | '5th' | '6th' | '7th' | '8th';
+export type CourseSemester = '1st' | '2nd' | '3rd' | '4th' | '5th' | '6th' | '7th' | '8th' | 'first' | 'second' | 'third' | 'fourth' | 'fifth' | 'sixth' | 'seventh' | 'eighth';
 
 /**
  * Represents a course in the curriculum

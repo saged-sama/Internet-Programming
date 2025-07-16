@@ -19,7 +19,9 @@ from .routes import (
     financials,
     students,
     users,
-    notices
+    grades,
+    notices,
+    projects  # Add this import
 )
 
 @asynccontextmanager
@@ -44,6 +46,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 # Main entity routes
 app.include_router(courses.router, prefix="/api")
 app.include_router(programs.router, prefix="/api")
+app.include_router(projects.router, prefix="/api")  # Add this line
 app.include_router(scheduling.router)
 app.include_router(rooms.router)
 app.include_router(exams.router)
@@ -58,3 +61,4 @@ app.include_router(faculty.router)
 app.include_router(users.router)
 app.include_router(students.router)
 app.include_router(files.router)
+app.include_router(grades.router, tags=["Grades"])

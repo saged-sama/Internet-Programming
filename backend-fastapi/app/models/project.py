@@ -10,6 +10,7 @@ class Project(SQLModel, table=True):
     topic: Optional[str] = None
     status: Optional[str] = None
     abstract: Optional[str] = None
+    # demo_url: Optional[str] = None  # Commented out until migration is run
 
 class ProjectTeamMember(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)

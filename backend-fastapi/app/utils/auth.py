@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 
 from app.utils.crypt import verify_password
 from app.utils.db import SessionDependency, get_session
-from app.models.user import User
+from app.models.user import User, UserRoles
 from app.utils.config import settings
 
 SECRET_KEY = settings.secret_key
@@ -68,7 +68,7 @@ async def get_current_user(token: Annotated[str, Depends(oath2_scheme)], session
         raise credentials_exception
     return user
 
-async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
+async def get_current_user_with_role(current_user: Annotated[User, Depends(get_current_user)]):
     if not current_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,3 +76,13 @@ async def get_current_active_user(current_user: Annotated[User, Depends(get_curr
             headers={"WWW-Authenticate": "Bearer"},
         )
     return current_user
+
+def roled_access(role: UserRoles):
+    async def check_role(current_user: Annotated[User, Depends(get_current_user)]):
+        if current_user.role != role:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Operation not permitted for this user role",
+            )
+        return current_user
+    return check_role

@@ -12,7 +12,8 @@ import type {
   DegreeLevel 
 } from '../types/degree';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+export const ABSOLUTE_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const API_BASE_URL = `${ABSOLUTE_BASE_URL}/api`;
 
 // Generic API request function
 async function apiRequest<T>(
