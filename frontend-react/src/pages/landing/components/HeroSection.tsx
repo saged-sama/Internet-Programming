@@ -5,21 +5,30 @@ import ImageSlider from './ImageSlider';
 
 export default function HeroSection() {
   return (
-    <section >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div 
+      className="relative bg-cover bg-center min-h-[600px] w-full mt-5"
+      style={{ 
+        backgroundImage: "url('src/assets/photos/landing.jpg')",
+      }}
+    >
+      {/* Dark overlay for better text visibility */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content positioned on top of the background image */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
-            <h1 className="mb-4">
+            <h1 className="mb-4 text-white font-bold text-4xl md:text-5xl">
               Department of Computer Science and Engineering
             </h1>
-            <p className="mb-8 text-muted-foreground">
+            <p className="mb-8 text-gray-200">
               University of Dhaka - A leading academic institution in Bangladesh
             </p>
             <div className="flex flex-wrap gap-4">
               <Button size="lg" className={themeClasses.primaryButton} asChild>
                 <Link to="/directory">University Directory</Link>
               </Button>
-              <Button variant="outline" size="lg" className={themeClasses.outlineButton} asChild>
+              <Button variant="outline" size="lg" className={`${themeClasses.outlineButton} border-white text-white hover:text-white`} asChild>
                 <Link to="/events">Upcoming Events</Link>
               </Button>
             </div>
@@ -29,6 +38,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

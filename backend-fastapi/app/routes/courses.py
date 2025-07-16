@@ -219,7 +219,7 @@ async def add_course_material(
     file: Annotated[Optional[UploadFile], File()] = None
 ):
     # Permission check
-    if not current_user or current_user.role == "student":
+    if (not current_user) or (current_user.role == "student"):
         raise HTTPException(status_code=403, detail="Only instructors can add materials")
 
     course = session.exec(select(Course).where(Course.course_code == course_code)).first()

@@ -1,13 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import type { Assignment } from "@/types/scheduling";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface AssignmentFormProps {
   onSubmit: (

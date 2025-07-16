@@ -44,7 +44,8 @@ async def get_results(
                                     "title": result.title,
                                     "year": result.year,
                                     "semester": result.semester,
-                                    "student_data": dict(zip(header, row))
+                                    "student_data": dict(zip(header, row)),
+                                    "file": result.file
                                 })
                                 break
                 except Exception as e:

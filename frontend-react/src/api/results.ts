@@ -26,8 +26,22 @@ export interface StudentResult {
     student_data: Record<string, string>;
 }
 
+export interface StudentsGrades {
+    title: string;
+    year: string;
+    semester: string;
+    student_data: {
+        student_id: string;
+        title: string;
+        total_gpa: number;
+        cgpa: number;
+        [courseCode: string]: string | number;
+    },
+    file: string;
+}
+
 // Get all results with optional filters
-export const getResults = async (query?: ResultsReadQuery): Promise<Result[]> => {
+export const getResults = async (query?: ResultsReadQuery): Promise<StudentsGrades[]> => {
     const params = new URLSearchParams();
     if (query?.year) params.append('year', query.year);
     if (query?.semester) params.append('semester', query.semester);
