@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { BookingFormData, RoomAvailability } from '@/types/scheduling';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
+import { getCurrentUser } from '@/lib/auth';
 
 interface RoomBookingFormProps {
   room: RoomAvailability | null;
@@ -10,10 +11,11 @@ interface RoomBookingFormProps {
 }
 
 export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookingFormProps) {
+  const user = useMemo(() => getCurrentUser(), []);
   const [formData, setFormData] = useState<BookingFormData>({
     room: room ? room.room : '',
-    requestedBy: '',
-    email: '',
+    requestedBy: user?.id || '',
+    email: user?.email || '',
     purpose: '',
     date: '',
     startTime: '',
@@ -29,8 +31,8 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
     if (room) {
       setFormData({
         room: room.room,
-        requestedBy: '',
-        email: '',
+        requestedBy: user?.id || '',
+        email: user?.email || '',
         purpose: '',
         date: '',
         startTime: '',
@@ -40,7 +42,7 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
       setSelectedDate(undefined);
       setSelectedSlot('');
     }
-  }, [room]);
+  }, [room, user?.id, user?.email]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -126,13 +128,13 @@ export default function RoomBookingForm({ room, onSubmit, onCancel }: RoomBookin
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="requestedBy" className="block mb-2 text-muted-foreground">
-              Name
+              User ID
             </label>
             <Input
               id="requestedBy"
               name="requestedBy"
               value={formData.requestedBy}
-              onChange={handleInputChange}
+              readOnly
               required
             />
           </div>

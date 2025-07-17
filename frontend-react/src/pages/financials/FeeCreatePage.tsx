@@ -118,9 +118,7 @@ export default function FeeCreatePage() {
                   required
                   className="w-full p-2 border border-input rounded-md bg-background"
                 >
-                  <option value="lab">Lab Fee</option>
-                  <option value="library">Library Fee</option>
-                  <option value="sports">Sports Fee</option>
+                  <option value="tuition_fee">Tuition Fee</option>
                   <option value="development">Development Fee</option>
                   <option value="admission">Admission Fee</option>
                   <option value="other">Other</option>
