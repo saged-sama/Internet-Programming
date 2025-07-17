@@ -2,8 +2,102 @@ import { useState } from "react";
 import { ProjectsShowcase } from "../../components/projects/ProjectsShowcase";
 import { AddProjectForm } from "../../components/projects/AddProjectForm";
 import { Button } from "../../components/ui/button";
-import { Plus, Search, ArrowRight, BookOpen, Microscope, Beaker, Users, Award } from "lucide-react";
-import ResearchLabImage from "../../assets/photos/ResearchLab2.jpg";
+import { Plus, Search, ArrowRight, BookOpen, Microscope, Beaker, Users, Award, ExternalLink } from "lucide-react";
+import ResearchLabImage from "../../assets/photos/ResearchLab.jpg";
+
+// Import feature highlight images
+import awardsImg from "../../assets/studentawards.jpg";
+import researchImg from "../../assets/research.jpg";
+import innovationImg from "../../assets/innovation.jpg";
+
+// Feature highlights data
+const features = [
+  {
+    icon: (
+      <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
+        <circle
+          cx="24"
+          cy="24"
+          r="22"
+          stroke="#EAB308"
+          strokeWidth="3"
+          fill="none"
+        />
+        <path
+          d="M24 10v16"
+          stroke="#25345D"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <circle cx="24" cy="32" r="3" fill="#EAB308" />
+      </svg>
+    ),
+    title: "AWARDS",
+    image: awardsImg,
+    headline: "Celebrating Excellence in Academics and Beyond",
+    description:
+      "Our university recognizes outstanding achievements in academics, leadership, and service. Discover the awards that inspire our students and faculty to reach new heights.",
+    link: "/awards",
+    linkText: "SEE AWARDS →",
+  },
+  {
+    icon: (
+      <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
+        <rect
+          x="6"
+          y="6"
+          width="36"
+          height="36"
+          rx="8"
+          stroke="#EAB308"
+          strokeWidth="3"
+          fill="none"
+        />
+        <path
+          d="M16 32l8-16 8 16"
+          stroke="#25345D"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <circle cx="24" cy="28" r="2" fill="#EAB308" />
+      </svg>
+    ),
+    title: "RESEARCH",
+    image: researchImg,
+    headline: "Pioneering Research for a Better Tomorrow",
+    description:
+      "Explore groundbreaking research projects led by our faculty and students. From technology to social sciences, our ongoing research is shaping the future.",
+    link: "/research",
+    linkText: "EXPLORE RESEARCH →",
+  },
+  {
+    icon: (
+      <svg width="48" height="48" fill="none" viewBox="0 0 48 48">
+        <circle
+          cx="24"
+          cy="24"
+          r="22"
+          stroke="#EAB308"
+          strokeWidth="3"
+          fill="none"
+        />
+        <path
+          d="M16 32c0-4.418 3.582-8 8-8s8 3.582 8 8"
+          stroke="#25345D"
+          strokeWidth="3"
+        />
+        <circle cx="24" cy="20" r="3" fill="#EAB308" />
+      </svg>
+    ),
+    title: "INNOVATION",
+    image: innovationImg,
+    headline: "Driving Innovation Across Disciplines",
+    description:
+      "Innovation is at the heart of our university. Discover how our community is creating solutions that make a real-world impact.",
+    link: "/projects",
+    linkText: "SEE INNOVATIONS →",
+  },
+];
 
 export function ResearchPage() {
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
@@ -143,8 +237,67 @@ export function ResearchPage() {
         <ProjectsShowcase refreshTrigger={refreshTrigger} />
       </div>
 
+      {/* Research Feature Highlights */}
+      <div className="py-16 bg-gradient-to-br from-[#F8F9FA] to-[#EDF2F7]">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-chart-3 bg-clip-text text-transparent mb-4">
+              Award Highlights
+            </h2>
+            <p className="text-lg text-primary-dark max-w-3xl mx-auto leading-relaxed">
+              Discover our key research areas and initiatives that are making an impact
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="group bg-white/80 backdrop-blur-sm border border-[#A8A8A8]/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden rounded-2xl"
+              >
+                <div className="h-1.5 bg-gradient-to-r from-primary to-primary-dark"></div>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="bg-primary/10 p-3 rounded-xl">
+                      {feature.icon}
+                    </div>
+                    <span className="text-xs font-semibold tracking-widest text-[#EAB308] px-3 py-1 bg-[#EAB308]/10 rounded-full">
+                      {feature.title}
+                    </span>
+                  </div>
+                  
+                  <div className="mb-4 overflow-hidden rounded-xl">
+                    <img
+                      src={feature.image}
+                      alt={feature.title}
+                      className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-primary group-hover:text-primary-dark transition-colors mb-3">
+                    {feature.headline}
+                  </h3>
+                  
+                  <p className="text-muted-foreground mb-5 line-clamp-3">
+                    {feature.description}
+                  </p>
+                  
+                  <a
+                    href={feature.link}
+                    className="flex items-center text-accent font-semibold text-sm group-hover:text-accent-dark transition-colors"
+                  >
+                    {feature.linkText}
+                    <ExternalLink className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
       {/* Featured Researcher */}
-      <div className="bg-gradient-to-r from-primary to-primary-dark py-16 mt-12">
+      <div className="bg-gradient-to-r from-primary to-primary-dark py-16">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="md:w-1/2">

@@ -17,8 +17,7 @@ export default function Navbar() {
       to: "/foryou",
       dropdown: [
         { label: "Application", to: "/application" },
-        { label: "Research", to: "/research" },
-        { label: "Awards", to: "/awards" },
+        { label: "Research, Projects & Awards", to: "/research" },
         { label: "Events", to: "/events" },        
         { label: "Contact", to: "/contact" },
       ],

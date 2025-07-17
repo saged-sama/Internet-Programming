@@ -294,7 +294,7 @@ export default function EventsPage() {
             />
           </div>
         )}
-        
+        //register
         {/* Grid View with Events */}
         {!loading && viewMode === 'grid' && events.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -389,7 +389,7 @@ export default function EventsPage() {
                       <div className="mt-auto flex justify-between items-center">
                         <Link
                           to={`/events/${event.id}`}
-                          className={`inline-flex items-center ${themeClasses.textAccentYellow} hover:underline`}
+                          className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md ${themeClasses.textAccentYellow} hover:underline`}
                         >
                           View Details
                           <svg
@@ -406,6 +406,14 @@ export default function EventsPage() {
                             />
                           </svg>
                         </Link>
+                        
+                        {event.registration_required && (
+                          <button
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105"
+                          >
+                            Register
+                          </button>
+                        )}
 
                         {/* Admin Controls */}
                         {isAdmin && (
