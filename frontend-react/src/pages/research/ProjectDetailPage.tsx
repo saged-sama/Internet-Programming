@@ -178,14 +178,14 @@ export function ProjectDetailPage() {
       <div className="min-h-screen bg-gradient-to-br from-[#F0F0F0] via-[#F0F0F0] to-[#D3D3D3]">
         <div className="container mx-auto py-20">
           <div className="text-center max-w-xl mx-auto bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-8">
-            <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">Project Not Found</h2>
+            <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Project Not Found</h2>
             <p className="text-muted-foreground mb-6">The project you're looking for doesn't exist or has been removed.</p>
             <Button 
               onClick={() => navigate("/research")}
-              className="group hover:bg-primary/10 transition-all duration-300"
+              className="group hover:bg-primary/10"
             >
               <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              <span className="bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent font-semibold">
+              <span className="bg-primary bg-clip-text text-transparent font-semibold">
                 Back to Research Projects
               </span>
             </Button>
@@ -216,7 +216,7 @@ export function ProjectDetailPage() {
           <div className="max-w-4xl mx-auto px-4">
             <div className="animate-fade-in-up">
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
-                <span className="bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-accent to-accent bg-clip-text text-transparent">
                   {project.title}
                 </span>
               </h1>
@@ -253,8 +253,7 @@ export function ProjectDetailPage() {
             className="group hover:bg-primary/10 transition-all duration-300"
           >
             <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            <span className="bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent font-semibold">
-              Back to Research Projects
+            <span className="text-primary font-semibold">              Back to Research Projects
             </span>
           </Button>
           
@@ -288,11 +287,11 @@ export function ProjectDetailPage() {
               <CardHeader className="border-b border-[#A8A8A8]/20 pb-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent mb-3">
+                    <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent mb-3">
                       {project.title}
                     </CardTitle>
                     <CardDescription className="flex items-center">
-                      <Badge className="mr-3 bg-gradient-to-r from-accent to-accent-light text-primary font-semibold px-3 py-1">
+                      <Badge className="mr-3 bg-gradient-to-r from-accent to-accent text-primary font-semibold px-3 py-1">
                         {project.status}
                       </Badge>
                       <span className="text-muted-foreground">{project.topic}</span>
@@ -373,7 +372,7 @@ export function ProjectDetailPage() {
           <div>
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-500 sticky top-8">
               <CardHeader>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
                   Project Information
                 </CardTitle>
               </CardHeader>
